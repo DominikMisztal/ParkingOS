@@ -24,9 +24,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ParkingOS login',
+      //title: 'ParkingOS login',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.amber, background: Colors.black87),
         useMaterial3: true,
       ),
       home: const Login(title: 'Parking OS login'),
