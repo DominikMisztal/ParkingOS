@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:parking_system/components/myCustomTextField.dart';
 
 class SignUpUser extends StatelessWidget {
   SignUpUser({super.key});
@@ -10,84 +11,87 @@ class SignUpUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    
+    const motiveColor = Colors.amber;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Sign up page'),
-        ),
-        body: Form(
+      appBar: AppBar(
+        title: const Text('Sign up page'),
+      ),
+      body: Form(
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Email"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
+              Container(
+                constraints: const BoxConstraints.expand(),
+              ),
+              Container(
+                color: Colors.black87,
+                width: (width / 3) * 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.directions_car,
+                      size: 128,
+                      color: motiveColor,
+                    ),
+                    const Text(
+                      'Sign up',
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: motiveColor),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: MyCustomTextField(
+                          controller: emailController,
+                          labelText: 'Email',
+                          obscureText: false,
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: MyCustomTextField(
+                          controller: passwordController,
+                          labelText: 'Password',
+                          obscureText: true,
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: MyCustomTextField(
+                          controller: passwordConfirmController,
+                          labelText: 'Confirm Password',
+                          obscureText: true,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 16.0),
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              Navigator.pop(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Please fill input')),
+                              );
+                            }
+                          },
+                          child: const Text('Create Account'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Password"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: passwordConfirmController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Confirm Password"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) { 
-                        Navigator.pop(context);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please fill input')),
-                        );
-                      }
-                    },
-                    child: const Text('Create Account'),
-                  ),
-                ),
-                ),
             ],
           ),
         ),
@@ -96,6 +100,6 @@ class SignUpUser extends StatelessWidget {
   }
 }
 
-bool validateAccount(String email, String password1, String password2){
+bool validateAccount(String email, String password1, String password2) {
   return true;
 }

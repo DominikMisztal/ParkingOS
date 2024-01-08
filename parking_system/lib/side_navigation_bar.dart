@@ -2,6 +2,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/user_page.dart';
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -14,6 +15,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
+
 
   List<Widget> pages = [
     userPage(username: title),
@@ -38,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   static get title => 'abc';
-
   @override
   void initState() {
     sideMenu.addListener((index) {
@@ -142,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: PageView(
               controller: pageController,
               children: pages,
+
             ),
           ),
         ],
