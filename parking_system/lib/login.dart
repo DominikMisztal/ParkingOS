@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/myCustomTextField.dart';
+import 'package:parking_system/homepagetest.dart';
 import 'package:parking_system/signup.dart';
 
 import 'homepage_user.dart';
@@ -39,9 +40,10 @@ class _LoginState extends State<Login> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePageUser(
-                        email: emailController.text,
-                      )),
+                builder: (context) => MyHomePage(
+                  title: emailController.text,
+                ),
+              ),
             );
           }
         } else {
