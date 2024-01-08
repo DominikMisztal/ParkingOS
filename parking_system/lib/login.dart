@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/myCustomTextField.dart';
-import 'package:parking_system/homepagetest.dart';
+import 'package:parking_system/components/my_custom_text_field.dart';
+import 'package:parking_system/side_navigation_bar.dart';
 import 'package:parking_system/signup.dart';
 
 import 'homepage_user.dart';

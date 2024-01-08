@@ -1,5 +1,7 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
+import 'package:parking_system/user_page.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -14,6 +16,30 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
 
+
+  List<Widget> pages = [
+    userPage(username: title),
+    Container(
+      color: const Color.fromARGB(255, 1, 1, 1),
+      child: const Center(
+        child: Text(
+          'ParkFinder',
+          style: TextStyle(fontSize: 35),
+        ),
+      ),
+    ),
+    Container(
+      color: Colors.white,
+      child: const Center(
+        child: Text(
+          'Settings',
+          style: TextStyle(fontSize: 35),
+        ),
+      ),
+    ),
+  ];
+
+  static get title => 'abc';
   @override
   void initState() {
     sideMenu.addListener((index) {
@@ -116,35 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: PageView(
               controller: pageController,
-              children: [
-                Container(
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'Account',
-                      style: TextStyle(fontSize: 35),
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'ParkFinder',
-                      style: TextStyle(fontSize: 35),
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text(
-                      'Settings',
-                      style: TextStyle(fontSize: 35),
-                    ),
-                  ),
-                ),
-              ],
+              children: pages,
+
             ),
           ),
         ],
