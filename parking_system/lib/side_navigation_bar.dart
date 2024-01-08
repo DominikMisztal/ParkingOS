@@ -17,15 +17,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> pages = [
     userPage(username: title),
-    // Container(
-    //   color: Colors.white,
-    //   child: const Center(
-    //     child: Text(
-    //       'Account',
-    //       style: TextStyle(fontSize: 35),
-    //     ),
-    //   ),
-    // ),
     Container(
       color: const Color.fromARGB(255, 1, 1, 1),
       child: const Center(
