@@ -27,14 +27,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       //title: 'ParkingOS login',
       theme: ThemeData(
-
         textTheme: TextTheme(
           displayLarge: const TextStyle(
               fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white60),
         ),
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.amber, background: Colors.black87),
-
         useMaterial3: true,
       ),
       home: const Login(title: 'Parking OS login'),

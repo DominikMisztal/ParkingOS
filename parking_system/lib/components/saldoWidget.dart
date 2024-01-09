@@ -4,6 +4,8 @@ class Saldo extends StatelessWidget {
   final int saldo;
   const Saldo({super.key, required this.saldo});
 
+  void _chargeSaldo() {}
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -15,18 +17,20 @@ class Saldo extends StatelessWidget {
           ),
         ),
         ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(80)),
-            child: Container(
-              color: Colors.white60,
-              width: 100,
-              height: 100,
-              child: Center(
-                child: Text(
-                  '${saldo}zł',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+          borderRadius: const BorderRadius.all(Radius.circular(80)),
+          child: Container(
+            color: Colors.white60,
+            width: 100,
+            height: 100,
+            child: Center(
+              child: Text(
+                '${saldo}zł',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            )),
+            ),
+          ),
+        ),
+        ElevatedButton(onPressed: _chargeSaldo, child: Text('Charge'))
       ],
     );
   }

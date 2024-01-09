@@ -1,7 +1,7 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
+import 'package:parking_system/parkfinder_page.dart';
 import 'package:parking_system/user_page.dart';
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -16,9 +16,9 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
 
-
   List<Widget> pages = [
     userPage(username: title),
+    Parkfinder(),
     Container(
       color: const Color.fromARGB(255, 1, 1, 1),
       child: const Center(
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('User_Panel'),
         centerTitle: true,
       ),
       body: Row(
@@ -143,7 +143,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: PageView(
               controller: pageController,
               children: pages,
-
             ),
           ),
         ],
