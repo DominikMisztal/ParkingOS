@@ -22,17 +22,45 @@ class _ParkingBoardState extends State<ParkingBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GridView.builder(
-          itemCount: ParkingBoard.rows * ParkingBoard.cols,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: ParkingBoard.cols, childAspectRatio: 2),
-          itemBuilder: (context, index) => ParkingTile(
-              id: (index +
-                  (ParkingBoard.currentFloor - 1) *
-                      ParkingBoard.rows *
-                      ParkingBoard.cols))),
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Handle button press
+              },
+              child: Text('Button 1'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Handle button press
+              },
+              child: Text('Button 2'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Handle button press
+              },
+              child: Text('Button 3'),
+            ),
+          ],
+        ),
+        Expanded(
+          child: GridView.builder(
+            itemCount: ParkingBoard.rows * ParkingBoard.cols,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: ParkingBoard.cols, childAspectRatio: 2),
+            itemBuilder: (context, index) => ParkingTile(
+                id: (index +
+                    (ParkingBoard.currentFloor - 1) *
+                        ParkingBoard.rows *
+                        ParkingBoard.cols)),
+          ),
+        ),
+      ],
     );
   }
 }
