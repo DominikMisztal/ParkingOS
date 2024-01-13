@@ -11,6 +11,8 @@ class userPage extends StatefulWidget {
 }
 
 class _userPageState extends State<userPage> {
+  SaldoChargerModel scm = SaldoChargerModel();
+  double _totalSaldo = 50;
   List<Car> _placeholderCars = [
     Car('Scoda', 'Octavia', 'Abcd'),
     Car('Scoda', 'Octavia', 'XYZQ'),
@@ -53,7 +55,7 @@ class _userPageState extends State<userPage> {
                   style: TextStyle(decoration: TextDecoration.underline),
                 ), //todo make it clickable
                 const SizedBox(height: 32),
-                const Saldo(saldo: 50)
+                Saldo(saldo: _totalSaldo, scm: scm),
               ],
             )),
         Container(

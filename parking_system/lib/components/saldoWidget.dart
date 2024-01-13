@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 
 class Saldo extends StatefulWidget {
-  final saldo;
-
-  //double saldoChange = 0;
-  const Saldo({super.key, required this.saldo});
+  final double saldo;
+  final SaldoChargerModel scm;
+  const Saldo({super.key, required this.saldo, required this.scm});
 
   @override
   State<Saldo> createState() => _SaldoState();
 }
 
 class _SaldoState extends State<Saldo> {
-  void _chargeSaldo() {}
-
   @override
   Widget build(BuildContext context) {
+    double _ssaldo = widget.saldo;
     return Column(
       children: [
         const Center(
@@ -30,9 +28,18 @@ class _SaldoState extends State<Saldo> {
             width: 100,
             height: 100,
             child: Center(
-              child: Text(
-                '${widget.saldo}zł',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              child: ListenableBuilder(
+                listenable: widget.scm,
+                builder: (BuildContext context, Widget? child) {
+                  _ssaldo += widget.scm.charge;
+                  return Text(
+                    '${_ssaldo}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -46,10 +53,8 @@ class _SaldoState extends State<Saldo> {
               ),
             );
             setState(() {
-              //Todo muszę to poprawić
-              // widget.saldo += val!;
+              widget.scm.chargeSaldo(val ?? 0);
             });
-            print('Dialog one returned value ---> $val');
           },
           child: const Text('Charge'),
         ),
@@ -96,7 +101,7 @@ class _ChargeDialogState extends State<ChargeDialog> {
               });
             },
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
@@ -111,5 +116,15 @@ class _ChargeDialogState extends State<ChargeDialog> {
         ],
       ),
     );
+  }
+}
+
+class SaldoChargerModel with ChangeNotifier {
+  double _charge = 0;
+  double get charge => _charge;
+
+  void chargeSaldo(double price) {
+    _charge += price;
+    notifyListeners();
   }
 }
