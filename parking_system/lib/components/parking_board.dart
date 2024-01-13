@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/parking_board_tile.dart';
+import 'dart:developer';
 
 class ParkingBoard extends StatefulWidget {
   const ParkingBoard({super.key});
   static int rows = 6;
   static int cols = 6;
-  static int floors = 1;
-  static int currentFloor = 1;
+  static int floors = 3;
   @override
   State<ParkingBoard> createState() => _ParkingBoardState();
 }
@@ -15,6 +15,7 @@ class _ParkingBoardState extends State<ParkingBoard> {
   int _currentFloor = 1;
 
   void _changeFloor(int newFloor) {
+    log('Changing to floor $newFloor');
     setState(() {
       _currentFloor = newFloor;
     });
@@ -28,22 +29,16 @@ class _ParkingBoardState extends State<ParkingBoard> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              child: Text('Button 1'),
+              onPressed: () => _changeFloor(1),
+              child: Text('Floor 1'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              child: Text('Button 2'),
+              onPressed: () => _changeFloor(2),
+              child: Text('Floor 2'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              child: Text('Button 3'),
+              onPressed: () => _changeFloor(3),
+              child: Text('floor 3'),
             ),
           ],
         ),
@@ -53,11 +48,8 @@ class _ParkingBoardState extends State<ParkingBoard> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ParkingBoard.cols, childAspectRatio: 2),
-            itemBuilder: (context, index) => ParkingTile(
-                id: (index +
-                    (ParkingBoard.currentFloor - 1) *
-                        ParkingBoard.rows *
-                        ParkingBoard.cols)),
+            itemBuilder: (context, index) =>
+                ParkingTile(id: (index + _currentFloor)),
           ),
         ),
       ],

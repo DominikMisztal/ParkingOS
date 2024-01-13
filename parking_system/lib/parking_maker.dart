@@ -15,6 +15,9 @@ class _ParkingMakerState extends State<ParkingMaker> {
   final widthController = TextEditingController();
   final heightController = TextEditingController();
   final floorsController = TextEditingController();
+  int parkingCols = 8;
+  int parkingRows = 8;
+  int parkingFloors = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +51,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
                                 child: TextFormField(
+                                  controller: widthController,
                                   decoration: InputDecoration(
                                     labelText: 'Width',
                                     hintText: 'Enter width',
@@ -58,6 +62,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
                                 child: TextFormField(
+                                  controller: heightController,
                                   decoration: InputDecoration(
                                     labelText: 'Height',
                                     hintText: 'Enter height',
@@ -68,6 +73,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
                                 child: TextFormField(
+                                  controller: floorsController,
                                   decoration: InputDecoration(
                                     labelText: 'Number of floors',
                                     hintText: 'Enter number of floors',
@@ -82,34 +88,6 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                   child: const Text('Generate'),
                                 ),
                               ),
-
-                              // TO CHANGE -------------------------------------------------
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: () => floorButton(1),
-                                  child: const Text('1'),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: () => floorButton(2),
-                                  child: const Text('2'),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: () => floorButton(3),
-                                  child: const Text('3'),
-                                ),
-                              ),
-
-                              // TO CHANGE -------------------------------------------------
                             ],
                           ),
                         ),
@@ -127,5 +105,15 @@ class _ParkingMakerState extends State<ParkingMaker> {
 
   void floorButton(int floor) {}
 
-  void generateParking() {}
+  void generateParking() {
+    setState(() {
+      parkingCols = int.parse(widthController.text);
+      parkingRows = int.parse(heightController.text);
+      parkingFloors = int.parse(floorsController.text);
+
+      ParkingBoard.cols = parkingCols;
+      ParkingBoard.rows = parkingRows;
+      ParkingBoard.floors = parkingFloors;
+    });
+  }
 }
