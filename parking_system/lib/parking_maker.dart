@@ -19,7 +19,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
   final floorsController = TextEditingController(text: "3");
   int parkingCols = 8;
   int parkingRows = 8;
-  int parkingFloors = 1;
+  int parkingFloors = 3;
 
   @override
   Widget build(BuildContext context) {
