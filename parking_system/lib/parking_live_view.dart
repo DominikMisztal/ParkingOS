@@ -1,30 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/parking_board.dart';
+import 'package:parking_system/components/parking_board_live_view.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 
-class ParkingMaker extends StatefulWidget {
-  const ParkingMaker({super.key});
-
+class ParkingLiveView extends StatefulWidget {
+  const ParkingLiveView({super.key});
+  static String parkingName = "Parking 1";
+  static int parkingRows = 2;
+  static int parkingCols = 2;
+  static int parkingFloors = 3;
+  static List<bool> spotsTaken = [
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+  ];
   @override
-  State<ParkingMaker> createState() => _ParkingMakerState();
+  State<ParkingLiveView> createState() => _ParkingLiveViewState();
 }
 
-class _ParkingMakerState extends State<ParkingMaker> {
-  final nameController = TextEditingController();
-  final addressController = TextEditingController();
-  final widthController = TextEditingController(text: "8");
-  final heightController = TextEditingController(text: "8");
-  final floorsController = TextEditingController(text: "3");
-  int parkingCols = 8;
-  int parkingRows = 8;
-  int parkingFloors = 3;
+class _ParkingLiveViewState extends State<ParkingLiveView> {
+  int currentlySelectedSpot = -1;
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    ParkingBoardLiveView.cols = ParkingLiveView.parkingCols;
+    ParkingBoardLiveView.rows = ParkingLiveView.parkingRows;
+    ParkingBoardLiveView.floors = ParkingLiveView.parkingFloors;
+    ParkingBoardLiveView.spotsBusy = ParkingLiveView.spotsTaken;
+    String spotStateDetails;
+    if (currentlySelectedSpot == -1) {
+      spotStateDetails = "No spot selected";
+    } else {
+      if (ParkingBoard.spotsBusy[currentlySelectedSpot]) {
+        spotStateDetails = "Spot is taken by: KL-12345";
+      } else {
+        spotStateDetails = "Spot is empty";
+      }
+    }
+
     return Stack(alignment: AlignmentDirectional.center, children: [
       Container(
         height: height - 30,
@@ -52,72 +78,35 @@ class _ParkingMakerState extends State<ParkingMaker> {
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: nameController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Name',
-                                    hintText: 'Enter parking name',
-                                  ),
-                                ),
+                                child: Text(ParkingLiveView.parkingName),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: addressController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Address',
-                                    hintText: 'Enter parking address',
-                                  ),
-                                ),
+                                child: Text(
+                                    "Currently selected: ${currentlySelectedSpot}"),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: widthController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Width',
-                                    hintText: 'Enter width',
-                                  ),
-                                ),
+                                child: Text(spotStateDetails),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: heightController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Height',
-                                    hintText: 'Enter height',
-                                  ),
-                                ),
+                                child: Text("Parking since: 8:00"),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: floorsController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Number of floors',
-                                    hintText: 'Enter number of floors',
-                                  ),
-                                ),
+                                child: Text("Currently required to pay: 50 zł"),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16.0),
                                 child: ElevatedButton(
-                                  onPressed: generateParking,
-                                  child: const Text('Generate'),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: saveParking,
-                                  child: const Text('Save'),
+                                  onPressed: goToStatistics,
+                                  child: const Text('Spot statistics'),
                                 ),
                               ),
                             ],
@@ -129,23 +118,19 @@ class _ParkingMakerState extends State<ParkingMaker> {
                 ))),
         Container(
           width: (2 * width / 3),
-          child: ParkingBoard(),
+          child: ParkingBoardLiveView(
+            changeSelectedSpot: changeSelectedSpot,
+          ),
         )
       ])
     ]);
   }
 
-  void saveParking() {}
+  void goToStatistics() {}
 
-  void generateParking() {
+  void changeSelectedSpot(int newSelectedSpot) {
     setState(() {
-      parkingCols = int.parse(widthController.text);
-      parkingRows = int.parse(heightController.text);
-      parkingFloors = int.parse(floorsController.text);
-
-      ParkingBoard.cols = parkingCols;
-      ParkingBoard.rows = parkingRows;
-      ParkingBoard.floors = parkingFloors;
+      currentlySelectedSpot = newSelectedSpot;
     });
   }
 }

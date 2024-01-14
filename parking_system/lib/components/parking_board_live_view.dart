@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/parking_board_tile.dart';
 import 'dart:developer';
 
-class ParkingBoard extends StatefulWidget {
-  const ParkingBoard({super.key});
+import 'package:parking_system/components/parking_board_tile_live_view.dart';
+
+class ParkingBoardLiveView extends StatefulWidget {
+  const ParkingBoardLiveView({super.key, required this.changeSelectedSpot});
   static int rows = 8;
   static int cols = 8;
   static int floors = 3;
   static int currentlySelected = -1;
   static final updateNotifier = ValueNotifier(0);
   static List<bool> spotsBusy = [];
+  final ValueChanged<int> changeSelectedSpot;
   @override
-  State<ParkingBoard> createState() => _ParkingBoardState();
+  State<ParkingBoardLiveView> createState() =>
+      _ParkingBoardLiveViewState(changeSelectedSpot);
 }
 
-class _ParkingBoardState extends State<ParkingBoard> {
+class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
   int _currentFloor = 1;
+  final ValueChanged<int> changeSelectedSpot;
+
+  _ParkingBoardLiveViewState(this.changeSelectedSpot);
 
   void _changeFloor(int newFloor) {
     setState(() {
@@ -34,7 +41,7 @@ class _ParkingBoardState extends State<ParkingBoard> {
               Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: ParkingBoard.floors,
+                  itemCount: ParkingBoardLiveView.floors,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -51,18 +58,17 @@ class _ParkingBoardState extends State<ParkingBoard> {
         ),
         Expanded(
           child: GridView.builder(
-            itemCount: ParkingBoard.rows * ParkingBoard.cols,
+            itemCount: ParkingBoardLiveView.rows * ParkingBoardLiveView.cols,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: ParkingBoard.cols, childAspectRatio: 2),
+                crossAxisCount: ParkingBoardLiveView.cols, childAspectRatio: 2),
             itemBuilder: (context, index) => Material(
-              child: InkWell(
-                  child: ParkingTile(
-                      id: (index +
-                          ((_currentFloor - 1) *
-                              (ParkingBoard.cols * ParkingBoard.rows)))),
-                  onTap: () => log('tapped')),
-            ),
+                child: ParkingTileLiveView(
+              id: (index +
+                  ((_currentFloor - 1) *
+                      (ParkingBoardLiveView.cols * ParkingBoardLiveView.rows))),
+              changeSelectedSpot: this.changeSelectedSpot,
+            )),
           ),
         ),
       ],
