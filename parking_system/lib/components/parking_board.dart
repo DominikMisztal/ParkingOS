@@ -40,6 +40,14 @@ class _ParkingBoardState extends State<ParkingBoard> {
               onPressed: () => _changeFloor(3),
               child: Text('floor 3'),
             ),
+            ElevatedButton(
+              onPressed: () => _changeFloor(4),
+              child: Text('floor 4'),
+            ),
+            ElevatedButton(
+              onPressed: () => _changeFloor(5),
+              child: Text('floor 5'),
+            ),
           ],
         ),
         Expanded(
