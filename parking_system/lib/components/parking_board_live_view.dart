@@ -5,7 +5,8 @@ import 'dart:developer';
 import 'package:parking_system/components/parking_board_tile_live_view.dart';
 
 class ParkingBoardLiveView extends StatefulWidget {
-  const ParkingBoardLiveView({super.key, required this.changeSelectedSpot});
+  const ParkingBoardLiveView(
+      {super.key, required this.changeSelectedSpot, required this.tappedTile});
   static int rows = 8;
   static int cols = 8;
   static int floors = 3;
@@ -13,6 +14,7 @@ class ParkingBoardLiveView extends StatefulWidget {
   static final updateNotifier = ValueNotifier(0);
   static List<bool> spotsBusy = [];
   final ValueChanged<int> changeSelectedSpot;
+  final TappedTile tappedTile;
   @override
   State<ParkingBoardLiveView> createState() =>
       _ParkingBoardLiveViewState(changeSelectedSpot);
@@ -32,7 +34,7 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
 
   @override
   Widget build(BuildContext context) {
-    TappedTile tappedt = TappedTile();
+    //TappedTile tappedt = TappedTile();
     return Column(
       children: [
         SizedBox(
@@ -69,7 +71,7 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
                   ((_currentFloor - 1) *
                       (ParkingBoardLiveView.cols * ParkingBoardLiveView.rows))),
               changeSelectedSpot: this.changeSelectedSpot,
-              tappedTile: tappedt,
+              tappedTile: widget.tappedTile,
             )),
           ),
         ),
@@ -80,12 +82,10 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
 
 class TappedTile extends ChangeNotifier {
   int selectedId = -1;
-
   void setId(int newId) {
     if (newId == this.selectedId) {
       selectedId = -1; // unTap
     } else {
-      log('new: ${newId} old:  ${selectedId}');
       this.selectedId = newId;
     }
     notifyListeners();
