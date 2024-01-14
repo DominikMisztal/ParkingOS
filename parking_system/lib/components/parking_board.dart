@@ -6,9 +6,10 @@ import 'package:parking_system/parking_maker.dart';
 
 class ParkingBoard extends StatefulWidget {
   const ParkingBoard({super.key});
-  static int rows = 6;
-  static int cols = 6;
+  static int rows = 8;
+  static int cols = 8;
   static int floors = 3;
+  static int currentlySelected = -1;
   @override
   State<ParkingBoard> createState() => _ParkingBoardState();
 }
