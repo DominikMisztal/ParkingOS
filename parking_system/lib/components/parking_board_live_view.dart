@@ -32,6 +32,7 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
 
   @override
   Widget build(BuildContext context) {
+    TappedTile tappedt = TappedTile();
     return Column(
       children: [
         SizedBox(
@@ -68,10 +69,25 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
                   ((_currentFloor - 1) *
                       (ParkingBoardLiveView.cols * ParkingBoardLiveView.rows))),
               changeSelectedSpot: this.changeSelectedSpot,
+              tappedTile: tappedt,
             )),
           ),
         ),
       ],
     );
+  }
+}
+
+class TappedTile extends ChangeNotifier {
+  int selectedId = -1;
+
+  void setId(int newId) {
+    if (newId == this.selectedId) {
+      selectedId = -1; // unTap
+    } else {
+      log('new: ${newId} old:  ${selectedId}');
+      this.selectedId = newId;
+    }
+    notifyListeners();
   }
 }
