@@ -20,4 +20,8 @@ class Car {
       map['registarion_num'] ?? '',
     );
   }
+  @override
+  String toString() {
+    return '$brand $model $registration_num';
+  }
 }

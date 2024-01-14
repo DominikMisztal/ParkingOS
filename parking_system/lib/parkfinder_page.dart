@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/myCustomTextField.dart';
 import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
+import 'package:parking_system/user_payment.dart';
 
 class Parkfinder extends StatefulWidget {
   const Parkfinder({super.key});
@@ -11,6 +12,17 @@ class Parkfinder extends StatefulWidget {
 }
 
 class _ParkfinderState extends State<Parkfinder> {
+  void _navigateToPayment(Parking parking, Spot spot) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => UserPaymentScreen(
+                parking: parking,
+                spot: spot,
+              )),
+    );
+  }
+
   late Parking currentParking;
   List<Spot> filteredSpaces = [];
   @override
@@ -118,6 +130,7 @@ class _ParkfinderState extends State<Parkfinder> {
                         filteredSpaces[index].isTaken ? 'Occupied' : 'Free'),
                     onTap: () {
                       //Navigate to payment
+                      _navigateToPayment(currentParking, filteredSpaces[index]);
                     },
                   );
                 },
