@@ -56,7 +56,7 @@ class _ParkingBoardState extends State<ParkingBoard> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ParkingBoard.cols, childAspectRatio: 2),
             itemBuilder: (context, index) => Material(
-              child: InkWell(
+              child: GestureDetector(
                   child: ParkingTile(
                       id: (index +
                           ((_currentFloor - 1) *
