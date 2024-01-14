@@ -12,9 +12,11 @@ class ParkingMaker extends StatefulWidget {
 }
 
 class _ParkingMakerState extends State<ParkingMaker> {
-  final widthController = TextEditingController();
-  final heightController = TextEditingController();
-  final floorsController = TextEditingController();
+  final nameController = TextEditingController();
+  final addressController = TextEditingController();
+  final widthController = TextEditingController(text: "8");
+  final heightController = TextEditingController(text: "8");
+  final floorsController = TextEditingController(text: "3");
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 1;
@@ -47,6 +49,28 @@ class _ParkingMakerState extends State<ParkingMaker> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             //crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 16),
+                                child: TextFormField(
+                                  controller: nameController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Name',
+                                    hintText: 'Enter parking name',
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 16),
+                                child: TextFormField(
+                                  controller: addressController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Address',
+                                    hintText: 'Enter parking address',
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16),
@@ -88,6 +112,14 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                   child: const Text('Generate'),
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 16.0),
+                                child: ElevatedButton(
+                                  onPressed: saveParking,
+                                  child: const Text('Save'),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -103,7 +135,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
     ]);
   }
 
-  void floorButton(int floor) {}
+  void saveParking() {}
 
   void generateParking() {
     setState(() {

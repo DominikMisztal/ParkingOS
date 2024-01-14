@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/parking_board_tile.dart';
 import 'dart:developer';
 
+import 'package:parking_system/parking_maker.dart';
+
 class ParkingBoard extends StatefulWidget {
   const ParkingBoard({super.key});
   static int rows = 6;
@@ -25,30 +27,27 @@ class _ParkingBoardState extends State<ParkingBoard> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () => _changeFloor(1),
-              child: Text('Floor 1'),
-            ),
-            ElevatedButton(
-              onPressed: () => _changeFloor(2),
-              child: Text('Floor 2'),
-            ),
-            ElevatedButton(
-              onPressed: () => _changeFloor(3),
-              child: Text('floor 3'),
-            ),
-            ElevatedButton(
-              onPressed: () => _changeFloor(4),
-              child: Text('floor 4'),
-            ),
-            ElevatedButton(
-              onPressed: () => _changeFloor(5),
-              child: Text('floor 5'),
-            ),
-          ],
+        SizedBox(
+          height: 50,
+          child: Row(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: ParkingBoard.floors,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () => _changeFloor(index + 1),
+                        child: Text('Floor ${index + 1}'),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: GridView.builder(
