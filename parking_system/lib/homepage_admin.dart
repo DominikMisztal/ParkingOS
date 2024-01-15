@@ -22,11 +22,21 @@ class HomePageAdmin extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => ParkingMaker()),
+                    MaterialPageRoute(builder: (context) => ParkingMaker()),
                   );
                 },
-                child: const Text("Go forward"),
+                child: const Text("Parking Maker"),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ParkingMaker()),
+                  );
+                },
+                child: const Text("Parking Live View"),
               ),
             ),
           ],
