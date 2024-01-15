@@ -3,6 +3,11 @@ import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
+import 'package:parking_system/models/parkingDB.dart';
+import 'package:parking_system/models/spot.dart';
+import 'package:parking_system/models/parking_model.dart';
+import 'package:parking_system/Utils/Utils.dart';
+import 'package:parking_system/services/park_services.dart';
 
 class ParkingMaker extends StatefulWidget {
   const ParkingMaker({super.key});
@@ -12,6 +17,7 @@ class ParkingMaker extends StatefulWidget {
 }
 
 class _ParkingMakerState extends State<ParkingMaker> {
+  final ParkingServices _parkingServices = ParkingServices();
   final nameController = TextEditingController();
   final addressController = TextEditingController();
   final widthController = TextEditingController(text: "8");
@@ -20,6 +26,38 @@ class _ParkingMakerState extends State<ParkingMaker> {
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 3;
+
+  void _addParking(){
+      int width = int.parse(widthController.text);
+      int height = int.parse(heightController.text);
+      int level = int.parse(floorsController.text);
+      String name = nameController.text;
+      String address = addressController.text;
+      if(width <= 0 || height <= 0 || level <= 0 || name == "" || address == ""){
+        showToast("User details not found");
+        return;
+      }
+      List<SpotDb> spots = [];
+      int amountOfSpots = width * height * level;
+      for(int i = 0; i < amountOfSpots; i++){
+        SpotDb spot = SpotDb(registrationNumber: "", date: "");
+        spots.add(spot);
+      }
+      Map<String, List<double>> tarifs =  setTariff();
+
+      ParkingDb parking = ParkingDb(tarifs: tarifs, height: height, width: width, level: level, address: address, name: name, spots:spots);
+      _parkingServices.addParking(parking);
+  }
+
+  //todo: set from this dummie values to actual ones, '12', '0', [1,2,3], [2,4,6]
+  Map<String, List<double>> setTariff(){
+    Map<String, List<double>> tarifs = {};
+    List<double> tarif1 = [1, 2, 3];
+    List<double> tarif2 = [2, 4, 6];
+    tarifs['12'] = (tarif1);
+    tarifs['0'] = (tarif2);
+    return tarifs;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +173,9 @@ class _ParkingMakerState extends State<ParkingMaker> {
     ]);
   }
 
-  void saveParking() {}
+  void saveParking() {
+    _addParking();
+  }
 
   void generateParking() {
     setState(() {

@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:parking_system/models/user.dart';
-import 'package:parking_system/models/parkingDb.dart';
+import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/Spot.dart';
 
-class UserService {
+class ParkingServices {
   final DatabaseReference _dbRef =
       FirebaseDatabase.instance.ref().child('parkings');
 
-  Future<void> addParking(String parkingName, ParkingDb parkingDb) async {
+  Future<void> addParking(ParkingDb parkingDb) async {
     Map<String, dynamic> parkingMap = parkingDb.toMap();
-    await _dbRef.child(parkingName).set(parkingMap);
+    await _dbRef.child(parkingDb.name).set(parkingMap);
   }
 
   Future<ParkingDb?> getParkingFromName(String name) async {

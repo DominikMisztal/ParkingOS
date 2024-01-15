@@ -22,6 +22,7 @@ class SignUpUser extends StatelessWidget {
     if (userCredential != null) {
       UserDb user = UserDb(
           login: emailController.text,
+          balance: 0,
           // listOfCars: [],
           );
           _userService.addUser(userCredential.user!.uid, user);
