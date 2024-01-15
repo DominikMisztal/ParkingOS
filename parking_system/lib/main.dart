@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/login.dart';
+import 'package:parking_system/parking_live_view.dart';
 import 'package:parking_system/parking_maker.dart';
 import 'package:parking_system/signup.dart';
 import 'homepage_user.dart';
@@ -39,8 +40,8 @@ class MyApp extends StatelessWidget {
             seedColor: Colors.amber, background: Colors.black87),
         useMaterial3: true,
       ),
-      //home: const Login(title: 'Parking OS login'),
-      home: const ParkingMaker(),
+      home: const Login(title: 'Parking OS login'),
+      // home: const ParkingLiveView(),
     );
   }
 }
