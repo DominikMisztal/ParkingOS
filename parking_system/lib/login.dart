@@ -1,11 +1,14 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/side_navigation_bar.dart';
 import 'package:parking_system/signup.dart';
-
-import 'homepage_user.dart';
+import 'package:parking_system/services/user_auth.dart';
 import 'homepage_admin.dart';
+import 'package:parking_system/utils/Utils.dart';
+import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key, required this.title});
@@ -21,6 +24,30 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  
+  final UserService _userService = UserService();
+  final UserAuth _userAuth = UserAuth();
+
+  Future<void> _loginIfPossible() async {
+    UserCredential? userCredential = await _userAuth.signIn(emailController.text.trim(), passwordController.text.trim());
+    if (userCredential != null) {
+      
+      UserDb? user = await _userService.getUserByUID(userCredential.user!.uid);
+      if (user != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyHomePage(
+                  title: emailController.text,
+                ),
+              ),
+            );
+         }
+      else {
+           showToast("User details not found");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +64,7 @@ class _LoginState extends State<Login> {
                       )),
             );
           } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyHomePage(
-                  title: emailController.text,
-                ),
-              ),
-            );
+            _loginIfPossible();
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
