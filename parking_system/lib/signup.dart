@@ -1,13 +1,33 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/myCustomTextField.dart';
+import 'package:parking_system/utils/Utils.dart';
+import 'package:parking_system/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:parking_system/services/user_auth.dart';
+import 'package:parking_system/services/user_services.dart';
 
 class SignUpUser extends StatelessWidget {
+  final UserAuth _userAuth = UserAuth();
+  final UserService _userService = UserService();
+
   SignUpUser({super.key});
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
+
+  void _registerIfPossible(BuildContext context) async {
+    UserCredential? userCredential = await _userAuth.signUp(emailController.text.trim(), passwordController.text.trim());
+    if (userCredential != null) {
+      UserDb user = UserDb(
+          login: emailController.text,
+          // listOfCars: [],
+          );
+          _userService.addUser(userCredential.user!.uid, user);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +97,7 @@ class SignUpUser extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              Navigator.pop(context);
+                              _registerIfPossible(context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
