@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
+import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
@@ -27,30 +28,41 @@ class _ParkingMakerState extends State<ParkingMaker> {
   int parkingRows = 8;
   int parkingFloors = 3;
 
-  void _addParking(){
-      int width = int.parse(widthController.text);
-      int height = int.parse(heightController.text);
-      int level = int.parse(floorsController.text);
-      String name = nameController.text;
-      String address = addressController.text;
-      if(width <= 0 || height <= 0 || level <= 0 || name == "" || address == ""){
-        showToast("User details not found");
-        return;
-      }
-      List<SpotDb> spots = [];
-      int amountOfSpots = width * height * level;
-      for(int i = 0; i < amountOfSpots; i++){
-        SpotDb spot = SpotDb(registrationNumber: "", date: "");
-        spots.add(spot);
-      }
-      Map<String, List<double>> tarifs =  setTariff();
+  void _addParking() {
+    int width = int.parse(widthController.text);
+    int height = int.parse(heightController.text);
+    int level = int.parse(floorsController.text);
+    String name = nameController.text;
+    String address = addressController.text;
+    if (width <= 0 ||
+        height <= 0 ||
+        level <= 0 ||
+        name == "" ||
+        address == "") {
+      showToast("User details not found");
+      return;
+    }
+    List<SpotDb> spots = [];
+    int amountOfSpots = width * height * level;
+    for (int i = 0; i < amountOfSpots; i++) {
+      SpotDb spot = SpotDb(registrationNumber: "", date: "");
+      spots.add(spot);
+    }
+    Map<String, List<double>> tarifs = setTariff();
 
-      ParkingDb parking = ParkingDb(tarifs: tarifs, height: height, width: width, level: level, address: address, name: name, spots:spots);
-      _parkingServices.addParking(parking);
+    ParkingDb parking = ParkingDb(
+        tarifs: tarifs,
+        height: height,
+        width: width,
+        level: level,
+        address: address,
+        name: name,
+        spots: spots);
+    _parkingServices.addParking(parking);
   }
 
   //todo: set from this dummie values to actual ones, '12', '0', [1,2,3], [2,4,6]
-  Map<String, List<double>> setTariff(){
+  Map<String, List<double>> setTariff() {
     Map<String, List<double>> tarifs = {};
     List<double> tarif1 = [1, 2, 3];
     List<double> tarif2 = [2, 4, 6];
@@ -87,61 +99,31 @@ class _ParkingMakerState extends State<ParkingMaker> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             //crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16),
-                                child: TextFormField(
+                              MyCustomTextField(
                                   controller: nameController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Name',
-                                    hintText: 'Enter parking name',
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16),
-                                child: TextFormField(
+                                  labelText: 'Name',
+                                  hintText: 'Enter parking name',
+                                  obscureText: false),
+                              MyCustomTextField(
                                   controller: addressController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Address',
-                                    hintText: 'Enter parking address',
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16),
-                                child: TextFormField(
+                                  labelText: 'Adress',
+                                  hintText: 'Enter parking address',
+                                  obscureText: false),
+                              MyCustomTextField(
                                   controller: widthController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Width',
-                                    hintText: 'Enter width',
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16),
-                                child: TextFormField(
+                                  labelText: 'Spot per row',
+                                  hintText: 'Enter spot per row number',
+                                  obscureText: false),
+                              MyCustomTextField(
                                   controller: heightController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Height',
-                                    hintText: 'Enter height',
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16),
-                                child: TextFormField(
-                                  controller: floorsController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Number of floors',
-                                    hintText: 'Enter number of floors',
-                                  ),
-                                ),
-                              ),
+                                  labelText: 'Spot per column',
+                                  hintText: 'Enter spot per column number',
+                                  obscureText: false),
+                              MyCustomTextField(
+                                  controller: nameController,
+                                  labelText: 'Number of floors',
+                                  hintText: 'Enter number of floors',
+                                  obscureText: false),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16.0),
