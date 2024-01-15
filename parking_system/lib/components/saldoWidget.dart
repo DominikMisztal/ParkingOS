@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:parking_system/services/user_auth.dart';
+import 'package:parking_system/services/user_services.dart';
 
 class Saldo extends StatefulWidget {
   final double saldo;
@@ -10,6 +12,8 @@ class Saldo extends StatefulWidget {
 }
 
 class _SaldoState extends State<Saldo> {
+UserService userService = UserService();
+
   @override
   Widget build(BuildContext context) {
     double _ssaldo = widget.saldo;
@@ -32,6 +36,7 @@ class _SaldoState extends State<Saldo> {
                 listenable: widget.scm,
                 builder: (BuildContext context, Widget? child) {
                   _ssaldo += widget.scm.charge;
+                  userService.addBalance(_ssaldo);
                   return Text(
                     '${_ssaldo}',
                     style: const TextStyle(
@@ -120,6 +125,8 @@ class _ChargeDialogState extends State<ChargeDialog> {
 }
 
 class SaldoChargerModel with ChangeNotifier {
+  
+  UserAuth userAuth = UserAuth();
   double _charge = 0;
   double get charge => _charge;
 

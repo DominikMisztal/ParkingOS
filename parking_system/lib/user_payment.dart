@@ -15,9 +15,9 @@ class UserPaymentScreen extends StatefulWidget {
 
 class UserPaymentStateScreen extends State<UserPaymentScreen> {
   List<Car> _placeholderCars = [
-    Car('Scoda', 'Octavia', 'Abcd'),
-    Car('Scoda', 'Octavia', 'XYZQ'),
-    Car('Mercedes', 'Benz', '1234'),
+    Car(brand: 'Scoda', model: 'Octavia',  registration_num : 'Abcd'),
+    Car(brand: 'Scoda', model:'Octavia',  registration_num : 'XYZQ'),
+    Car(brand: 'Mercedes', model: 'Benz',  registration_num : '1234'),
   ];
   Car? selectedCar;
 //Todo jest dosyć brzydko, uporządkuję to o ile znajdę czas
