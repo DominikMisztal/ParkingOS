@@ -1,23 +1,32 @@
 class Parking {
+  String parkingId;
   String name;
+  String adress;
   int floors;
-  int spot_for_floor;
+  int spotPerFloor;
+  double price; //change to something more sophisticated
 
-  Parking(this.name, this.floors, this.spot_for_floor);
+  Parking(this.parkingId, this.name, this.adress, this.floors,
+      this.spotPerFloor, this.price);
 
   Map<String, dynamic> toMap() {
     return {
+      'parkingId': parkingId,
       'name': name,
+      'adress': adress,
       'floors': floors,
-      'spot_for_floor': spot_for_floor,
+      'spotPerFloor': spotPerFloor,
     };
   }
 
   factory Parking.fromMap(Map<String, dynamic> map) {
     return Parking(
+      map['parkingId'] ?? '',
       map['name'] ?? '',
+      map['adress'] ?? '',
       map['floors'] ?? 0,
-      map['spot_for_floor'] ?? 0,
+      map['spotPerFloor'] ?? 0,
+      map['price'] ?? 0,
     );
   }
 }

@@ -11,6 +11,8 @@ class userPage extends StatefulWidget {
 }
 
 class _userPageState extends State<userPage> {
+  SaldoChargerModel scm = SaldoChargerModel();
+  double _totalSaldo = 50;
   List<Car> _placeholderCars = [
     Car('Scoda', 'Octavia', 'Abcd'),
     Car('Scoda', 'Octavia', 'XYZQ'),
@@ -25,13 +27,14 @@ class _userPageState extends State<userPage> {
       Container(
         height: height - 30,
         width: width - 30,
-        color: Colors.white60,
+        color: Colors.white,
       ),
       Row(children: [
         Container(
             width: width / 3,
             child: Column(
               children: [
+                const SizedBox(height: 8),
                 const Icon(
                   Icons.person,
                   size: 64,
@@ -42,8 +45,17 @@ class _userPageState extends State<userPage> {
                   'User: ${widget.username}',
                   style: TextStyle(fontSize: 16),
                 ),
+                const Icon(
+                  Icons.edit,
+                  size: 32,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Edit user Data',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ), //todo make it clickable
                 const SizedBox(height: 32),
-                const Saldo(saldo: 50)
+                Saldo(saldo: _totalSaldo, scm: scm),
               ],
             )),
         Container(
@@ -51,6 +63,7 @@ class _userPageState extends State<userPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const SizedBox(height: 8),
                 const Icon(
                   Icons.directions_car,
                   size: 64,

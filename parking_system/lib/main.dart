@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/login.dart';
+import 'package:parking_system/parking_maker.dart';
+import 'package:parking_system/signup.dart';
+import 'homepage_user.dart';
+import 'homepage_admin.dart';
 
 
 void main() async {
@@ -26,17 +30,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       //title: 'ParkingOS login',
       theme: ThemeData(
-
         textTheme: const TextTheme(
           displayLarge: TextStyle(
+
               fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white60),
         ),
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.amber, background: Colors.black87),
-
         useMaterial3: true,
       ),
-      home: const Login(title: 'Parking OS login'),
+      //home: const Login(title: 'Parking OS login'),
+      home: const ParkingMaker(),
     );
   }
 }

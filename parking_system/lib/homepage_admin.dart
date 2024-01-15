@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:parking_system/components/parking_board.dart';
+import 'package:parking_system/parking_maker.dart';
 
 class HomePageAdmin extends StatelessWidget {
   const HomePageAdmin({super.key, required this.email});
@@ -18,9 +20,13 @@ class HomePageAdmin extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ParkingMaker()),
+                  );
                 },
-                child: const Text("Go back!"),
+                child: const Text("Go forward"),
               ),
             ),
           ],
