@@ -120,7 +120,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                   hintText: 'Enter spot per column number',
                                   obscureText: false),
                               MyCustomTextField(
-                                  controller: nameController,
+                                  controller: floorsController,
                                   labelText: 'Number of floors',
                                   hintText: 'Enter number of floors',
                                   obscureText: false),
