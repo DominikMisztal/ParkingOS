@@ -1,9 +1,9 @@
 class Car {
-  String brand;
-  String model;
-  String registration_num;
+  Car({required this.brand, required this.model, required this.registration_num});
 
-  Car(this.brand, this.model, this.registration_num);
+  final String brand;
+  final String model;
+  final String registration_num;
 
   Map<String, dynamic> toMap() {
     return {
@@ -13,11 +13,11 @@ class Car {
     };
   }
 
-  factory Car.fromMap(Map<String, dynamic> map) {
+  factory Car.fromMap(String title, Map<String, dynamic> map) {
     return Car(
-      map['brand'] ?? '',
-      map['model'] ?? '',
-      map['registarion_num'] ?? '',
+      brand: map['brand'] ?? '',
+      model: map['model'] ?? '',
+      registration_num: title,
     );
   }
   @override

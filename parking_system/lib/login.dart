@@ -39,6 +39,7 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(
                 builder: (context) => MyHomePage(
                   title: emailController.text,
+                  user: user,
                 ),
               ),
             );

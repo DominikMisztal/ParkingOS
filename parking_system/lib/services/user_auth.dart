@@ -41,17 +41,11 @@ class UserAuth {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<AuthStatus> resetPassword(String login) async {
-
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: login).then((value) => status = AuthStatus.successful).
-      catchError((e) {
-        status = AuthException.handleAuthException(e);
-        showToast(e.code.replaceAll(RegExp(r'[_-]'), ' ').toLowerCase());
-        return status;
-      });
-      return status;
-  }
-
+  Future<String?> getCurrentUserUid() async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+  return user?.uid;
+}
 }
 
 class AuthException{

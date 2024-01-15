@@ -23,7 +23,7 @@ class SignUpUser extends StatelessWidget {
       UserDb user = UserDb(
           login: emailController.text,
           balance: 0,
-          // listOfCars: [],
+          listOfCars: {},
           );
           _userService.addUser(userCredential.user!.uid, user);
       Navigator.pop(context);

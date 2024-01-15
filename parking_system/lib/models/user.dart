@@ -6,26 +6,33 @@ class UserDb {
   const UserDb ({
     required this.login,
     required this.balance,
-    // required this.listOfCars,
+    required this.listOfCars,
   });
 
   final String login;
-  final int balance;
-  // final List<Car> listOfCars;
+  final double balance;
+  final Map<String, Car> listOfCars;
 
   Map<String, dynamic> toMap() {
     return {
       'login': login,
       'balance': balance,
-      // 'listOfCars': listOfCars,
+      'listOfCars': listOfCars.map((key, value) => MapEntry(key, value.toMap())),
     };
   }
 
   factory UserDb.fromMap(Map<String, dynamic> map) {
+    Map<String, dynamic>? listOfCarsMap = map['listOfCars'] as Map<String, dynamic>?;
+
     return UserDb(
         login: map['login'] ?? '',
         balance: map['balance'] ?? 0,
-        // listOfCars: map['listOfCars'] ?? [],
+        listOfCars: listOfCarsMap != null ? listOfCarsMap.map((key, value) => MapEntry(key, Car.fromMap(key, value))) : {},
         );
   }
+  List<Car> userCars(){
+    List<Car> cars  = listOfCars.values.toList();
+    return cars;
+  }
+
 }

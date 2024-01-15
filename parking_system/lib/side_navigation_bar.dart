@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/parkfinder_page.dart';
 import 'package:parking_system/user_page.dart';
 import 'package:parking_system/user_payment.dart';
+import 'package:parking_system/models/user.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
+  const MyHomePage({Key? key, required this.title, required this.user}) : super(key: key);
+  final UserDb user;
   final String title;
 
   @override
@@ -17,8 +18,17 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
 
-  List<Widget> pages = [
-    userPage(username: title),
+  List<Widget> pages = [];
+
+  static get title => 'abc';
+  @override
+  void initState() {
+    sideMenu.addListener((index) {
+      pageController.jumpToPage(index);
+    });
+    super.initState();
+    pages = [
+    userPage(user: widget.user),
     Parkfinder(),
     Container(
       color: Colors.white,
@@ -30,14 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),
   ];
-
-  static get title => 'abc';
-  @override
-  void initState() {
-    sideMenu.addListener((index) {
-      pageController.jumpToPage(index);
-    });
-    super.initState();
   }
 
   @override

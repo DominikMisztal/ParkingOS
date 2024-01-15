@@ -1,23 +1,36 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
+import 'package:parking_system/models/user.dart';
+import 'package:parking_system/services/user_services.dart';
 
 class userPage extends StatefulWidget {
-  const userPage({super.key, required this.username});
-  final String username;
+  const userPage({super.key, required this.user});
+  final UserDb user;
   @override
   State<userPage> createState() => _userPageState();
 }
 
 class _userPageState extends State<userPage> {
+  UserService userService = UserService();
   SaldoChargerModel scm = SaldoChargerModel();
-  double _totalSaldo = 50;
+  late double _totalSaldo = widget.user.balance;
+  late UserDb user;
+  
   List<Car> _placeholderCars = [
-    Car('Scoda', 'Octavia', 'Abcd'),
-    Car('Scoda', 'Octavia', 'XYZQ'),
-    Car('Mercedes', 'Benz', '1234'),
+    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
+    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
+    Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    user = widget.user;
+    _placeholderCars = user.userCars();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +55,7 @@ class _userPageState extends State<userPage> {
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  'User: ${widget.username}',
+                  'User: ${widget.user.login}',
                   style: TextStyle(fontSize: 16),
                 ),
                 const Icon(
