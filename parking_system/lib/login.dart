@@ -9,7 +9,6 @@ import 'package:parking_system/services/user_services.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Login extends StatefulWidget {
   const Login({super.key, required this.title});
 
@@ -24,28 +23,27 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  
+
   final UserService _userService = UserService();
   final UserAuth _userAuth = UserAuth();
 
   Future<void> _loginIfPossible() async {
-    UserCredential? userCredential = await _userAuth.signIn(emailController.text.trim(), passwordController.text.trim());
+    UserCredential? userCredential = await _userAuth.signIn(
+        emailController.text.trim(), passwordController.text.trim());
     if (userCredential != null) {
-      
       UserDb? user = await _userService.getUserByUID(userCredential.user!.uid);
       if (user != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyHomePage(
-                  title: emailController.text,
-                  user: user,
-                ),
-              ),
-            );
-         }
-      else {
-           showToast("User details not found");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(
+              title: emailController.text,
+              user: user,
+            ),
+          ),
+        );
+      } else {
+        showToast("User details not found");
       }
     }
   }
@@ -127,20 +125,30 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       child: MyCustomTextField(
-                        controller: emailController,
-                        labelText: 'Email',
-                        obscureText: false,
-                      ),
+                          controller: emailController,
+                          labelText: 'Email',
+                          obscureText: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Email';
+                            }
+                            return null;
+                          }),
                     ),
 
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       child: MyCustomTextField(
-                        controller: passwordController,
-                        labelText: "Password",
-                        obscureText: true,
-                      ),
+                          controller: passwordController,
+                          labelText: "Password",
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Password';
+                            }
+                            return null;
+                          }),
                     ),
 
                     // login button
