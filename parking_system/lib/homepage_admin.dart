@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/parking_maker.dart';
+import 'package:parking_system/parking_live_view.dart';
 
 class HomePageAdmin extends StatelessWidget {
   const HomePageAdmin({super.key, required this.email});
@@ -33,7 +34,7 @@ class HomePageAdmin extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ParkingMaker()),
+                    MaterialPageRoute(builder: (context) => ParkingLiveView()),
                   );
                 },
                 child: const Text("Parking Live View"),
