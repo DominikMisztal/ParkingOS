@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/expense.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
+import 'dart:developer';
 
 class ParkingExpenses extends StatefulWidget {
   const ParkingExpenses({super.key});
@@ -176,6 +177,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                       key: Key(item),
                       onDismissed: (direction) {
                         setState(() {
+                          expensesRecords.removeAt(index);
                           _items.removeAt(index);
                         });
                       },
@@ -188,6 +190,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                           icon: Icon(Icons.delete),
                           onPressed: () {
                             setState(() {
+                              expensesRecords.removeAt(index);
                               _items.removeAt(index);
                             });
                           },
@@ -211,6 +214,14 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     });
   }
 
+  void updateListView() {
+    List<String> newList = [];
+    for (var x in expensesRecords) {
+      newList.add(x.toString());
+    }
+    _items = newList;
+  }
+
   void addExpenses() {
     //get expenses from database
     if (expensesRecords.isEmpty) {
@@ -221,16 +232,6 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
       expensesRecords = temp;
     }
   }
-
-  void updateListView() {
-    List<String> newList = [];
-    for (var x in expensesRecords) {
-      newList.add(x.toString());
-    }
-    _items = newList;
-  }
-
-  void removeRecord(index) {}
 
   void saveChanges() {
     //send expensesRecords to database
