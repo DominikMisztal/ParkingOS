@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:parking_system/components/expense.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
-import 'package:parking_system/components/parking_board.dart';
-import 'package:parking_system/components/parking_current_expenses.dart';
 
 class ParkingExpenses extends StatefulWidget {
   const ParkingExpenses({super.key});
@@ -11,6 +10,10 @@ class ParkingExpenses extends StatefulWidget {
 }
 
 class _ParkingExpensesrState extends State<ParkingExpenses> {
+  List<String> _items = ['Item 1', 'Item 2', 'Item 3'];
+  String expensesLabel = 'Expenses for ';
+  List<Expense> expensesRecords = [];
+
   DateTime selectedDate = DateTime.now();
   String selectedCategory = 'Cleaning';
   final List<String> categories = [
@@ -55,6 +58,10 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    addExpenses();
+    updateListView();
+    expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
     return Stack(alignment: AlignmentDirectional.center, children: [
       Container(
         height: height - 30,
@@ -126,9 +133,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        // Add your code here.
-                      },
+                      onPressed: addExpenseToParking,
                       child: Text(
                         'Add',
                         style: TextStyle(
@@ -137,15 +142,97 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                         ),
                       ),
                     ),
+                    Padding(padding: EdgeInsets.all(10)),
+                    ElevatedButton(
+                      onPressed: saveChanges,
+                      child: Text(
+                        'Save changes',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
                   ]),
                 )))),
         Container(
           width: (width / 2),
-          child: ParkingCurrentExpenses(selectedDate: DateTime.now()),
+          child: Scaffold(
+              body: Column(
+            children: [
+              SizedBox(
+                height: 100,
+                child: Text(
+                  expensesLabel,
+                  style: TextStyle(color: Colors.white, fontSize: 40),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = _items[index];
+                    return Dismissible(
+                      key: Key(item),
+                      onDismissed: (direction) {
+                        setState(() {
+                          _items.removeAt(index);
+                        });
+                      },
+                      child: ListTile(
+                        title: Text(
+                          item,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            setState(() {
+                              _items.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          )),
         )
       ])
     ]);
   }
 
-  void addExpenseToParking() {}
+  void addExpenseToParking() {
+    setState(() {
+      expensesRecords.add(Expense(selectedCategory, isCyclical,
+          double.parse(expenseAmountController.text), selectedDate));
+    });
+  }
+
+  void addExpenses() {
+    //get expenses from database
+    if (expensesRecords.isEmpty) {
+      List<Expense> temp = [];
+      temp.add(Expense('Cleaning', false, 120.50, DateTime.now()));
+      temp.add(Expense('Other', false, 40.75, DateTime.now()));
+      temp.add(Expense('Electricity', true, 202, DateTime.now()));
+      expensesRecords = temp;
+    }
+  }
+
+  void updateListView() {
+    List<String> newList = [];
+    for (var x in expensesRecords) {
+      newList.add(x.toString());
+    }
+    _items = newList;
+  }
+
+  void removeRecord(index) {}
+
+  void saveChanges() {
+    //send expensesRecords to database
+  }
 }
