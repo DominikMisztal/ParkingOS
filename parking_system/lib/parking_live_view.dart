@@ -1,12 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/custom_formatted_text.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/parking_board_live_view.dart';
-import 'package:parking_system/components/saldoWidget.dart';
-import 'package:parking_system/models/car_model.dart';
 
 class ParkingLiveView extends StatefulWidget {
   const ParkingLiveView({super.key});

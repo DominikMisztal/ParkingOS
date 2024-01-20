@@ -4,6 +4,7 @@ import 'package:parking_system/login.dart';
 import 'package:parking_system/parking_expenses.dart';
 import 'package:parking_system/parking_live_view.dart';
 import 'package:parking_system/parking_maker.dart';
+import 'package:parking_system/parking_statistics.dart';
 import 'package:parking_system/signup.dart';
 import 'homepage_user.dart';
 import 'homepage_admin.dart';
@@ -40,7 +41,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const Login(title: 'Parking OS login'),
-      home: const ParkingLiveView(),
+      home: const ParkingStatistics(
+          category: 'Parking spots',
+          parkingName: 'Parking 1',
+          spotId: '1',
+          vehicleReg: '-1'),
     );
   }
 }

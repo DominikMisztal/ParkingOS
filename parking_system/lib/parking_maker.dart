@@ -155,7 +155,9 @@ class _ParkingMakerState extends State<ParkingMaker> {
   }
 
   void saveParking() {
-    _addParking();
+    if (validateParking()) {
+      _addParking();
+    }
   }
 
   void generateParking() {
@@ -173,11 +175,17 @@ class _ParkingMakerState extends State<ParkingMaker> {
   }
 
   bool validateParking() {
-    parkingCols = int.parse(widthController.text);
-    parkingRows = int.parse(heightController.text);
-    parkingFloors = int.parse(floorsController.text);
-    if (parkingFloors < 0 || parkingFloors > 8) {
+    int parkCols = int.parse(widthController.text);
+    int parkRows = int.parse(heightController.text);
+    int parkFloors = int.parse(floorsController.text);
+    if (parkFloors < 1 || parkFloors > 8) {
       showAlertDialog(tempContext, 'Wrong amount of floors!');
+      return false;
+    } else if (parkCols < 1 || parkCols > 20) {
+      showAlertDialog(tempContext, 'Wrong amount of spots per row!');
+      return false;
+    } else if (parkRows < 1 || parkRows > 20) {
+      showAlertDialog(tempContext, 'Wrong amount of spots per collumn!');
       return false;
     }
 
