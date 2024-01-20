@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
-import 'package:parking_system/components/saldoWidget.dart';
-import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
-import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/Utils/Utils.dart';
 import 'package:parking_system/services/park_services.dart';
 
@@ -71,8 +67,11 @@ class _ParkingMakerState extends State<ParkingMaker> {
     return tarifs;
   }
 
+  late BuildContext tempContext;
+
   @override
   Widget build(BuildContext context) {
+    tempContext = context;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Stack(alignment: AlignmentDirectional.center, children: [
@@ -120,7 +119,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                   hintText: 'Enter spot per column number',
                                   obscureText: false),
                               MyCustomTextField(
-                                  controller: nameController,
+                                  controller: floorsController,
                                   labelText: 'Number of floors',
                                   hintText: 'Enter number of floors',
                                   obscureText: false),
@@ -160,14 +159,55 @@ class _ParkingMakerState extends State<ParkingMaker> {
   }
 
   void generateParking() {
-    setState(() {
-      parkingCols = int.parse(widthController.text);
-      parkingRows = int.parse(heightController.text);
-      parkingFloors = int.parse(floorsController.text);
+    if (validateParking()) {
+      setState(() {
+        parkingCols = int.parse(widthController.text);
+        parkingRows = int.parse(heightController.text);
+        parkingFloors = int.parse(floorsController.text);
 
-      ParkingBoard.cols = parkingCols;
-      ParkingBoard.rows = parkingRows;
-      ParkingBoard.floors = parkingFloors;
-    });
+        ParkingBoard.cols = parkingCols;
+        ParkingBoard.rows = parkingRows;
+        ParkingBoard.floors = parkingFloors;
+      });
+    }
+  }
+
+  bool validateParking() {
+    parkingCols = int.parse(widthController.text);
+    parkingRows = int.parse(heightController.text);
+    parkingFloors = int.parse(floorsController.text);
+    if (parkingFloors < 0 || parkingFloors > 8) {
+      showAlertDialog(tempContext, 'Wrong amount of floors!');
+      return false;
+    }
+
+    return true;
+  }
+
+  showAlertDialog(BuildContext context, String message) {
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Warning",
+        style: TextStyle(color: Colors.white),
+      ),
+      content: Text(message, style: TextStyle(color: Colors.white)),
+      actions: [
+        TextButton(
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

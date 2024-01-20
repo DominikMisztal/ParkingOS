@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/custom_formatted_text.dart';
@@ -9,23 +11,10 @@ import 'package:parking_system/models/car_model.dart';
 class ParkingLiveView extends StatefulWidget {
   const ParkingLiveView({super.key});
   static String parkingName = "Parking 1";
-  static int parkingRows = 2;
-  static int parkingCols = 2;
+  static int parkingRows = 20;
+  static int parkingCols = 8;
   static int parkingFloors = 3;
-  static List<bool> spotsTaken = [
-    true,
-    false,
-    false,
-    true,
-    true,
-    false,
-    false,
-    true,
-    true,
-    false,
-    false,
-    true,
-  ];
+  static List<bool> spotsTaken = [];
   @override
   State<ParkingLiveView> createState() => _ParkingLiveViewState();
 }
@@ -41,6 +30,9 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     ParkingBoardLiveView.cols = ParkingLiveView.parkingCols;
     ParkingBoardLiveView.rows = ParkingLiveView.parkingRows;
     ParkingBoardLiveView.floors = ParkingLiveView.parkingFloors;
+    if (ParkingLiveView.spotsTaken.isEmpty) {
+      generateTestPlacements();
+    }
     ParkingBoardLiveView.spotsBusy = ParkingLiveView.spotsTaken;
     String spotStateDetails;
     if (currentlySelectedSpot == -1) {
@@ -129,5 +121,19 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     setState(() {
       currentlySelectedSpot = newSelectedSpot;
     });
+  }
+
+  void generateTestPlacements() {
+    List<bool> testPlacements = [];
+    var rand = Random();
+    for (int i = 0;
+        i <
+            ParkingBoardLiveView.cols *
+                ParkingLiveView.parkingRows *
+                ParkingBoardLiveView.floors;
+        i++) {
+      testPlacements.add(rand.nextBool());
+    }
+    ParkingLiveView.spotsTaken = testPlacements;
   }
 }

@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const Login(title: 'Parking OS login'),
-      home: const ParkingExpenses(),
+      home: const ParkingLiveView(),
     );
   }
 }

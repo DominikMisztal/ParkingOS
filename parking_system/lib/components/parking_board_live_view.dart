@@ -62,7 +62,7 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
         Expanded(
           child: GridView.builder(
             itemCount: ParkingBoardLiveView.rows * ParkingBoardLiveView.cols,
-            physics: const NeverScrollableScrollPhysics(),
+            //physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ParkingBoardLiveView.cols, childAspectRatio: 2),
             itemBuilder: (context, index) => Material(
