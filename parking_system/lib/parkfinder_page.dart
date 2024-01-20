@@ -65,6 +65,7 @@ class _ParkfinderState extends State<Parkfinder> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    final parkingTimeController = TextEditingController();
 
     return Stack(alignment: AlignmentDirectional.center, children: [
       Container(
@@ -78,6 +79,20 @@ class _ParkfinderState extends State<Parkfinder> {
         width: width / 3,
         child: Column(
           children: [
+            const Text(
+              'How many hours do you plan to stay?',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            MyCustomTextField(
+                controller: parkingTimeController,
+                labelText: 'Enter time',
+                obscureText: false),
+            const SizedBox(
+              height: 32,
+            ),
             const Text(
               'Search for your Parking',
               style: TextStyle(

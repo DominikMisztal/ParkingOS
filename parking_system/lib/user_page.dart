@@ -6,6 +6,7 @@ import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/utils/Utils.dart';
 
 class userPage extends StatefulWidget {
   const userPage({super.key, required this.user});
@@ -107,6 +108,12 @@ class _userPageState extends State<userPage> {
                           setState(() {
                             if (car.registration_num == null ||
                                 car.registration_num.isEmpty) {
+                              showToast('Registration must not be empty');
+                              return;
+                            }
+                            if (car.registration_num.length > 7 ||
+                                car.registration_num.length < 5) {
+                              showToast('Invalid registration format');
                               return;
                             }
                             _placeholderCars.add(car);

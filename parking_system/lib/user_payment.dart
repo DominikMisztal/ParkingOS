@@ -15,18 +15,17 @@ class UserPaymentScreen extends StatefulWidget {
 
 class UserPaymentStateScreen extends State<UserPaymentScreen> {
   List<Car> _placeholderCars = [
-    Car(brand: 'Scoda', model: 'Octavia',  registration_num : 'Abcd'),
-    Car(brand: 'Scoda', model:'Octavia',  registration_num : 'XYZQ'),
-    Car(brand: 'Mercedes', model: 'Benz',  registration_num : '1234'),
+    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
+    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
+    Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234'),
   ];
   Car? selectedCar;
-//Todo jest dosyć brzydko, uporządkuję to o ile znajdę czas
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController carController = TextEditingController();
 
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(alignment: AlignmentDirectional.center, children: [
@@ -60,9 +59,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                 label: Text('Your Car: $selectedCar'),
                 onSelected: (Car? car) {
                   selectedCar = car;
-                  print(selectedCar);
                   setState(() {
-                    print(car?.brand);
                     selectedCar = car;
                   });
                 },
@@ -114,5 +111,13 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
         )
       ]),
     );
+  }
+
+  bool _takeTicket() {
+    //Check if user saldo is not negative if so, return false
+
+    //Add ticket to user's account (will be visible in Ticket section)
+
+    return true;
   }
 }

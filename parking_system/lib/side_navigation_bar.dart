@@ -4,9 +4,11 @@ import 'package:parking_system/parkfinder_page.dart';
 import 'package:parking_system/user_page.dart';
 import 'package:parking_system/user_payment.dart';
 import 'package:parking_system/models/user.dart';
+import 'package:parking_system/user_tickets.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title, required this.user}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.user})
+      : super(key: key);
   final UserDb user;
   final String title;
 
@@ -28,18 +30,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     super.initState();
     pages = [
-    userPage(user: widget.user),
-    Parkfinder(),
-    Container(
-      color: Colors.white,
-      child: const Center(
-        child: Text(
-          'Settings',
-          style: TextStyle(fontSize: 35),
+      userPage(user: widget.user),
+      Parkfinder(),
+      UserTicketScreen(),
+      Container(
+        color: Colors.white,
+        child: const Center(
+          child: Text(
+            'Settings',
+            style: TextStyle(fontSize: 35),
+          ),
         ),
       ),
-    ),
-  ];
+    ];
   }
 
   @override
@@ -57,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
             style: SideMenuStyle(
               unselectedTitleTextStyle: TextStyle(color: Colors.white60),
               unselectedIconColor: Colors.white60,
-              displayMode: SideMenuDisplayMode.auto,
+              displayMode: SideMenuDisplayMode.open,
               hoverColor: Colors.blue[100],
               selectedHoverColor: Colors.blue[100],
               selectedColor: Colors.lightBlue,
@@ -123,6 +126,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   sideMenu.changePage(index);
                 },
                 icon: const Icon(Icons.search),
+              ),
+              SideMenuItem(
+                title: 'Tickets',
+                onTap: (index, _) {
+                  sideMenu.changePage(index);
+                },
+                icon: const Icon(Icons.airplane_ticket),
               ),
               SideMenuItem(
                 title: 'Settings',
