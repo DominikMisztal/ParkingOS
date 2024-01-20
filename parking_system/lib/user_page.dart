@@ -94,7 +94,10 @@ class _userPageState extends State<userPage> {
                     child: ListView.builder(
                       itemCount: _placeholderCars.length,
                       itemBuilder: (context, index) {
-                        return carCard(car: _placeholderCars[index]);
+                        return carCard(
+                          car: _placeholderCars[index],
+                          carList: _placeholderCars,
+                        );
                       },
                     ),
                   ),
