@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
       //home: const Login(title: 'Parking OS login'),
       home: const ParkingStatistics(
-          category: 'Parking spots',
+          category: 'Parkings',
           parkingName: 'Parking 1',
           spotId: '1',
           vehicleReg: '-1'),
