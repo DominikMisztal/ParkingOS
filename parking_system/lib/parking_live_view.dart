@@ -92,6 +92,8 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                         listenable: tappedt,
                                         builder: (BuildContext context,
                                             Widget? child) {
+                                          this.currentlySelectedSpot =
+                                              tappedt.selectedId;
                                           return Text(
                                             "Currently selected: ${tappedt.selectedId}",
                                             style: const TextStyle(
