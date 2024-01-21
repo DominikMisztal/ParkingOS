@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
+
+import 'package:parking_system/components/saldoWidget.dart';
+import 'package:parking_system/components/tarrifs_stiff.dart';
+import 'package:parking_system/models/car_model.dart';
+
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
 import 'package:parking_system/Utils/Utils.dart';
@@ -23,7 +28,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 3;
-
+  bool _toggleTariffParking = false;
   void _addParking() {
     int width = int.parse(widthController.text);
     int height = int.parse(heightController.text);
@@ -74,6 +79,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
     tempContext = context;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Parking Maker'),
@@ -146,6 +152,14 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                     ),
                                   ),
                                   Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 16.0),
+                                child: ElevatedButton(
+                                  onPressed: switchParkingNTarrifs,
+                                  child: const Text('Parking / Tarrifs'),
+                                ),
+                              ),
+                                  Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 16.0),
                                     child: ElevatedButton(
@@ -162,7 +176,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                     ))),
             Container(
               width: (2 * width / 3),
-              child: ParkingBoard(),
+              child: _toggleTariffParking ? TarrifStiffDataTable() : ParkingBoard(),
             )
           ])
         ]));
@@ -231,5 +245,11 @@ class _ParkingMakerState extends State<ParkingMaker> {
         return alert;
       },
     );
+  }
+
+  void switchParkingNTarrifs() {
+    setState(() {
+      _toggleTariffParking = !_toggleTariffParking;
+    });
   }
 }

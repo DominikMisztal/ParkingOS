@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
+import 'package:parking_system/components/car_form.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/utils/Utils.dart';
 
 class userPage extends StatefulWidget {
   const userPage({super.key, required this.user});
@@ -18,7 +20,7 @@ class _userPageState extends State<userPage> {
   SaldoChargerModel scm = SaldoChargerModel();
   late double _totalSaldo = widget.user.balance;
   late UserDb user;
-  
+
   List<Car> _placeholderCars = [
     Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
     Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
@@ -92,10 +94,38 @@ class _userPageState extends State<userPage> {
                     child: ListView.builder(
                       itemCount: _placeholderCars.length,
                       itemBuilder: (context, index) {
-                        return carCard(car: _placeholderCars[index]);
+                        return carCard(
+                          car: _placeholderCars[index],
+                          carList: _placeholderCars,
+                        );
                       },
                     ),
                   ),
+                ),
+                FloatingActionButton(
+                  onPressed: () async {
+                    Car? newCar = await showDialog(
+                      context: context,
+                      builder: (context) => CarForm(
+                        onSubmit: (car) {
+                          setState(() {
+                            if (car.registration_num == null ||
+                                car.registration_num.isEmpty) {
+                              showToast('Registration must not be empty');
+                              return;
+                            }
+                            if (car.registration_num.length > 7 ||
+                                car.registration_num.length < 5) {
+                              showToast('Invalid registration format');
+                              return;
+                            }
+                            _placeholderCars.add(car);
+                          });
+                        },
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.add),
                 ),
               ],
             ))
