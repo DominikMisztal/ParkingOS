@@ -32,7 +32,6 @@ class _carCardState extends State<carCard> {
 
   //Todo Connect with database
   void _editCar(Car car) {
-    print('Umm');
     _showDeleteDialog(car);
   }
 

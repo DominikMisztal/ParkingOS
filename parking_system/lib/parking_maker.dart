@@ -3,6 +3,7 @@ import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/saldoWidget.dart';
+import 'package:parking_system/components/tarriff_datatable.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
@@ -27,7 +28,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 3;
-
+  bool _tarrifEdit = false;
   void _addParking() {
     int width = int.parse(widthController.text);
     int height = int.parse(heightController.text);
@@ -136,6 +137,14 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 16.0),
                                 child: ElevatedButton(
+                                  onPressed: editTarrifs,
+                                  child: const Text('Parking  / Tarrifs'),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 16.0),
+                                child: ElevatedButton(
                                   onPressed: saveParking,
                                   child: const Text('Save'),
                                 ),
@@ -149,8 +158,8 @@ class _ParkingMakerState extends State<ParkingMaker> {
                 ))),
         Container(
           width: (2 * width / 3),
-          child: ParkingBoard(),
-        )
+          child: _tarrifEdit ? TarrifDataTable() : ParkingBoard(),
+        ),
       ])
     ]);
   }
@@ -168,6 +177,12 @@ class _ParkingMakerState extends State<ParkingMaker> {
       ParkingBoard.cols = parkingCols;
       ParkingBoard.rows = parkingRows;
       ParkingBoard.floors = parkingFloors;
+    });
+  }
+
+  void editTarrifs() {
+    setState(() {
+      _tarrifEdit = !_tarrifEdit;
     });
   }
 }
