@@ -8,6 +8,7 @@ import 'package:parking_system/parking_statistics.dart';
 import 'package:parking_system/signup.dart';
 import 'homepage_user.dart';
 import 'homepage_admin.dart';
+import 'parking_summary.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,11 +42,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const Login(title: 'Parking OS login'),
-      home: const ParkingStatistics(
-          category: 'Parkings',
-          parkingName: 'Parking 1',
-          spotId: '1',
-          vehicleReg: '-1'),
+      home: const ParkingSummaryWidget(),
     );
   }
 }
