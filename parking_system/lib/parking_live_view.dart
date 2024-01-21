@@ -5,6 +5,9 @@ import 'package:parking_system/components/custom_formatted_text.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/parking_board_live_view.dart';
 
+import 'parking_statistics.dart';
+import 'dart:developer' as developer;
+
 class ParkingLiveView extends StatefulWidget {
   const ParkingLiveView({super.key});
   static String parkingName = "Parking 1";
@@ -127,11 +130,22 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
         ]));
   }
 
-  void goToStatistics() {}
+  void goToStatistics() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ParkingStatistics(
+              category: 'Parking Spots',
+              parkingName: ParkingLiveView.parkingName,
+              spotId: currentlySelectedSpot.toString(),
+              vehicleReg: '')),
+    );
+  }
 
   void changeSelectedSpot(int newSelectedSpot) {
     setState(() {
       currentlySelectedSpot = newSelectedSpot;
+      developer.log('Live view selected spot: ${currentlySelectedSpot}');
     });
   }
 

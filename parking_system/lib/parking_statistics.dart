@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/myCustomTextField.dart';
 import 'package:parking_system/components/statistics/parkingStatistics.dart';
 import 'package:parking_system/components/statistics/vehicleStatistics.dart';
 import 'package:parking_system/models/statistics/parkingHistoryRecord.dart';
@@ -166,7 +165,8 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                           ),
                           Padding(padding: EdgeInsets.all(10)),
                           SpotsStatisticsWidget(
-                              selectedParking: selectedParking)
+                              selectedParking: selectedParking,
+                              selectedSpotId: selectedSpot)
                         ]),
                       )))),
             ])

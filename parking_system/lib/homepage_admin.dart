@@ -54,8 +54,8 @@ class HomePageAdmin extends StatelessWidget {
                         builder: (context) => ParkingStatistics(
                             category: 'Parkings',
                             parkingName: 'Parking 1',
-                            spotId: '1',
-                            vehicleReg: 'kl-12345')),
+                            spotId: '',
+                            vehicleReg: '')),
                   );
                 },
                 child: const Text("Parking Statistics"),

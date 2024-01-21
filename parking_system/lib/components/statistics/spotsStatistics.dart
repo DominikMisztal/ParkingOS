@@ -3,15 +3,19 @@ import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/spotRecotd.dart';
 
 class SpotsStatisticsWidget extends StatefulWidget {
-  const SpotsStatisticsWidget({super.key, required this.selectedParking});
+  const SpotsStatisticsWidget(
+      {super.key, required this.selectedParking, required this.selectedSpotId});
 
   final String selectedParking;
+  final String selectedSpotId;
   @override
-  State<SpotsStatisticsWidget> createState() =>
-      _SpotsStatisticsWidgetState(selectedParking: this.selectedParking);
+  State<SpotsStatisticsWidget> createState() => _SpotsStatisticsWidgetState(
+      selectedParking: this.selectedParking,
+      selectedSpotId: this.selectedSpotId);
 }
 
 class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
+  String selectedSpotId;
   String selectedParking;
   List<String> parkingNames = [];
   List<SpotRecord> spotRecords = [];
@@ -30,7 +34,8 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   String selectedColumn = 'Parking Name';
   String selectedColumnForFiltering = 'Parking Name';
 
-  _SpotsStatisticsWidgetState({required this.selectedParking});
+  _SpotsStatisticsWidgetState(
+      {required this.selectedParking, required this.selectedSpotId});
   var filterController = TextEditingController();
 
   void getSpotRecords() {
@@ -64,6 +69,12 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
     var width = MediaQuery.of(context).size.width;
 
     getSpotRecords();
+    if (selectedSpotId != '' || selectedSpotId != '-1') {
+      filterController.text = selectedSpotId;
+      selectedColumnForFiltering = 'Spot ID';
+      // to do filtering
+    }
+
     return Column(children: [
       Autocomplete<String>(
         optionsBuilder: (TextEditingValue textEditingValue) {
