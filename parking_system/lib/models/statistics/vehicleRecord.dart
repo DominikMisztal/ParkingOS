@@ -4,6 +4,7 @@ class VehicleRecord {
   bool isParked;
   String? parkingName;
   String? spotId;
+  DateTime? parkingSince;
   double totalExpenses;
 
   VehicleRecord(
@@ -12,5 +13,6 @@ class VehicleRecord {
       required this.isParked,
       required this.totalExpenses,
       this.parkingName,
-      this.spotId}) {}
+      this.spotId,
+      this.parkingSince}) {}
 }

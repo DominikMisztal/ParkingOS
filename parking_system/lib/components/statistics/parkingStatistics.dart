@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/parkingRecord.dart';
 
 class ParkingStatisticsWidget extends StatefulWidget {
@@ -14,7 +15,20 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   String selectedParking;
   List<String> parkingNames = [];
   List<ParkingRecord> parkingRecords = [];
+  List<String> columnNames = [
+    'Parking Name',
+    'Amount of Spots',
+    'Taken Spots',
+    'Total Income',
+    'Today\'s Income'
+  ];
+  List<String> orderingTypes = ['Asc', 'Desc'];
+  String selectedOrdering = 'Asc';
+  String selectedColumn = 'Parking Name';
+  String selectedColumnForFiltering = 'Parking Name';
+
   _ParkingStatisticsWidgetState({required this.selectedParking});
+  var filterController = TextEditingController();
 
   void getParkingRecords() {
     parkingRecords.add(ParkingRecord(
@@ -43,7 +57,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
+
     getParkingRecords();
     return Column(children: [
       Autocomplete<String>(
@@ -63,7 +77,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
             TextEditingController textEditingController,
             FocusNode focusNode,
             VoidCallback onFieldSubmitted) {
-          textEditingController.text = selectedParking ?? '';
+          textEditingController.text = selectedParking;
           return TextFormField(
             controller: textEditingController,
             focusNode: focusNode,
@@ -108,6 +122,99 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
           );
         },
       ),
+      Row(
+        children: [
+          Text(
+            'Order by: ',
+            style: TextStyle(color: Colors.white),
+          ),
+          Padding(padding: EdgeInsets.all(10)),
+          DropdownButton<String>(
+            value: selectedColumn,
+            style: TextStyle(color: Colors.white),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedColumn = newValue!;
+              });
+            },
+            items: columnNames.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Padding(padding: EdgeInsets.all(10)),
+          DropdownButton<String>(
+            value: selectedOrdering,
+            style: TextStyle(color: Colors.white),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedOrdering = newValue!;
+              });
+            },
+            items: orderingTypes.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Padding(padding: EdgeInsets.all(10)),
+          ElevatedButton(
+            onPressed: sortTable,
+            child: Text(
+              'Sort',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Text(
+            'Filter: ',
+            style: TextStyle(color: Colors.white),
+          ),
+          SizedBox(
+            width: 200,
+            child: MyCustomTextField(
+              controller: filterController,
+              labelText: 'Filter by',
+              obscureText: false,
+            ),
+          ),
+          DropdownButton<String>(
+            value: selectedColumnForFiltering,
+            style: TextStyle(color: Colors.white),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedColumnForFiltering = newValue!;
+              });
+            },
+            items: columnNames.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Padding(padding: EdgeInsets.all(10)),
+          ElevatedButton(
+            onPressed: filterTable,
+            child: Text(
+              'Filter',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
       Padding(padding: EdgeInsets.all(10)),
       DataTable(
         columns: [
@@ -145,5 +252,13 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
         }).toList(),
       )
     ]);
+  }
+
+  void sortTable() {
+    //Change to DB connection
+  }
+
+  void filterTable() {
+    //change to DB connection
   }
 }

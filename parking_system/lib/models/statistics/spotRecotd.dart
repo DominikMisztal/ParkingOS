@@ -4,9 +4,9 @@ class SpotRecord {
   bool isTaken;
   double totalIncome;
   double dailyIncome;
-  double temporaryIncome;
+  double? temporaryIncome;
   String? parkedCarRegistration;
-  DateTime? takenSince;
+  DateTime? parkingStart;
 
   SpotRecord(
       {required this.spotId,
@@ -14,7 +14,7 @@ class SpotRecord {
       required this.isTaken,
       required this.totalIncome,
       required this.dailyIncome,
-      required this.temporaryIncome,
+      this.temporaryIncome,
       this.parkedCarRegistration,
-      this.takenSince}) {}
+      this.parkingStart}) {}
 }
