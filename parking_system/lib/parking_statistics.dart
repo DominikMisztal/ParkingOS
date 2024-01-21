@@ -87,6 +87,16 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                       child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(children: [
+                      ElevatedButton(
+                        onPressed: () => {Navigator.pop(context)},
+                        child: Text(
+                          'Go back',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       DropdownButton<String>(
                         value: selectedCategory,
                         style: TextStyle(color: Colors.white),
@@ -119,6 +129,16 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                       child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(children: [
+                      ElevatedButton(
+                        onPressed: () => {Navigator.pop(context)},
+                        child: Text(
+                          'Go back',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       DropdownButton<String>(
                         value: selectedCategory,
                         style: TextStyle(color: Colors.white),
@@ -151,6 +171,16 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                       child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(children: [
+                      ElevatedButton(
+                        onPressed: () => {Navigator.pop(context)},
+                        child: Text(
+                          'Go back',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       DropdownButton<String>(
                         value: selectedCategory,
                         style: TextStyle(color: Colors.white),
@@ -183,6 +213,16 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                       child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(children: [
+                      ElevatedButton(
+                        onPressed: () => {Navigator.pop(context)},
+                        child: Text(
+                          'Go back',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       DropdownButton<String>(
                         value: selectedCategory,
                         style: TextStyle(color: Colors.white),

@@ -66,6 +66,16 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             //crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              ElevatedButton(
+                                onPressed: () => {Navigator.pop(context)},
+                                child: Text(
+                                  'Go back',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                               CustomFormattedText(
                                   text: ParkingLiveView.parkingName),
                               Padding(

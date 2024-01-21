@@ -98,6 +98,16 @@ class _ParkingMakerState extends State<ParkingMaker> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             //crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              ElevatedButton(
+                                onPressed: () => {Navigator.pop(context)},
+                                child: Text(
+                                  'Go back',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                               MyCustomTextField(
                                   controller: nameController,
                                   labelText: 'Name',

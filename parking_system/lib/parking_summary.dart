@@ -3,14 +3,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class ParkingSummaryWidget extends StatefulWidget {
-  const ParkingSummaryWidget({super.key});
+class ParkingSummary extends StatefulWidget {
+  const ParkingSummary({super.key});
 
   @override
-  State<ParkingSummaryWidget> createState() => _ParkingSummaryWidgetState();
+  State<ParkingSummary> createState() => _ParkingSummaryState();
 }
 
-class _ParkingSummaryWidgetState extends State<ParkingSummaryWidget> {
+class _ParkingSummaryState extends State<ParkingSummary> {
   List<ChartData> incomeData = [];
   List<ChartData> expenseData = [];
   List<String> parkingNames = [];
@@ -27,7 +27,7 @@ class _ParkingSummaryWidgetState extends State<ParkingSummaryWidget> {
     selectedParking = parkingNames[0];
   }
 
-  _ParkingSummaryWidgetState() {
+  _ParkingSummaryState() {
     getParkingNames();
   }
 

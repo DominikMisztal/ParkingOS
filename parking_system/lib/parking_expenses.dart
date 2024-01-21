@@ -79,6 +79,16 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        ElevatedButton(
+                          onPressed: () => {Navigator.pop(context)},
+                          child: Text(
+                            'Go back',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                         Text(
                           'Date: ',
                           style: TextStyle(color: Colors.white),

@@ -41,8 +41,7 @@ class MyApp extends StatelessWidget {
             seedColor: Colors.amber, background: Colors.black87),
         useMaterial3: true,
       ),
-      //home: const Login(title: 'Parking OS login'),
-      home: const ParkingSummaryWidget(),
+      home: const Login(title: 'Parking OS login'),
     );
   }
 }
