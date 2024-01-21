@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
-import 'package:parking_system/models/statistics/parkingRecord.dart';
 import 'package:parking_system/models/statistics/vehicleRecord.dart';
 
 class VehicleStatisticsWidget extends StatefulWidget {

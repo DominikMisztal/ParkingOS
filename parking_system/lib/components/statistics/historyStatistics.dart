@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/parkingHistoryRecord.dart';
-import 'package:parking_system/models/statistics/parkingRecord.dart';
 
 class HistoryStatisticsWidget extends StatefulWidget {
   const HistoryStatisticsWidget({super.key, required this.selectedParking});
