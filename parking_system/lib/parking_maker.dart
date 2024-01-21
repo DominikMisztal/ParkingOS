@@ -74,94 +74,98 @@ class _ParkingMakerState extends State<ParkingMaker> {
     tempContext = context;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    return Stack(alignment: AlignmentDirectional.center, children: [
-      Container(
-        height: height - 30,
-        width: width - 30,
-        color: Colors.white60,
-      ),
-      Row(children: [
-        Material(
-            child: Container(
-                width: width / 3,
-                child: Form(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        Container(
-                          color: Colors.black87,
-                          width: (width / 3) * 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            //crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () => {Navigator.pop(context)},
-                                child: Text(
-                                  'Go back',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Parking Maker'),
+        ),
+        body: Stack(alignment: AlignmentDirectional.center, children: [
+          Container(
+            height: height - 30,
+            width: width - 30,
+            color: Colors.white60,
+          ),
+          Row(children: [
+            Material(
+                child: Container(
+                    width: width / 3,
+                    child: Form(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: [
+                            Container(
+                              color: Colors.black87,
+                              width: (width / 3) * 2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                //crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => {Navigator.pop(context)},
+                                    child: Text(
+                                      'Go back',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  MyCustomTextField(
+                                      controller: nameController,
+                                      labelText: 'Name',
+                                      hintText: 'Enter parking name',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: addressController,
+                                      labelText: 'Adress',
+                                      hintText: 'Enter parking address',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: widthController,
+                                      labelText: 'Spot per row',
+                                      hintText: 'Enter spot per row number',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: heightController,
+                                      labelText: 'Spot per column',
+                                      hintText: 'Enter spot per column number',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: floorsController,
+                                      labelText: 'Number of floors',
+                                      hintText: 'Enter number of floors',
+                                      obscureText: false),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: generateParking,
+                                      child: const Text('Generate'),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: saveParking,
+                                      child: const Text('Save'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              MyCustomTextField(
-                                  controller: nameController,
-                                  labelText: 'Name',
-                                  hintText: 'Enter parking name',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: addressController,
-                                  labelText: 'Adress',
-                                  hintText: 'Enter parking address',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: widthController,
-                                  labelText: 'Spot per row',
-                                  hintText: 'Enter spot per row number',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: heightController,
-                                  labelText: 'Spot per column',
-                                  hintText: 'Enter spot per column number',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: floorsController,
-                                  labelText: 'Number of floors',
-                                  hintText: 'Enter number of floors',
-                                  obscureText: false),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: generateParking,
-                                  child: const Text('Generate'),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: saveParking,
-                                  child: const Text('Save'),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ))),
-        Container(
-          width: (2 * width / 3),
-          child: ParkingBoard(),
-        )
-      ])
-    ]);
+                      ),
+                    ))),
+            Container(
+              width: (2 * width / 3),
+              child: ParkingBoard(),
+            )
+          ])
+        ]));
   }
 
   void saveParking() {

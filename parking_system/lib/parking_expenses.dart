@@ -62,158 +62,162 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     addExpenses();
     updateListView();
     expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
-    return Stack(alignment: AlignmentDirectional.center, children: [
-      Container(
-        height: height - 30,
-        width: width - 30,
-        color: Colors.white60,
-      ),
-      Row(children: [
-        Material(
-            child: Container(
-                width: width / 2,
-                child: Form(
-                    child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Parking Expenses'),
+        ),
+        body: Stack(alignment: AlignmentDirectional.center, children: [
+          Container(
+            height: height - 30,
+            width: width - 30,
+            color: Colors.white60,
+          ),
+          Row(children: [
+            Material(
+                child: Container(
+                    width: width / 2,
+                    child: Form(
+                        child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => {Navigator.pop(context)},
+                              child: Text(
+                                'Go back',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Date: ',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            TextButton(
+                              onPressed: () => _selectDate(context),
+                              child: Text(
+                                '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        DropdownButton<String>(
+                          value: selectedCategory,
+                          style: TextStyle(color: Colors.white),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategory = newValue!;
+                            });
+                          },
+                          items: categories
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        MyCustomTextField(
+                            controller: expenseAmountController,
+                            labelText: 'Amount',
+                            obscureText: false),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Is cyclical: ',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Checkbox(
+                              value: isCyclical,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCyclical = value!;
+                                });
+                              },
+                            )
+                          ],
+                        ),
                         ElevatedButton(
-                          onPressed: () => {Navigator.pop(context)},
+                          onPressed: addExpenseToParking,
                           child: Text(
-                            'Go back',
+                            'Add',
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        Text(
-                          'Date: ',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextButton(
-                          onPressed: () => _selectDate(context),
+                        Padding(padding: EdgeInsets.all(10)),
+                        ElevatedButton(
+                          onPressed: saveChanges,
                           child: Text(
-                            '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}',
+                            'Save changes',
                             style: TextStyle(
-                              color: Colors.blue,
+                              fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    DropdownButton<String>(
-                      value: selectedCategory,
-                      style: TextStyle(color: Colors.white),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCategory = newValue!;
-                        });
-                      },
-                      items: categories
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    MyCustomTextField(
-                        controller: expenseAmountController,
-                        labelText: 'Amount',
-                        obscureText: false),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Is cyclical: ',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Checkbox(
-                          value: isCyclical,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCyclical = value!;
-                            });
-                          },
                         )
-                      ],
+                      ]),
+                    )))),
+            Container(
+              width: (width / 2),
+              child: Scaffold(
+                  body: Column(
+                children: [
+                  SizedBox(
+                    height: 100,
+                    child: Text(
+                      expensesLabel,
+                      style: TextStyle(color: Colors.white, fontSize: 40),
                     ),
-                    ElevatedButton(
-                      onPressed: addExpenseToParking,
-                      child: Text(
-                        'Add',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Padding(padding: EdgeInsets.all(10)),
-                    ElevatedButton(
-                      onPressed: saveChanges,
-                      child: Text(
-                        'Save changes',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                  ]),
-                )))),
-        Container(
-          width: (width / 2),
-          child: Scaffold(
-              body: Column(
-            children: [
-              SizedBox(
-                height: 100,
-                child: Text(
-                  expensesLabel,
-                  style: TextStyle(color: Colors.white, fontSize: 40),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _items.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = _items[index];
-                    return Dismissible(
-                      key: Key(item),
-                      onDismissed: (direction) {
-                        setState(() {
-                          expensesRecords.removeAt(index);
-                          _items.removeAt(index);
-                        });
-                      },
-                      child: ListTile(
-                        title: Text(
-                          item,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _items.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = _items[index];
+                        return Dismissible(
+                          key: Key(item),
+                          onDismissed: (direction) {
                             setState(() {
                               expensesRecords.removeAt(index);
                               _items.removeAt(index);
                             });
                           },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-          )),
-        )
-      ])
-    ]);
+                          child: ListTile(
+                            title: Text(
+                              item,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                setState(() {
+                                  expensesRecords.removeAt(index);
+                                  _items.removeAt(index);
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              )),
+            )
+          ])
+        ]));
   }
 
   void addExpenseToParking() {

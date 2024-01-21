@@ -42,84 +42,89 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
       }
     }
 
-    return Stack(alignment: AlignmentDirectional.center, children: [
-      Container(
-        height: height - 30,
-        width: width - 30,
-        color: Colors.white60,
-      ),
-      Row(children: [
-        Material(
-            child: Container(
-                width: width / 3,
-                child: Form(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        Container(
-                          color: Colors.black87,
-                          width: (width / 3) * 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            //crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () => {Navigator.pop(context)},
-                                child: Text(
-                                  'Go back',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              CustomFormattedText(
-                                  text: ParkingLiveView.parkingName),
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 16),
-                                  child: ListenableBuilder(
-                                    listenable: tappedt,
-                                    builder:
-                                        (BuildContext context, Widget? child) {
-                                      return Text(
-                                        "Currently selected: ${tappedt.selectedId}",
-                                        style: const TextStyle(
-                                            color: Colors.white60),
-                                      );
-                                    },
-                                  )),
-                              CustomFormattedText(text: spotStateDetails),
-                              CustomFormattedText(text: "Parking since: 8:00"),
-                              CustomFormattedText(
-                                  text: "Currently required to pay: 50 zł"),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: goToStatistics,
-                                  child: const Text('Spot statistics'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ))),
-        Container(
-          width: (2 * width / 3),
-          child: ParkingBoardLiveView(
-            changeSelectedSpot: changeSelectedSpot,
-            tappedTile: tappedt,
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Parking Live View'),
+        ),
+        body: Stack(alignment: AlignmentDirectional.center, children: [
+          Container(
+            height: height - 30,
+            width: width - 30,
+            color: Colors.white60,
           ),
-        )
-      ])
-    ]);
+          Row(children: [
+            Material(
+                child: Container(
+                    width: width / 3,
+                    child: Form(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: [
+                            Container(
+                              color: Colors.black87,
+                              width: (width / 3) * 2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                //crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => {Navigator.pop(context)},
+                                    child: Text(
+                                      'Go back',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  CustomFormattedText(
+                                      text: ParkingLiveView.parkingName),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 16),
+                                      child: ListenableBuilder(
+                                        listenable: tappedt,
+                                        builder: (BuildContext context,
+                                            Widget? child) {
+                                          return Text(
+                                            "Currently selected: ${tappedt.selectedId}",
+                                            style: const TextStyle(
+                                                color: Colors.white60),
+                                          );
+                                        },
+                                      )),
+                                  CustomFormattedText(text: spotStateDetails),
+                                  CustomFormattedText(
+                                      text: "Parking since: 8:00"),
+                                  CustomFormattedText(
+                                      text: "Currently required to pay: 50 zł"),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: goToStatistics,
+                                      child: const Text('Spot statistics'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ))),
+            Container(
+              width: (2 * width / 3),
+              child: ParkingBoardLiveView(
+                changeSelectedSpot: changeSelectedSpot,
+                tappedTile: tappedt,
+              ),
+            )
+          ])
+        ]));
   }
 
   void goToStatistics() {}

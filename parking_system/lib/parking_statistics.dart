@@ -78,173 +78,193 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
     var height = MediaQuery.of(context).size.height;
 
     if (selectedCategory == 'Parkings') {
-      return Stack(alignment: AlignmentDirectional.center, children: [
-        Row(children: [
-          Material(
-              child: Container(
-                  width: width,
-                  child: Form(
-                      child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      ElevatedButton(
-                        onPressed: () => {Navigator.pop(context)},
-                        child: Text(
-                          'Go back',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Parking Statistics'),
+          ),
+          body: Stack(alignment: AlignmentDirectional.center, children: [
+            Row(children: [
+              Material(
+                  child: Container(
+                      width: width,
+                      child: Form(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          ElevatedButton(
+                            onPressed: () => {Navigator.pop(context)},
+                            child: Text(
+                              'Go back',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        style: TextStyle(color: Colors.white),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCategory = newValue!;
-                          });
-                        },
-                        items: categories
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      ParkingStatisticsWidget(selectedParking: selectedParking)
-                    ]),
-                  )))),
-        ])
-      ]);
+                          DropdownButton<String>(
+                            value: selectedCategory,
+                            style: TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCategory = newValue!;
+                              });
+                            },
+                            items: categories
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                          Padding(padding: EdgeInsets.all(10)),
+                          ParkingStatisticsWidget(
+                              selectedParking: selectedParking)
+                        ]),
+                      )))),
+            ])
+          ]));
     } else if (selectedCategory == 'Parking Spots') {
-      return Stack(alignment: AlignmentDirectional.center, children: [
-        Row(children: [
-          Material(
-              child: Container(
-                  width: width,
-                  child: Form(
-                      child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      ElevatedButton(
-                        onPressed: () => {Navigator.pop(context)},
-                        child: Text(
-                          'Go back',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Parking Statistics'),
+          ),
+          body: Stack(alignment: AlignmentDirectional.center, children: [
+            Row(children: [
+              Material(
+                  child: Container(
+                      width: width,
+                      child: Form(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          ElevatedButton(
+                            onPressed: () => {Navigator.pop(context)},
+                            child: Text(
+                              'Go back',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        style: TextStyle(color: Colors.white),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCategory = newValue!;
-                          });
-                        },
-                        items: categories
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      SpotsStatisticsWidget(selectedParking: selectedParking)
-                    ]),
-                  )))),
-        ])
-      ]);
+                          DropdownButton<String>(
+                            value: selectedCategory,
+                            style: TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCategory = newValue!;
+                              });
+                            },
+                            items: categories
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                          Padding(padding: EdgeInsets.all(10)),
+                          SpotsStatisticsWidget(
+                              selectedParking: selectedParking)
+                        ]),
+                      )))),
+            ])
+          ]));
     } else if (selectedCategory == 'Vehicles') {
-      return Stack(alignment: AlignmentDirectional.center, children: [
-        Row(children: [
-          Material(
-              child: Container(
-                  width: width,
-                  child: Form(
-                      child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      ElevatedButton(
-                        onPressed: () => {Navigator.pop(context)},
-                        child: Text(
-                          'Go back',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Parking Statistics'),
+          ),
+          body: Stack(alignment: AlignmentDirectional.center, children: [
+            Row(children: [
+              Material(
+                  child: Container(
+                      width: width,
+                      child: Form(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          ElevatedButton(
+                            onPressed: () => {Navigator.pop(context)},
+                            child: Text(
+                              'Go back',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        style: TextStyle(color: Colors.white),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCategory = newValue!;
-                          });
-                        },
-                        items: categories
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      VehicleStatisticsWidget(selectedParking: selectedParking)
-                    ]),
-                  )))),
-        ])
-      ]);
+                          DropdownButton<String>(
+                            value: selectedCategory,
+                            style: TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCategory = newValue!;
+                              });
+                            },
+                            items: categories
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                          Padding(padding: EdgeInsets.all(10)),
+                          VehicleStatisticsWidget(
+                              selectedParking: selectedParking)
+                        ]),
+                      )))),
+            ])
+          ]));
     } else {
-      return Stack(alignment: AlignmentDirectional.center, children: [
-        Row(children: [
-          Material(
-              child: Container(
-                  width: width,
-                  child: Form(
-                      child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      ElevatedButton(
-                        onPressed: () => {Navigator.pop(context)},
-                        child: Text(
-                          'Go back',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Parking Statistics'),
+          ),
+          body: Stack(alignment: AlignmentDirectional.center, children: [
+            Row(children: [
+              Material(
+                  child: Container(
+                      width: width,
+                      child: Form(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          ElevatedButton(
+                            onPressed: () => {Navigator.pop(context)},
+                            child: Text(
+                              'Go back',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        style: TextStyle(color: Colors.white),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCategory = newValue!;
-                          });
-                        },
-                        items: categories
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      HistoryStatisticsWidget(selectedParking: selectedParking)
-                    ]),
-                  )))),
-        ])
-      ]);
+                          DropdownButton<String>(
+                            value: selectedCategory,
+                            style: TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCategory = newValue!;
+                              });
+                            },
+                            items: categories
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                          Padding(padding: EdgeInsets.all(10)),
+                          HistoryStatisticsWidget(
+                              selectedParking: selectedParking)
+                        ]),
+                      )))),
+            ])
+          ]));
     }
   }
 }
