@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
+import 'package:parking_system/parking_statistics.dart';
 
 class ParkingUsers extends StatefulWidget {
   const ParkingUsers({super.key});
@@ -92,7 +93,7 @@ class UserTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(90),
         child: Container(
           padding: const EdgeInsets.all(8.0),
-          color: Colors.white60,
+          color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -144,6 +145,19 @@ class CarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Todo: Ask about how to do it
+    void goToStatistics() {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //       builder: (context) => ParkingStatistics(
+      //           category: 'Parking Spots',
+      //           parkingName: ParkingLiveView.parkingName,
+      //           spotId: currentlySelectedSpot.toString(),
+      //           vehicleReg: '')),
+      // );
+    }
+
     return Card(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,7 +182,7 @@ class CarTile extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.more_vert),
             onPressed: () {
-              //Go to statistics
+              goToStatistics();
             },
           ),
         ],
