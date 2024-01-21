@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
-import 'package:parking_system/components/saldoWidget.dart';
-import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
-import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/Utils/Utils.dart';
 import 'package:parking_system/services/park_services.dart';
 
@@ -71,103 +67,169 @@ class _ParkingMakerState extends State<ParkingMaker> {
     return tarifs;
   }
 
+  late BuildContext tempContext;
+
   @override
   Widget build(BuildContext context) {
+    tempContext = context;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    return Stack(alignment: AlignmentDirectional.center, children: [
-      Container(
-        height: height - 30,
-        width: width - 30,
-        color: Colors.white60,
-      ),
-      Row(children: [
-        Material(
-            child: Container(
-                width: width / 3,
-                child: Form(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        Container(
-                          color: Colors.black87,
-                          width: (width / 3) * 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            //crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              MyCustomTextField(
-                                  controller: nameController,
-                                  labelText: 'Name',
-                                  hintText: 'Enter parking name',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: addressController,
-                                  labelText: 'Adress',
-                                  hintText: 'Enter parking address',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: widthController,
-                                  labelText: 'Spot per row',
-                                  hintText: 'Enter spot per row number',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: heightController,
-                                  labelText: 'Spot per column',
-                                  hintText: 'Enter spot per column number',
-                                  obscureText: false),
-                              MyCustomTextField(
-                                  controller: nameController,
-                                  labelText: 'Number of floors',
-                                  hintText: 'Enter number of floors',
-                                  obscureText: false),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: generateParking,
-                                  child: const Text('Generate'),
-                                ),
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Parking Maker'),
+        ),
+        body: Stack(alignment: AlignmentDirectional.center, children: [
+          Container(
+            height: height - 30,
+            width: width - 30,
+            color: Colors.white60,
+          ),
+          Row(children: [
+            Material(
+                child: Container(
+                    width: width / 3,
+                    child: Form(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: [
+                            Container(
+                              color: Colors.black87,
+                              width: (width / 3) * 2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                //crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => {Navigator.pop(context)},
+                                    child: Text(
+                                      'Go back',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  MyCustomTextField(
+                                      controller: nameController,
+                                      labelText: 'Name',
+                                      hintText: 'Enter parking name',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: addressController,
+                                      labelText: 'Adress',
+                                      hintText: 'Enter parking address',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: widthController,
+                                      labelText: 'Spot per row',
+                                      hintText: 'Enter spot per row number',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: heightController,
+                                      labelText: 'Spot per column',
+                                      hintText: 'Enter spot per column number',
+                                      obscureText: false),
+                                  MyCustomTextField(
+                                      controller: floorsController,
+                                      labelText: 'Number of floors',
+                                      hintText: 'Enter number of floors',
+                                      obscureText: false),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: generateParking,
+                                      child: const Text('Generate'),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: saveParking,
+                                      child: const Text('Save'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: saveParking,
-                                  child: const Text('Save'),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ))),
-        Container(
-          width: (2 * width / 3),
-          child: ParkingBoard(),
-        )
-      ])
-    ]);
+                      ),
+                    ))),
+            Container(
+              width: (2 * width / 3),
+              child: ParkingBoard(),
+            )
+          ])
+        ]));
   }
 
   void saveParking() {
-    _addParking();
+    if (validateParking()) {
+      _addParking();
+    }
   }
 
   void generateParking() {
-    setState(() {
-      parkingCols = int.parse(widthController.text);
-      parkingRows = int.parse(heightController.text);
-      parkingFloors = int.parse(floorsController.text);
+    if (validateParking()) {
+      setState(() {
+        parkingCols = int.parse(widthController.text);
+        parkingRows = int.parse(heightController.text);
+        parkingFloors = int.parse(floorsController.text);
 
-      ParkingBoard.cols = parkingCols;
-      ParkingBoard.rows = parkingRows;
-      ParkingBoard.floors = parkingFloors;
-    });
+        ParkingBoard.cols = parkingCols;
+        ParkingBoard.rows = parkingRows;
+        ParkingBoard.floors = parkingFloors;
+      });
+    }
+  }
+
+  bool validateParking() {
+    int parkCols = int.parse(widthController.text);
+    int parkRows = int.parse(heightController.text);
+    int parkFloors = int.parse(floorsController.text);
+    if (parkFloors < 1 || parkFloors > 8) {
+      showAlertDialog(tempContext, 'Wrong amount of floors!');
+      return false;
+    } else if (parkCols < 1 || parkCols > 20) {
+      showAlertDialog(tempContext, 'Wrong amount of spots per row!');
+      return false;
+    } else if (parkRows < 1 || parkRows > 20) {
+      showAlertDialog(tempContext, 'Wrong amount of spots per collumn!');
+      return false;
+    }
+
+    return true;
+  }
+
+  showAlertDialog(BuildContext context, String message) {
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Warning",
+        style: TextStyle(color: Colors.white),
+      ),
+      content: Text(message, style: TextStyle(color: Colors.white)),
+      actions: [
+        TextButton(
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
