@@ -8,6 +8,8 @@ import 'package:parking_system/models/statistics/vehicleRecord.dart';
 
 import 'components/statistics/historyStatistics.dart';
 import 'components/statistics/spotsStatistics.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/models/parkingDB.dart';
 
 class ParkingStatistics extends StatefulWidget {
   const ParkingStatistics(
@@ -31,6 +33,7 @@ class ParkingStatistics extends StatefulWidget {
 }
 
 class _ParkingStatisticsState extends State<ParkingStatistics> {
+  ParkingServices parkingServices = ParkingServices();
   String selectedParking;
   String selectedVehicle;
   String selectedSpot;
@@ -43,6 +46,7 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
   ];
   List<String> spotIds = [];
   List<String> cars = [];
+  List<ParkingDb> parkings = [];
 
   List<ParkingRecord> parkingsRecords = [];
   List<VehicleRecord> vehiclesRecords = [];
@@ -60,11 +64,13 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
     getParkingData();
   }
 
-  void getParkingData() {
+  void getParkingData() async {
     //DB connection TO DO
-    parkingNames.add("Parking 1");
-    parkingNames.add("Parking 2");
-    parkingNames.add("Parking 3");
+    List<String>? fetchedParkingNames = await parkingServices.getParkingNames();
+    if(fetchedParkingNames != null){
+      parkingNames.addAll(fetchedParkingNames);
+    }
+    print(parkingNames);
     for (var i = 0; i < 100; i++) {
       spotIds.add(i.toString());
       cars.add(i.toString());

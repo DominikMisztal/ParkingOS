@@ -35,7 +35,7 @@ class _userPageState extends State<userPage> {
   }
   void deleteCar(Car car) async{
     await user.deleteCar(car.registration_num);
-    _placeholderCars = user.userCars();
+    _placeholderCars.remove(car);
   }
 
   late double _totalSaldo = widget.user.balance;

@@ -20,12 +20,23 @@ class ParkingServices {
     return ParkingDb.fromMap(userData);
   }
 
+  Future<List<String>?> getParkingNames() async {
+  DataSnapshot snapshot = await _dbRef.get();
+  if (snapshot.value == null) return null;
+
+  Map<String, dynamic> parkingData = json.decode(json.encode(snapshot.value));
+  List<String> parkingNames = parkingData.keys.toList();
+
+  return parkingNames;
+}
+
   Future<SpotDb?> getSpotFromParking(String parkingName, int spotName) async {
     DataSnapshot snapshot = await _dbRef.child(parkingName).get();
     if(snapshot.value == null) return null;
     Map<String, dynamic> userData = json.decode(json.encode(snapshot.value));
     return SpotDb.fromMap(userData);
   }
+
 
   //Future<CarHistoryDb?> getHistoryOfCar(String registration) async{
     
