@@ -6,8 +6,12 @@ import 'package:parking_system/models/car_model.dart';
 class carCard extends StatefulWidget {
   final Car car;
   final List<Car> carList; //easiest way to delete
-
-  const carCard({super.key, required this.car, required this.carList});
+  final VoidCallback onDelete;
+  const carCard(
+      {super.key,
+      required this.car,
+      required this.carList,
+      required this.onDelete});
 
   @override
   State<carCard> createState() => _carCardState();
@@ -54,7 +58,9 @@ class _carCardState extends State<carCard> {
               child: const Text('Cancel'),
             ),
             TextButton(
+              onLongPress: widget.onDelete,
               onPressed: () {
+                widget.onDelete();
                 // Remove the item from the list
                 setState(() {
                   widget.carList.remove(car);

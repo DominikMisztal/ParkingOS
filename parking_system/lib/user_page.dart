@@ -54,6 +54,13 @@ class _userPageState extends State<userPage> {
     _placeholderCars = user.userCars();
   }
 
+  void deleteItem(int index) {
+    debugPrint('Delete');
+    setState(() {
+      _placeholderCars.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -85,9 +92,10 @@ class _userPageState extends State<userPage> {
                   size: 32,
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Edit user Data',
-                  style: TextStyle(decoration: TextDecoration.underline),
+                TextButton(
+                  child: const Text('Edit user Data',
+                      style: TextStyle(decoration: TextDecoration.underline)),
+                  onPressed: () {},
                 ), //todo make it clickable
                 const SizedBox(height: 32),
                 Saldo(saldo: _totalSaldo, scm: scm),
@@ -117,6 +125,9 @@ class _userPageState extends State<userPage> {
                         return carCard(
                           car: _placeholderCars[index],
                           carList: _placeholderCars,
+                          onDelete: () {
+                            deleteItem(index);
+                          },
                         );
                       },
                     ),
