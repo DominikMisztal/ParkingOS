@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/car_form.dart';
+import 'package:parking_system/components/edit_email_dialog.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
@@ -27,13 +28,17 @@ class _userPageState extends State<userPage> {
   // }
   void getCars(Car car) async {
     bool? checkRegistration = await userService.canAddCar(car.registration_num);
-    if(checkRegistration == null) return;
+    if (checkRegistration == null) return;
     //if(checkRegistration){
-      await user.addCar(car);
-      _placeholderCars = user.userCars();
+    await user.addCar(car);
+    _placeholderCars = user.userCars();
     //}
+    setState(() {
+      _placeholderCars = user.userCars();
+    });
   }
-  void deleteCar(Car car) async{
+
+  void deleteCar(Car car) async {
     await user.deleteCar(car.registration_num);
     _placeholderCars.remove(car);
   }
@@ -42,9 +47,21 @@ class _userPageState extends State<userPage> {
   late UserDb user;
 
   List<Car> _placeholderCars = [
-    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd', expences: 0),
-    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ', expences: 0),
-    Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234', expences: 0),
+    Car(
+        brand: 'Scoda',
+        model: 'Octavia',
+        registration_num: 'Abcd',
+        expences: 0),
+    Car(
+        brand: 'Scoda',
+        model: 'Octavia',
+        registration_num: 'XYZQ',
+        expences: 0),
+    Car(
+        brand: 'Mercedes',
+        model: 'Benz',
+        registration_num: '1234',
+        expences: 0),
   ];
 
   @override
@@ -56,6 +73,12 @@ class _userPageState extends State<userPage> {
   }
   void setBalance() async{
     _totalSaldo = await userService.getBalance();
+  }
+
+  void deleteItem(int index) {
+    setState(() {
+      deleteCar(_placeholderCars[index]);
+    });
   }
 
   @override
@@ -89,10 +112,25 @@ class _userPageState extends State<userPage> {
                   size: 32,
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Edit user Data',
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ), //todo make it clickable
+                TextButton(
+                  child: const Text('Edit user Data',
+                      style: TextStyle(decoration: TextDecoration.underline)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ChangeEmailDialog(
+                        currentEmail: user.login,
+                        onChanged: (newEmail) {
+                          print('New email: $newEmail');
+                          setState(() {
+                            //user.login = newEmail;
+                          });
+                          //Todo Zaktualizować newEmail w database
+                        },
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 32),
                 Saldo(saldo: _totalSaldo, scm: scm),
               ],
@@ -116,11 +154,15 @@ class _userPageState extends State<userPage> {
                   child: SizedBox(
                     height: 300,
                     child: ListView.builder(
+                      scrollDirection: Axis.vertical,
                       itemCount: _placeholderCars.length,
                       itemBuilder: (context, index) {
                         return carCard(
                           car: _placeholderCars[index],
                           carList: _placeholderCars,
+                          onDelete: () {
+                            deleteItem(index);
+                          },
                         );
                       },
                     ),
@@ -146,10 +188,10 @@ class _userPageState extends State<userPage> {
                             // bool canAddCar = await userService.canAddCar(car.registration_num);
                             // if(){
                             getCars(car);
-                            //deleteCar(car);                        
-                              //MapEntry<String, Car> entry = MapEntry(car.registration_num, car);
-                              //user.listOfCars.addEntries(entry);
-                              //_placeholderCars.add(car);
+                            //deleteCar(car);
+                            //MapEntry<String, Car> entry = MapEntry(car.registration_num, car);
+                            //user.listOfCars.addEntries(entry);
+                            //_placeholderCars.add(car);
                             //}
                           });
                         },

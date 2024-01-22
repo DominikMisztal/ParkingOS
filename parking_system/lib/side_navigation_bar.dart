@@ -33,15 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
       userPage(user: widget.user),
       Parkfinder(),
       UserTicketScreen(),
-      Container(
-        color: Colors.white,
-        child: const Center(
-          child: Text(
-            'Settings',
-            style: TextStyle(fontSize: 35),
-          ),
-        ),
-      ),
     ];
   }
 
@@ -133,13 +124,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   sideMenu.changePage(index);
                 },
                 icon: const Icon(Icons.airplane_ticket),
-              ),
-              SideMenuItem(
-                title: 'Settings',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.settings),
               ),
             ],
           ),
