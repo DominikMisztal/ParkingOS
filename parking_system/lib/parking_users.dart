@@ -15,19 +15,55 @@ class ParkingUsers extends StatefulWidget {
 class _ParkingUsersState extends State<ParkingUsers> {
   final List<UserDb> _placeholderUsers = [
     UserDb(login: 'jankowalski@gmail.com', balance: 10, listOfCars: {
-      'Car1': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
-      'Car2': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
-      'Car3': Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234'),
+      'Car1': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'Abcd',
+          expences: 100),
+      'Car2': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'XYZQ',
+          expences: 100),
+      'Car3': Car(
+          brand: 'Mercedes',
+          model: 'Benz',
+          registration_num: '1234',
+          expences: 100),
     }),
     UserDb(login: 'marek.walczak@gmail.com', balance: 14, listOfCars: {
-      'Car1': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
-      'Car2': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
-      'Car3': Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234'),
+      'Car1': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'Abcd',
+          expences: 100),
+      'Car2': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'XYZQ',
+          expences: 100),
+      'Car3': Car(
+          brand: 'Mercedes',
+          model: 'Benz',
+          registration_num: '1234',
+          expences: 100),
     }),
     UserDb(login: 'marzena.janos@gmail.com', balance: 20, listOfCars: {
-      'Car1': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd'),
-      'Car2': Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ'),
-      'Car3': Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234'),
+      'Car1': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'Abcd',
+          expences: 100),
+      'Car2': Car(
+          brand: 'Scoda',
+          model: 'Octavia',
+          registration_num: 'XYZQ',
+          expences: 100),
+      'Car3': Car(
+          brand: 'Mercedes',
+          model: 'Benz',
+          registration_num: '1234',
+          expences: 100),
     })
   ];
 
