@@ -33,6 +33,9 @@ class _userPageState extends State<userPage> {
     await user.addCar(car);
     _placeholderCars = user.userCars();
     //}
+    setState(() {
+      _placeholderCars = user.userCars();
+    });
   }
 
   void deleteCar(Car car) async {
