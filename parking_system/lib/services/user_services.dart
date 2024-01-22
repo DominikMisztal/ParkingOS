@@ -41,7 +41,7 @@ Future<bool?> canAddCar(String registrationPlate) async {
   return true;
 }
 
- 
+  
 
   Future<UserDb?> getUserByUID(String uID) async {
     DataSnapshot snapshot = await _userRef.child(uID).get();
@@ -67,8 +67,47 @@ Future<bool?> canAddCar(String registrationPlate) async {
       }
     }
 
-    return null; // Car with the specified registration not found
+    return null;
 }
+
+Future<List<Car>> getCars() async {
+  String? uid = await userAuth.getCurrentUserUid();
+  if (uid != null) {
+    DataSnapshot snapshot = await _userRef.child(uid).child('listOfCars').get();
+
+    if (snapshot.value != null) {
+      List<Car> cars = [];
+
+      Map<dynamic, dynamic> carsMap = snapshot.value as Map<dynamic, dynamic>;
+      carsMap.forEach((registrationNum, carData) {
+        Car car = Car.fromMap(registrationNum, carData);
+        cars.add(car);
+      });
+
+      return cars;
+    } else {
+      return [];
+    }
+  } else {
+    return [];
+  }
+}
+
+Future<double> getBalance() async {
+  String? uid = await userAuth.getCurrentUserUid();
+  if (uid != null) {
+    DataSnapshot snapshot = await _userRef.child(uid).child('balance').get();
+    if (snapshot.value != null) {
+      return (snapshot.value as num).toDouble();;
+    } else {
+      return 0;
+    }
+  } else {
+    return 0;
+  }
+}
+
+
 
   void addBalance(double totalAmount) async {
     String? uid = await userAuth.getCurrentUserUid();

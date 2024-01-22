@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/models/car_model.dart';
+import 'package:parking_system/models/layover_model.dart';
 import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/user_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class UserPaymentScreen extends StatefulWidget {
@@ -14,12 +17,25 @@ class UserPaymentScreen extends StatefulWidget {
 }
 
 class UserPaymentStateScreen extends State<UserPaymentScreen> {
+  ParkingServices parkingServices = ParkingServices();
+  UserService userService = UserService();
   List<Car> _placeholderCars = [
     Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd', expences: 0),
     Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ', expences: 0),
     Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234', expences: 0),
   ];
   Car? selectedCar;
+  
+  @override
+  void initState(){
+    super.initState();
+    addCars();
+  }
+
+  void addCars() async {
+    List<Car> cars = await userService.getCars();
+    _placeholderCars.addAll(cars);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +112,9 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                             height: 16,
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _takeTicket();
+                            },
                             child: Text('Take a ticket'),
                           ),
                         ],
@@ -113,11 +131,16 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     );
   }
 
-  bool _takeTicket() {
-    //Check if user saldo is not negative if so, return false
-
-    //Add ticket to user's account (will be visible in Ticket section)
-
+  Future<bool> _takeTicket() async{
+    double balance = await userService.getBalance();
+    if(balance < 0){
+      return false;
+    }
+    
+    //place car in db on spot and so on...
+    Car car = Car(brand: "implement", model:"adding",expences: 0, registration_num: "cars here");
+    Layover ticket = Layover(DateTime.now().toString(), "", widget.parking.name, widget.spot.number.toString(), car, "123124");
+    parkingServices.startParking(widget.spot.number, widget.parking.name, selectedCar?.registration_num, widget.spot.floor, ticket, "12345");
     return true;
   }
 }

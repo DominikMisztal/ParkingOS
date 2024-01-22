@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/myCustomTextField.dart';
 import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
+
+import 'package:parking_system/models/parkingDB.dart';
+import 'package:parking_system/models/spot.dart';
+import 'package:parking_system/services/park_services.dart';
+
 import 'package:parking_system/user_payment.dart';
 
 class Parkfinder extends StatefulWidget {
@@ -12,6 +17,7 @@ class Parkfinder extends StatefulWidget {
 }
 
 class _ParkfinderState extends State<Parkfinder> {
+  ParkingServices parkingServices = ParkingServices();
   void _navigateToPayment(Parking parking, Spot spot) {
     Navigator.push(
       context,
@@ -25,10 +31,27 @@ class _ParkfinderState extends State<Parkfinder> {
 
   late Parking currentParking;
   List<Spot> filteredSpaces = [];
+  List<ParkingDb> parkingsDb = [];
   @override
-  void initState() {
+  void initState(){
     filteredSpaces = [];
     super.initState();
+    addParkings();
+  }
+
+  void addParkings() async{
+      List<ParkingDb>? tempParkingsDb = await parkingServices.getParkings();
+      if(tempParkingsDb != null){
+        parkingsDb = tempParkingsDb;
+      }
+
+      for (var parking in parkingsDb) {
+        //todo: add tarifs
+        parkings.add(Parking(parking.address, parking.name, parking.address, parking.level, parking.height * parking.width, 1));
+        for (var spot in parking.spots) {
+          spots.add(Spot(parking.address, spot.level, spot.idNumber, spot.registrationNumber == "" ? false : true));
+        }
+      }
   }
 
   List<Parking> parkings = [

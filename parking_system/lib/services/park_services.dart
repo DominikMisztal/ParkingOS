@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:parking_system/models/layover_model.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/Spot.dart';
+import 'package:parking_system/models/spot_model.dart';
+import 'package:parking_system/services/park_history.dart';
+import 'package:parking_system/services/ticket_services.dart';
 
 class ParkingServices {
-  final DatabaseReference _dbRef =
-      FirebaseDatabase.instance.ref().child('parkings');
+  ParkHistory parkHistory = ParkHistory();
+  TicketService ticketService = TicketService();
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref().child('parkings');
 
   Future<void> addParking(ParkingDb parkingDb) async {
     Map<String, dynamic> parkingMap = parkingDb.toMap();
@@ -50,18 +55,38 @@ Future<List<ParkingDb>?> getParkings() async {
     return SpotDb.fromMap(userData);
   }
 
+  Future<void> startParking(int spotId, String parkingName, String? registration, int lvl, Layover ticket, String ticketKey) async {
+    if(registration == null) return;
+    SpotDb spot = SpotDb(registrationNumber: registration, date: "", level: lvl, idNumber: spotId);
 
-  //Future<CarHistoryDb?> getHistoryOfCar(String registration) async{
-    
-  //}
+    Map<String, dynamic> spotMap = {
+      'registrationNumber': spot.registrationNumber,
+      'date': spot.date,
+      'level': spot.level,
+      'idNumber': spot.idNumber,
+    };
 
-  // Future<SpotDb?> getRoomByNumber(int roomNum) async {
-  //   Query query = _roomRef.orderByChild('number').equalTo(roomNum);
-  //   DataSnapshot snapshot = await query.get();
-  //   if (snapshot.value == null) return null;
-  //   Map<String, dynamic> roomData = json.decode(json.encode(snapshot.value));
-  //   String roomId = roomData.keys.first;
-  //   return SpotDb.fromMap(roomData[roomId]);
-  // }
+    await _dbRef.child(parkingName).child('spots').child(spotId.toString()).set(spotMap);
+    ticketService.addTicket(ticket, ticketKey);
+  }
 
+  Future<void> moveFromParking(int spotId, String parkingName, int level, double cost) async {
+    Map<String, dynamic> spotMap = {
+      'registrationNumber': "",
+      'date': "",
+      'level': level,
+      'idNumber': spotId,
+    };
+
+    DataSnapshot dataSnapshot = await _dbRef.child(parkingName).child('spots').child(spotId.toString()).get();
+    Map<String, dynamic>? spotData = dataSnapshot.value as Map<String, dynamic>?;
+    if(spotData != null){
+      String date = spotData['date'] ?? '';
+      String registrationNumber = spotData['registrationNumber'] ?? '';
+      
+      parkHistory.addToParkingHistory(parkingName, spotId.toString(), registrationNumber, DateTime.parse(date), DateTime.now(), cost);
+      await _dbRef.child(parkingName).child('spots').child(spotId.toString()).set(spotMap);
+      ticketService.payForTicket();
+    }
+  }
 }

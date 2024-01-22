@@ -8,8 +8,9 @@ class Layover {
   final String parkingId;
   final String spotId;
   final Car car;
+  final String userId;
 
-  Layover(this.startDate, this.endDate, this.parkingId, this.spotId, this.car);
+  Layover(this.startDate, this.endDate, this.parkingId, this.spotId, this.car, this.userId);
 
   Map<String, dynamic> toMap() {
     return {
@@ -18,6 +19,7 @@ class Layover {
       'parkingId': parkingId,
       'spotId': spotId,
       'car': car,
+      'userId': userId,
     };
   }
 
@@ -28,6 +30,7 @@ class Layover {
       map['parkingId'],
       map['spotId'],
       map['car'],
+      map['userId'],
     );
   }
 }
