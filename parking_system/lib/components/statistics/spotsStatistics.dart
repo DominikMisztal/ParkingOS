@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/spotRecotd.dart';
+import 'package:parking_system/models/parkingDB.dart';
+import 'package:parking_system/services/park_services.dart';
 
 class SpotsStatisticsWidget extends StatefulWidget {
   const SpotsStatisticsWidget(
@@ -15,6 +17,7 @@ class SpotsStatisticsWidget extends StatefulWidget {
 }
 
 class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
+  ParkingServices parkingServices = ParkingServices();
   String selectedSpotId;
   String selectedParking;
   List<String> parkingNames = [];
@@ -33,36 +36,78 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   String selectedOrdering = 'Asc';
   String selectedColumn = 'Parking Name';
   String selectedColumnForFiltering = 'Parking Name';
-
+  List<ParkingDb> parkings = [];
   _SpotsStatisticsWidgetState(
       {required this.selectedParking, required this.selectedSpotId});
   var filterController = TextEditingController();
 
-  void getSpotRecords() {
-    spotRecords.add(SpotRecord(
-        spotId: '123',
-        parkingName: 'Parking 1',
-        isTaken: true,
-        totalIncome: 561,
-        dailyIncome: 64,
-        temporaryIncome: 12,
-        parkedCarRegistration: 'kl-12345',
-        parkingStart: DateTime.now()));
-    spotRecords.add(SpotRecord(
-      spotId: '124',
-      parkingName: 'Parking 1',
-      isTaken: false,
-      totalIncome: 561,
-      dailyIncome: 64,
-    ));
-    spotRecords.add(SpotRecord(
-      spotId: '24',
-      parkingName: 'Parking 1',
-      isTaken: false,
-      totalIncome: 561,
-      dailyIncome: 64,
-    ));
-  }
+  void getSpotRecords() async {
+
+    List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
+    if(fetchedParkings != null){
+          parkings.clear();
+          spotRecords.clear();
+          parkings.addAll(fetchedParkings);
+          for (var parking in parkings) {
+            
+            for(var spot in parking.spots){
+              spotRecords.add(SpotRecord(
+              spotId: spot.idNumber.toString(),
+              parkingName: parking.name,
+              isTaken: spot.date != "" ? true : false,
+              totalIncome: 0,
+              dailyIncome: 0,
+              temporaryIncome: spot.date == "" ? setTempIncome(DateTime.now(), parking.tarifs, false) : setTempIncome(DateTime.parse(spot.date), parking.tarifs, true),
+              parkedCarRegistration: spot.registrationNumber,
+              parkingStart: spot.date == "" ? null: DateTime.parse(spot.date)));
+            }
+          }
+        }
+    }
+
+double setTempIncome(DateTime start, Map<String, List<double>> tarifs, bool currentlyOn){
+  if(!currentlyOn) return 0;
+   DateTime dateTime2 = DateTime.now();
+   Duration difference = dateTime2.difference(start);
+   int hoursDifference = difference.inHours;
+  
+  int timeNow = dateTime2.hour;
+
+   MapEntry<String, List<double>> firstEntry = tarifs.entries.first;
+   MapEntry<String, List<double>> secondEntry = tarifs.entries.elementAt(1);;
+   int key1 = int.parse(firstEntry.key);
+   int key2 = int.parse(secondEntry.key);
+   if(key1 < key2){
+      if(timeNow > key1){
+        //key1 = 5, key2 = 17, timeNow = 10, timeNow = 4
+        if(hoursDifference < 2) return firstEntry.value[0];
+        else if(hoursDifference < 3) return firstEntry.value[1];
+        else return firstEntry.value[2];
+      }
+      else{
+        if(hoursDifference < 2) return secondEntry.value[0];
+        else if(hoursDifference < 3) return secondEntry.value[1];
+        else return secondEntry.value[2];
+      }
+   }
+   else{
+      //key1 = 15, key2 = 4, timeNow = 3, timeNow = 4
+      if(timeNow > key1 || timeNow < key2){
+        if(hoursDifference < 2) return firstEntry.value[0];
+        else if(hoursDifference < 3) return firstEntry.value[1];
+        else return firstEntry.value[2];
+      }
+      else{
+        if(hoursDifference < 2) return secondEntry.value[0];
+        else if(hoursDifference < 3) return secondEntry.value[1];
+        else return secondEntry.value[2];
+      }
+   }
+
+  // List<double> firstValue = firstEntry.value;
+
+  return 0;
+}
 
   @override
   Widget build(BuildContext context) {

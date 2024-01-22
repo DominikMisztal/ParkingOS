@@ -24,7 +24,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
 
   List<Layover> layovers = [
     Layover(DateTime.now().toString(), '', 'Great Parking', '23',
-        Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd1')),
+        Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd1', expences: 0)),
   ];
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;

@@ -23,11 +23,24 @@ class ParkingServices {
   Future<List<String>?> getParkingNames() async {
   DataSnapshot snapshot = await _dbRef.get();
   if (snapshot.value == null) return null;
-
   Map<String, dynamic> parkingData = json.decode(json.encode(snapshot.value));
   List<String> parkingNames = parkingData.keys.toList();
-
   return parkingNames;
+}
+
+Future<List<ParkingDb>?> getParkings() async {
+  DataSnapshot snapshot = await _dbRef.get();
+  if (snapshot.value == null) return null;
+
+  Map<String, dynamic> parkingData = json.decode(json.encode(snapshot.value));
+  List<ParkingDb> parkingList = [];
+
+  parkingData.forEach((parkingName, parkingSpotData) {
+    ParkingDb parkingSpot = ParkingDb.fromMap(parkingSpotData);
+    parkingList.add(parkingSpot);
+  });
+
+  return parkingList;
 }
 
   Future<SpotDb?> getSpotFromParking(String parkingName, int spotName) async {

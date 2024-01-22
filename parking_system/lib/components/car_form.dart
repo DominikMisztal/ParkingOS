@@ -51,6 +51,7 @@ class _CarFormState extends State<CarForm> {
               brand: _brandController.text,
               model: _modelController.text,
               registration_num: _registrationController.text,
+              expences: 0,
             );
             widget.onSubmit(newCar);
             Navigator.pop(context);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/parkingRecord.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/models/parkingDB.dart';
 
 class ParkingStatisticsWidget extends StatefulWidget {
   const ParkingStatisticsWidget({super.key, required this.selectedParking});
@@ -26,32 +28,36 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   String selectedOrdering = 'Asc';
   String selectedColumn = 'Parking Name';
   String selectedColumnForFiltering = 'Parking Name';
+  ParkingServices parkingServices = ParkingServices();
+  List<ParkingDb> parkings = [];
 
   _ParkingStatisticsWidgetState({required this.selectedParking});
   var filterController = TextEditingController();
 
-  void getParkingRecords() {
-    parkingRecords.add(ParkingRecord(
-      parkingName: 'Parking 1',
-      amountOfSpots: 100,
-      takenSpots: 50,
-      totalIncome: 500.0,
-      todayIncome: 50.0,
-    ));
-    parkingRecords.add(ParkingRecord(
-      parkingName: 'Parking 2',
-      amountOfSpots: 200,
-      takenSpots: 100,
-      totalIncome: 1000.0,
-      todayIncome: 100.0,
-    ));
-    parkingRecords.add(ParkingRecord(
-      parkingName: 'Parking 3',
-      amountOfSpots: 300,
-      takenSpots: 150,
-      totalIncome: 1500.0,
-      todayIncome: 150.0,
-    ));
+
+  void getParkingRecords() async {
+    
+
+    List<String>? fetchedParkingNames = await parkingServices.getParkingNames();
+    if(fetchedParkingNames != null){
+      parkingNames.addAll(fetchedParkingNames);
+    }
+
+    List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
+    if(fetchedParkings != null){
+      parkings.clear();
+      parkingRecords.clear();
+      parkings.addAll(fetchedParkings);
+      for (var parking in parkings) {
+        parkingRecords.add(ParkingRecord(
+        parkingName: parking.name,
+        amountOfSpots: parking.spots.length,
+        takenSpots: 50,//todo: change 50 to actual number of taken spots
+        totalIncome: parking.income,
+        todayIncome: parking.dailyIncome,
+      ));
+      }
+    }
   }
 
   @override

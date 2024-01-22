@@ -46,7 +46,8 @@ class _ParkingMakerState extends State<ParkingMaker> {
     List<SpotDb> spots = [];
     int amountOfSpots = width * height * level;
     for (int i = 0; i < amountOfSpots; i++) {
-      SpotDb spot = SpotDb(registrationNumber: "", date: "");
+      level = (i/(width * height)).toInt();
+      SpotDb spot = SpotDb(registrationNumber: "", date: "", idNumber: i, level: level );
       spots.add(spot);
     }
     Map<String, List<double>> tarifs = setTariff();
@@ -58,7 +59,9 @@ class _ParkingMakerState extends State<ParkingMaker> {
         level: level,
         address: address,
         name: name,
-        spots: spots);
+        spots: spots,
+        income: 0,
+        dailyIncome: 0,);
     _parkingServices.addParking(parking);
   }
 
