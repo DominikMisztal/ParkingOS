@@ -38,7 +38,7 @@ class _userPageState extends State<userPage> {
     _placeholderCars.remove(car);
   }
 
-  late double _totalSaldo = widget.user.balance;
+  late double _totalSaldo = user.balance;
   late UserDb user;
 
   List<Car> _placeholderCars = [
@@ -51,7 +51,11 @@ class _userPageState extends State<userPage> {
   void initState() {
     super.initState();
     user = widget.user;
-    _placeholderCars = user.userCars();
+    setBalance();
+    _placeholderCars = user.userCars();    
+  }
+  void setBalance() async{
+    _totalSaldo = await userService.getBalance();
   }
 
   @override
