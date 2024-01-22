@@ -6,6 +6,7 @@ import 'package:parking_system/parking_maker.dart';
 import 'package:parking_system/parking_live_view.dart';
 import 'package:parking_system/parking_statistics.dart';
 import 'package:parking_system/parking_summary.dart';
+import 'package:parking_system/parking_users.dart';
 
 class HomePageAdmin extends StatelessWidget {
   const HomePageAdmin({super.key, required this.email});
@@ -83,6 +84,18 @@ class HomePageAdmin extends StatelessWidget {
                   );
                 },
                 child: const Text("Parking Summary"),
+              ),
+            ),
+            Padding(padding: EdgeInsets.all(10)),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ParkingUsers()),
+                  );
+                },
+                child: const Text("Users"),
               ),
             ),
           ],
