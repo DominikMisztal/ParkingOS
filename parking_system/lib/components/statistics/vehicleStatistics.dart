@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/vehicleRecord.dart';
+import 'package:parking_system/services/park_history.dart';
+import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/models/car_model.dart';
 
 class VehicleStatisticsWidget extends StatefulWidget {
   const VehicleStatisticsWidget({super.key, required this.selectedParking});
@@ -12,6 +15,8 @@ class VehicleStatisticsWidget extends StatefulWidget {
 }
 
 class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
+  ParkHistory parkHistory = ParkHistory();
+  UserService userService = UserService();
   String selectedParking;
   List<String> parkingNames = [];
   List<VehicleRecord> vehicleRecords = [];
@@ -20,7 +25,7 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
     'Vehicle Brand',
     'Is Parked',
     'Total Payments',
-    'Parking Name',
+    'Model',
     'Spot ID',
     'Parking Since'
   ];
@@ -32,12 +37,25 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   _VehicleStatisticsWidgetState({required this.selectedParking});
   var filterController = TextEditingController();
 
-  void getParkingRecords() {
-    vehicleRecords.add(VehicleRecord(
-        vehicleRegistration: 'kl-12345',
-        vehicleBrand: 'BMW',
+  void getParkingRecords() async {
+    List<String>? carRegistrations = await parkHistory.getAllRegistrations();
+    if(carRegistrations == null) return;
+    Set<String> uniqueSet = Set<String>.from(carRegistrations);
+    carRegistrations = uniqueSet.toList();
+    print(carRegistrations);
+    
+    for (var registration in carRegistrations) {
+      Car? car = await userService.getCarByRegistration(registration);
+      if(car == null) continue;
+        vehicleRecords.add(VehicleRecord(
+        vehicleRegistration: car.registration_num,
+        vehicleBrand: car.brand,
         isParked: false,
-        totalExpenses: 156));
+        totalExpenses: car.expences,
+        model: car.model,
+        ));
+    }
+
   }
 
   @override
@@ -239,9 +257,9 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
             DataCell(Text(record.isParked.toString(),
                 style: TextStyle(color: Colors.white))),
             DataCell(Text(
-                record.parkingName == null
+                record.model == null
                     ? 'N/A'
-                    : record.parkingName.toString(),
+                    : record.model.toString(),
                 style: TextStyle(color: Colors.white))),
             DataCell(Text(
                 record.spotId == null ? 'N/A' : record.spotId.toString(),

@@ -2,7 +2,7 @@ class VehicleRecord {
   String vehicleRegistration;
   String vehicleBrand;
   bool isParked;
-  String? parkingName;
+  String? model;
   String? spotId;
   DateTime? parkingSince;
   double totalExpenses;
@@ -12,7 +12,7 @@ class VehicleRecord {
       required this.vehicleBrand,
       required this.isParked,
       required this.totalExpenses,
-      this.parkingName,
+      this.model,
       this.spotId,
       this.parkingSince}) {}
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/parkingHistoryRecord.dart';
+import 'package:parking_system/services/park_history.dart';
 
 class HistoryStatisticsWidget extends StatefulWidget {
   const HistoryStatisticsWidget({super.key, required this.selectedParking});
@@ -12,6 +13,7 @@ class HistoryStatisticsWidget extends StatefulWidget {
 }
 
 class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
+  ParkHistory parkHistory = ParkHistory();
   String selectedParking;
   List<String> parkingNames = [];
   List<ParkingHistoryRecord> historyRecords = [];
@@ -32,28 +34,18 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
   _HistoryStatisticsWidgetState({required this.selectedParking});
   var filterController = TextEditingController();
 
-  void getHistoryRecords() {
+  void getHistoryRecords() async {
+
+    List<ParkingHistoryRecord>? temp = await parkHistory.getParkingHistoryData();
+    if(temp != null){
+      historyRecords = temp;
+      return;
+    }
     historyRecords.add(ParkingHistoryRecord(
         vehicleRegistration: 'kl-12345',
         vehicleBrand: 'Mazda',
         parkingName: 'Parking 1',
         spotId: '123',
-        parkingStart: DateTime.now(),
-        parkingEnd: DateTime.now(),
-        cost: 125.25));
-    historyRecords.add(ParkingHistoryRecord(
-        vehicleRegistration: 'kl-12345',
-        vehicleBrand: 'Mazda',
-        parkingName: 'Parking 1',
-        spotId: '124',
-        parkingStart: DateTime.now(),
-        parkingEnd: DateTime.now(),
-        cost: 125.25));
-    historyRecords.add(ParkingHistoryRecord(
-        vehicleRegistration: 'kl-12345',
-        vehicleBrand: 'Mazda',
-        parkingName: 'Parking 1',
-        spotId: '149',
         parkingStart: DateTime.now(),
         parkingEnd: DateTime.now(),
         cost: 125.25));

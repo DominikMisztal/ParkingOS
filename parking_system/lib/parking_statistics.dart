@@ -70,7 +70,7 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
     if(fetchedParkingNames != null){
       parkingNames.addAll(fetchedParkingNames);
     }
-    print(parkingNames);
+   
     for (var i = 0; i < 100; i++) {
       spotIds.add(i.toString());
       cars.add(i.toString());

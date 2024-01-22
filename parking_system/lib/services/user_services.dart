@@ -51,6 +51,25 @@ Future<bool?> canAddCar(String registrationPlate) async {
     return UserDb.fromMap(userData);
   }
 
+  Future<Car?> getCarByRegistration(String registrationNum) async {
+    DataSnapshot usersSnapshot = await _userRef.get();
+    Map<dynamic, dynamic>? usersData = usersSnapshot.value as Map<String, dynamic>?;
+
+    if (usersData != null) {
+      for (var userDataKey in usersData.keys) {
+        Map<dynamic, dynamic>? userData = usersData[userDataKey];
+        if (userData != null && userData['listOfCars'] != null) {
+          Map<dynamic, dynamic> listOfCars = userData['listOfCars'];
+          if (listOfCars.containsKey(registrationNum)) {
+            return Car.fromMap(registrationNum,listOfCars[registrationNum]);
+          }
+        }
+      }
+    }
+
+    return null; // Car with the specified registration not found
+}
+
   void addBalance(double totalAmount) async {
     String? uid = await userAuth.getCurrentUserUid();
     if(uid != null){
