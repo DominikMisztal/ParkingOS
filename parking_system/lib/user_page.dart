@@ -69,9 +69,8 @@ class _userPageState extends State<userPage> {
   }
 
   void deleteItem(int index) {
-    debugPrint('Delete');
     setState(() {
-      _placeholderCars.removeAt(index);
+      deleteCar(_placeholderCars[index]);
     });
   }
 
@@ -148,6 +147,7 @@ class _userPageState extends State<userPage> {
                   child: SizedBox(
                     height: 300,
                     child: ListView.builder(
+                      scrollDirection: Axis.vertical,
                       itemCount: _placeholderCars.length,
                       itemBuilder: (context, index) {
                         return carCard(
