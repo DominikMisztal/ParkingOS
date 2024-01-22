@@ -16,6 +16,31 @@ class UserService {
     await _userRef.child(uID).set(userMap);
   }
 
+Future<bool?> canAddCar(String registrationPlate) async {
+  DatabaseReference usersRef = _userRef;
+
+  DatabaseEvent usersEvent = await usersRef.once();
+
+  if (usersEvent.snapshot.value != null) {
+    if (usersEvent.snapshot.value is Map<String, dynamic>) {
+      Map<String, dynamic> users = usersEvent.snapshot.value as Map<String, dynamic>;
+      for (String userId in users.keys) {
+        DatabaseReference userCarsRef = usersRef.child(userId).child('listOfCars');
+        DatabaseEvent userCarsEvent = await userCarsRef.once();
+        if (userCarsEvent.snapshot.value is Map<String, dynamic>) {
+          Map<String, dynamic> userCars = userCarsEvent.snapshot.value as Map<String, dynamic>;
+          if (userCars.containsValue(registrationPlate)) {
+            print(registrationPlate);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  print('returned true');
+  return true;
+}
+
  
 
   Future<UserDb?> getUserByUID(String uID) async {
@@ -34,5 +59,21 @@ class UserService {
     });
     }
   }
+
+  Future<void> updateCars(Map<String, Car> cars) async {
+  String? uid = await userAuth.getCurrentUserUid();
+  if (uid != null) {
+    Map<String, dynamic> carsMap = {};
+    cars.forEach((registrationNum, car) {
+      carsMap[registrationNum] = {
+        'brand': car.brand,
+        'model': car.model,
+      };
+    });
+
+    Map<String, dynamic> updateData = {'listOfCars': carsMap};
+    await _userRef.child(uid).update(updateData);
+  }
+}
 
 }

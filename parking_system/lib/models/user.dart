@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:parking_system/models/car_model.dart';
+import 'package:parking_system/services/user_services.dart';
 
 @immutable
 class UserDb {
@@ -12,6 +13,28 @@ class UserDb {
   final String login;
   final double balance;
   final Map<String, Car> listOfCars;
+
+  Future<Map<String, Car>> addCar(Car car) async {
+
+    UserService userService = UserService();
+    MapEntry<String, Car> entry = MapEntry(car.registration_num, car);
+    listOfCars.addEntries([entry]);
+    await userService.updateCars(listOfCars);
+    
+    return listOfCars;
+  }
+
+  Future<Map<String, Car>> deleteCar(String plate) async {
+    
+    UserService userService = UserService();
+    
+    listOfCars.removeWhere((key, value) => value.registration_num == plate);
+
+    await userService.updateCars(listOfCars);
+    
+    return listOfCars;
+  }
+
 
   Map<String, dynamic> toMap() {
     return {
@@ -34,5 +57,4 @@ class UserDb {
     List<Car> cars  = listOfCars.values.toList();
     return cars;
   }
-
 }

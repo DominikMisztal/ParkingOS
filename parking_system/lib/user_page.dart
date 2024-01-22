@@ -18,6 +18,26 @@ class userPage extends StatefulWidget {
 class _userPageState extends State<userPage> {
   UserService userService = UserService();
   SaldoChargerModel scm = SaldoChargerModel();
+
+  // bool canAddCar(registrationPlate) async{
+  //   if(userService.canAddCar(registrationPlate)){
+  //     return true;
+  //   }
+  //   return false;
+  // }
+  void getCars(Car car) async {
+    bool? checkRegistration = await userService.canAddCar(car.registration_num);
+    if(checkRegistration == null) return;
+    //if(checkRegistration){
+      await user.addCar(car);
+      _placeholderCars = user.userCars();
+    //}
+  }
+  void deleteCar(Car car) async{
+    await user.deleteCar(car.registration_num);
+    _placeholderCars = user.userCars();
+  }
+
   late double _totalSaldo = widget.user.balance;
   late UserDb user;
 
@@ -119,7 +139,14 @@ class _userPageState extends State<userPage> {
                               showToast('Invalid registration format');
                               return;
                             }
-                            _placeholderCars.add(car);
+                            // bool canAddCar = await userService.canAddCar(car.registration_num);
+                            // if(){
+                            getCars(car);
+                            //deleteCar(car);                        
+                              //MapEntry<String, Car> entry = MapEntry(car.registration_num, car);
+                              //user.listOfCars.addEntries(entry);
+                              //_placeholderCars.add(car);
+                            //}
                           });
                         },
                       ),
