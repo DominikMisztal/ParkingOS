@@ -12,7 +12,6 @@ enum AuthStatus {
 }
 
 class UserAuth {
-
   AuthStatus status = AuthStatus.successful;
 
   Future<UserCredential?> signIn(String login, String password) async {
@@ -42,14 +41,32 @@ class UserAuth {
   }
 
   Future<String?> getCurrentUserUid() async {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = auth.currentUser;
-  return user?.uid;
-}
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    return user?.uid;
+  }
+
+  // Change password
+  Future<void> changePassword(
+      String email, String oldPassword, String newPassword) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+
+    try {
+      // Reauthenticate user with old password
+      AuthCredential credential =
+          EmailAuthProvider.credential(email: email, password: oldPassword);
+      await user?.reauthenticateWithCredential(credential);
+      await user?.updatePassword(newPassword);
+    } catch (e) {
+      // Handle error (e.g., weak password, wrong password)
+      showToast(e.toString());
+    }
+  }
 }
 
-class AuthException{
-  static handleAuthException(FirebaseAuthException e){
+class AuthException {
+  static handleAuthException(FirebaseAuthException e) {
     AuthStatus status;
     switch (e.code) {
       case "invalid-email":

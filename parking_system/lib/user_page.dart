@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/car_form.dart';
 import 'package:parking_system/components/edit_email_dialog.dart';
+import 'package:parking_system/components/edit_password_dialog.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
@@ -114,23 +115,22 @@ class _userPageState extends State<userPage> {
                 ),
                 const SizedBox(height: 8),
                 TextButton(
-                  child: const Text('Edit user Data',
-                      style: TextStyle(decoration: TextDecoration.underline)),
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => ChangeEmailDialog(
-                        currentEmail: user.login,
+                      builder: (context) => ChangePasswordDialog(
+                        user: widget.user,
                         onChanged: (newEmail) {
-                          print('New email: $newEmail');
-                          setState(() {
-                            //user.login = newEmail;
-                          });
-                          //Todo Zaktualizować newEmail w database
+                          showToast('Password actualized');
                         },
                       ),
                     );
                   },
+                  child: const Text(
+                    'Edit Password',
+                    style: TextStyle(
+                        fontSize: 16, decoration: TextDecoration.underline),
+                  ),
                 ),
                 const SizedBox(height: 32),
                 Saldo(
