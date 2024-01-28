@@ -212,17 +212,16 @@ class CarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Todo: Ask about how to do it
     void goToStatistics() {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => ParkingStatistics(
-      //           category: 'Parking Spots',
-      //           parkingName: ParkingLiveView.parkingName,
-      //           spotId: currentlySelectedSpot.toString(),
-      //           vehicleReg: '')),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ParkingStatistics(
+                category: 'Vehicles',
+                parkingName: '',
+                spotId: '',
+                vehicleReg: car.registration_num)),
+      );
     }
 
     return Card(
