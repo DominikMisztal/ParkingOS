@@ -131,7 +131,7 @@ class UserTile extends StatefulWidget {
 class _UserTileState extends State<UserTile> {
   late Color tileColor;
   late String blockText;
-  void changeTileColor() {
+  void changeOnBlocked() {
     setState(() {
       blockText = widget.user.blocked == true ? 'Unblock user' : 'Block user';
       tileColor = widget.user.blocked == true ? Colors.grey : Colors.white;
@@ -184,7 +184,7 @@ class _UserTileState extends State<UserTile> {
                   IconButton(
                     onPressed: () {
                       widget.onBlock();
-                      changeTileColor();
+                      changeOnBlocked();
                     },
                     icon: Icon(
                       Icons.block,
