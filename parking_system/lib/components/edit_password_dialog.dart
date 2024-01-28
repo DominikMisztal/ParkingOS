@@ -40,18 +40,21 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
           const SizedBox(height: 10),
           TextField(
             style: const TextStyle(color: Colors.white60),
+            obscureText: true,
             controller: _oldPasswordController,
             decoration: const InputDecoration(labelText: 'Old Password'),
           ),
           const SizedBox(height: 10),
           TextField(
             style: const TextStyle(color: Colors.white60),
+            obscureText: true,
             controller: _newPasswordController,
             decoration: const InputDecoration(labelText: 'New password'),
           ),
           const SizedBox(height: 10),
           TextField(
             style: const TextStyle(color: Colors.white60),
+            obscureText: true,
             controller: _confirmNewPasswordController,
             decoration:
                 const InputDecoration(labelText: 'Confirm new password'),
