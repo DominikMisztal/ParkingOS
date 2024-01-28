@@ -19,22 +19,18 @@ class UserPaymentScreen extends StatefulWidget {
 class UserPaymentStateScreen extends State<UserPaymentScreen> {
   ParkingServices parkingServices = ParkingServices();
   UserService userService = UserService();
-  List<Car> _placeholderCars = [
-    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd', expences: 0),
-    Car(brand: 'Scoda', model: 'Octavia', registration_num: 'XYZQ', expences: 0),
-    Car(brand: 'Mercedes', model: 'Benz', registration_num: '1234', expences: 0),
-  ];
+  List<Car> _placeholderCars = [];
   Car? selectedCar;
-  
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    addCars();
   }
 
-  void addCars() async {
+  Future<List<Car>> fetchData() async {
     List<Car> cars = await userService.getCars();
-    _placeholderCars.addAll(cars);
+    _placeholderCars = cars;
+    return cars;
   }
 
   @override
@@ -67,29 +63,49 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
               const Text('Select a Car:',
                   style: TextStyle(fontSize: 32, color: Colors.white60)),
               const SizedBox(height: 16),
-              DropdownMenu<Car>(
-                textStyle: TextStyle(color: Colors.white60),
-                //initialSelection: _placeholderCars.first,
-                controller: carController,
-                requestFocusOnTap: true,
-                label: Text('Your Car: $selectedCar'),
-                onSelected: (Car? car) {
-                  selectedCar = car;
-                  setState(() {
-                    selectedCar = car;
-                  });
+              FutureBuilder(
+                future: fetchData(),
+                builder: (context, AsyncSnapshot<List<Car>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Display a loading screen while waiting for data
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    // Display an error message if data loading fails
+                    return Center(
+                      child: Text('Error loading data'),
+                    );
+                  } else {
+                    // Display your actual content when data is loaded
+                    List<Car> data = snapshot.data!;
+                    return DropdownMenu<Car>(
+                      textStyle: TextStyle(color: Colors.white60),
+                      //initialSelection: _placeholderCars.first,
+                      controller: carController,
+                      requestFocusOnTap: true,
+                      label: Text('Your Car: $selectedCar'),
+                      onSelected: (Car? car) {
+                        selectedCar = car;
+                        setState(() {
+                          selectedCar = car;
+                        });
+                      },
+                      dropdownMenuEntries: _placeholderCars
+                          .map<DropdownMenuEntry<Car>>((Car car) {
+                        return DropdownMenuEntry<Car>(
+                          value: car,
+                          label:
+                              '${car.brand} ${car.model} ${car.registration_num}',
+                          style: MenuItemButton.styleFrom(
+                            minimumSize: Size(width / 2,
+                                30), //Todo można poprawić responsywność
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }
                 },
-                dropdownMenuEntries:
-                    _placeholderCars.map<DropdownMenuEntry<Car>>((Car car) {
-                  return DropdownMenuEntry<Car>(
-                    value: car,
-                    label: '${car.brand} ${car.model} ${car.registration_num}',
-                    style: MenuItemButton.styleFrom(
-                      minimumSize: Size(
-                          width / 2, 30), //Todo można poprawić responsywność
-                    ),
-                  );
-                }).toList(),
               ),
               Expanded(
                 child: Column(
@@ -131,16 +147,22 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     );
   }
 
-  Future<bool> _takeTicket() async{
+  Future<bool> _takeTicket() async {
     double balance = await userService.getBalance();
-    if(balance < 0){
+    if (balance < 0) {
       return false;
     }
-    
+
     //place car in db on spot and so on...
-    Car car = Car(brand: "implement", model:"adding",expences: 0, registration_num: "cars here");
-    Layover ticket = Layover(DateTime.now().toString(), "", widget.parking.name, widget.spot.number.toString(), car, "123124");
-    parkingServices.startParking(widget.spot.number, widget.parking.name, selectedCar?.registration_num, widget.spot.floor, ticket, "12345");
+    Car car = Car(
+        brand: "implement",
+        model: "adding",
+        expences: 0,
+        registration_num: "cars here");
+    Layover ticket = Layover(DateTime.now().toString(), "", widget.parking.name,
+        widget.spot.number.toString(), car, "123124");
+    parkingServices.startParking(widget.spot.number, widget.parking.name,
+        selectedCar?.registration_num, widget.spot.floor, ticket, "12345");
     return true;
   }
 }
