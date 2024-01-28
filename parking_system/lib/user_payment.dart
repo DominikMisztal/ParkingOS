@@ -5,6 +5,7 @@ import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
 import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/utils/Utils.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class UserPaymentScreen extends StatefulWidget {
@@ -150,6 +151,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
   Future<bool> _takeTicket() async {
     double balance = await userService.getBalance();
     if (balance < 0) {
+      showToast('Don\'t have enought funds, please charge your account');
       return false;
     }
 
