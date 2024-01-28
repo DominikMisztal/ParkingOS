@@ -2,11 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/utils/Utils.dart';
 
 class TarrifStiffDataTable extends StatefulWidget {
+  final Function(Map<String, List<double>>) onValueChanged;
+  final Map<String, List<double>> tariffsMap;
+  TarrifStiffDataTable(
+      {required this.onValueChanged, required this.tariffsMap});
   @override
-  _TarrifDataTableState createState() => _TarrifDataTableState();
+  _TarrifDataTableState createState() => _TarrifDataTableState(
+      onValueChanged: this.onValueChanged, tariffsMap: this.tariffsMap);
 }
 
 class _TarrifDataTableState extends State<TarrifStiffDataTable> {
+  final Function(Map<String, List<double>>) onValueChanged;
+  bool controllersUpdated = false;
+  Map<String, List<double>> tariffsMap = {
+    '0': [0, 0, 0],
+    '12': [0, 0, 0]
+  };
+  _TarrifDataTableState(
+      {required this.onValueChanged, required this.tariffsMap});
   late List<List<TextEditingController>>
       controllersList; //I have no Idea, jak my to będziemy trzymać w bazie
 
@@ -22,10 +35,65 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
         (colIndex) => TextEditingController(),
       ),
     );
+    for (int i = 0; i < controllersList.length; i++) {
+      for (int j = 0; j < controllersList[i].length; j++) {
+        controllersList[i][j].addListener(() {
+          listener();
+        });
+      }
+    }
+  }
+
+  void listener() {
+    if (controllersUpdated) {
+      updateTariffsMap();
+      onValueChanged(tariffsMap);
+    }
+  }
+
+  void updateTariffsMap() {
+    Map<String, List<double>> temp;
+    // String tariff1Time = controllersList[0][1].text;
+    // String tariff2Time = controllersList[0][2].text;
+    // UPDATE TIME SELECTION
+    String tariff1Time = '8';
+    String tariff2Time = '16';
+    double tariff1_1 = double.parse(
+        controllersList[0][1].text.isEmpty ? '0' : controllersList[0][1].text);
+    double tariff1_2 = double.parse(
+        controllersList[1][1].text.isEmpty ? '0' : controllersList[1][1].text);
+    double tariff1_3 = double.parse(
+        controllersList[2][1].text.isEmpty ? '0' : controllersList[2][1].text);
+    double tariff2_1 = double.parse(
+        controllersList[0][2].text.isEmpty ? '0' : controllersList[0][2].text);
+    double tariff2_2 = double.parse(
+        controllersList[1][2].text.isEmpty ? '0' : controllersList[1][2].text);
+    double tariff2_3 = double.parse(
+        controllersList[2][2].text.isEmpty ? '0' : controllersList[2][2].text);
+    temp = {
+      tariff1Time: [tariff1_1, tariff1_2, tariff1_3],
+      tariff2Time: [tariff2_1, tariff2_2, tariff2_3]
+    };
+    tariffsMap = temp;
+  }
+
+  void updateControllers() {
+    String key1 = tariffsMap.keys.elementAt(0);
+    String key2 = tariffsMap.keys.elementAt(1);
+    List<double>? tariffs1Values = tariffsMap[key1];
+    List<double>? tariffs2Values = tariffsMap[key2];
+    controllersList[0][1].text = tariffs1Values![0].toString();
+    controllersList[1][1].text = tariffs1Values[0].toString();
+    controllersList[2][1].text = tariffs1Values[0].toString();
+    controllersList[0][2].text = tariffs2Values![0].toString();
+    controllersList[1][2].text = tariffs2Values[0].toString();
+    controllersList[2][2].text = tariffs2Values[0].toString();
   }
 
   @override
   Widget build(BuildContext context) {
+    updateControllers();
+    controllersUpdated = true;
     return Scaffold(
       appBar: AppBar(
         title: const Text(

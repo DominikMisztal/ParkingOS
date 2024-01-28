@@ -42,12 +42,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const Login(title: 'Parking OS login'),
-      home: const ParkingStatistics(
-        category: 'Parking Spots',
-        parkingName: 'Parking 1',
-        spotId: '0',
-        vehicleReg: '',
-      ),
+      home: const ParkingMaker(),
     );
   }
 }
