@@ -69,9 +69,10 @@ class _userPageState extends State<userPage> {
     super.initState();
     user = widget.user;
     setBalance();
-    _placeholderCars = user.userCars();    
+    _placeholderCars = user.userCars();
   }
-  void setBalance() async{
+
+  void setBalance() async {
     _totalSaldo = await userService.getBalance();
   }
 
@@ -132,7 +133,11 @@ class _userPageState extends State<userPage> {
                   },
                 ),
                 const SizedBox(height: 32),
-                Saldo(saldo: _totalSaldo, scm: scm),
+                Saldo(
+                  saldo: _totalSaldo,
+                  scm: scm,
+                  user: this.user,
+                ),
               ],
             )),
         Container(

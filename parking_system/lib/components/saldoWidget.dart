@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/services/user_auth.dart';
 import 'package:parking_system/services/user_services.dart';
 
+import '../models/user.dart';
+
 class Saldo extends StatefulWidget {
   final double saldo;
   final SaldoChargerModel scm;
-  const Saldo({super.key, required this.saldo, required this.scm});
+  final UserDb user;
+  const Saldo(
+      {super.key, required this.saldo, required this.scm, required this.user});
 
   @override
-  State<Saldo> createState() => _SaldoState();
+  State<Saldo> createState() => _SaldoState(user: this.user);
 }
 
 class _SaldoState extends State<Saldo> {
-UserService userService = UserService();
+  final UserDb user;
+
+  _SaldoState({required this.user});
+  UserService userService = UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +44,7 @@ UserService userService = UserService();
                 builder: (BuildContext context, Widget? child) {
                   _ssaldo += widget.scm.charge;
                   userService.addBalance(_ssaldo);
+                  user.addBalance(widget.scm.charge);
                   return Text(
                     '${_ssaldo}',
                     style: const TextStyle(
@@ -125,7 +133,6 @@ class _ChargeDialogState extends State<ChargeDialog> {
 }
 
 class SaldoChargerModel with ChangeNotifier {
-  
   UserAuth userAuth = UserAuth();
   double _charge = 0;
   double get charge => _charge;
