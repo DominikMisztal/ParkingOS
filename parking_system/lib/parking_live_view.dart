@@ -20,10 +20,18 @@ class ParkingLiveView extends StatefulWidget {
 }
 
 class _ParkingLiveViewState extends State<ParkingLiveView> {
+  List<String> parkingNames = ['Parking 1', 'Parking 2'];
   int currentlySelectedSpot = -1;
+  late String selectedParking;
+
+  void loadParking() {
+    //connect to DB
+  }
 
   @override
   Widget build(BuildContext context) {
+    loadParking();
+    selectedParking = parkingNames[0];
     TappedTile tappedt = TappedTile();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -83,8 +91,23 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                       ),
                                     ),
                                   ),
-                                  CustomFormattedText(
-                                      text: ParkingLiveView.parkingName),
+                                  DropdownButton<String>(
+                                    value: selectedParking,
+                                    style: TextStyle(color: Colors.white),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedParking = newValue!;
+                                      });
+                                    },
+                                    items: parkingNames
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
                                   Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 16),

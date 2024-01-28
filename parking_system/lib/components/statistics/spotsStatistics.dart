@@ -42,72 +42,85 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   var filterController = TextEditingController();
 
   void getSpotRecords() async {
-
     List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
-    if(fetchedParkings != null){
-          parkings.clear();
-          spotRecords.clear();
-          parkings.addAll(fetchedParkings);
-          for (var parking in parkings) {
-            
-            for(var spot in parking.spots){
-              spotRecords.add(SpotRecord(
+    if (fetchedParkings != null) {
+      parkings.clear();
+      spotRecords.clear();
+      parkings.addAll(fetchedParkings);
+      for (var parking in parkings) {
+        for (var spot in parking.spots) {
+          spotRecords.add(SpotRecord(
               spotId: spot.idNumber.toString(),
               parkingName: parking.name,
               isTaken: spot.date != "" ? true : false,
               totalIncome: 0,
               dailyIncome: 0,
-              temporaryIncome: spot.date == "" ? setTempIncome(DateTime.now(), parking.tarifs, false) : setTempIncome(DateTime.parse(spot.date), parking.tarifs, true),
+              temporaryIncome: spot.date == ""
+                  ? setTempIncome(DateTime.now(), parking.tarifs, false)
+                  : setTempIncome(
+                      DateTime.parse(spot.date), parking.tarifs, true),
               parkedCarRegistration: spot.registrationNumber,
-              parkingStart: spot.date == "" ? null: DateTime.parse(spot.date)));
-            }
-          }
+              parkingStart:
+                  spot.date == "" ? null : DateTime.parse(spot.date)));
         }
+      }
+    }
+  }
+
+  double setTempIncome(
+      DateTime start, Map<String, List<double>> tarifs, bool currentlyOn) {
+    if (!currentlyOn) return 0;
+    DateTime dateTime2 = DateTime.now();
+    Duration difference = dateTime2.difference(start);
+    int hoursDifference = difference.inHours;
+
+    int timeNow = dateTime2.hour;
+
+    MapEntry<String, List<double>> firstEntry = tarifs.entries.first;
+    MapEntry<String, List<double>> secondEntry = tarifs.entries.elementAt(1);
+    ;
+    int key1 = int.parse(firstEntry.key);
+    int key2 = int.parse(secondEntry.key);
+    if (key1 < key2) {
+      if (timeNow > key1) {
+        //key1 = 5, key2 = 17, timeNow = 10, timeNow = 4
+        if (hoursDifference < 2)
+          return firstEntry.value[0];
+        else if (hoursDifference < 3)
+          return firstEntry.value[1];
+        else
+          return firstEntry.value[2];
+      } else {
+        if (hoursDifference < 2)
+          return secondEntry.value[0];
+        else if (hoursDifference < 3)
+          return secondEntry.value[1];
+        else
+          return secondEntry.value[2];
+      }
+    } else {
+      //key1 = 15, key2 = 4, timeNow = 3, timeNow = 4
+      if (timeNow > key1 || timeNow < key2) {
+        if (hoursDifference < 2)
+          return firstEntry.value[0];
+        else if (hoursDifference < 3)
+          return firstEntry.value[1];
+        else
+          return firstEntry.value[2];
+      } else {
+        if (hoursDifference < 2)
+          return secondEntry.value[0];
+        else if (hoursDifference < 3)
+          return secondEntry.value[1];
+        else
+          return secondEntry.value[2];
+      }
     }
 
-double setTempIncome(DateTime start, Map<String, List<double>> tarifs, bool currentlyOn){
-  if(!currentlyOn) return 0;
-   DateTime dateTime2 = DateTime.now();
-   Duration difference = dateTime2.difference(start);
-   int hoursDifference = difference.inHours;
-  
-  int timeNow = dateTime2.hour;
+    // List<double> firstValue = firstEntry.value;
 
-   MapEntry<String, List<double>> firstEntry = tarifs.entries.first;
-   MapEntry<String, List<double>> secondEntry = tarifs.entries.elementAt(1);;
-   int key1 = int.parse(firstEntry.key);
-   int key2 = int.parse(secondEntry.key);
-   if(key1 < key2){
-      if(timeNow > key1){
-        //key1 = 5, key2 = 17, timeNow = 10, timeNow = 4
-        if(hoursDifference < 2) return firstEntry.value[0];
-        else if(hoursDifference < 3) return firstEntry.value[1];
-        else return firstEntry.value[2];
-      }
-      else{
-        if(hoursDifference < 2) return secondEntry.value[0];
-        else if(hoursDifference < 3) return secondEntry.value[1];
-        else return secondEntry.value[2];
-      }
-   }
-   else{
-      //key1 = 15, key2 = 4, timeNow = 3, timeNow = 4
-      if(timeNow > key1 || timeNow < key2){
-        if(hoursDifference < 2) return firstEntry.value[0];
-        else if(hoursDifference < 3) return firstEntry.value[1];
-        else return firstEntry.value[2];
-      }
-      else{
-        if(hoursDifference < 2) return secondEntry.value[0];
-        else if(hoursDifference < 3) return secondEntry.value[1];
-        else return secondEntry.value[2];
-      }
-   }
-
-  // List<double> firstValue = firstEntry.value;
-
-  return 0;
-}
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -277,64 +290,75 @@ double setTempIncome(DateTime start, Map<String, List<double>> tarifs, bool curr
         ],
       ),
       Padding(padding: EdgeInsets.all(10)),
-      DataTable(
-        columns: [
-          DataColumn(
-              label: Text(
-            columnNames[0],
-            style: TextStyle(color: Colors.white),
-          )),
-          DataColumn(
-              label:
-                  Text(columnNames[1], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[2], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[3], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[4], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[5], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[6], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[7], style: TextStyle(color: Colors.white))),
-        ],
-        rows: spotRecords.map((SpotRecord record) {
-          return DataRow(cells: [
-            DataCell(Text(record.parkingName,
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.spotId.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.totalIncome.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.dailyIncome.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.isTaken.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.parkedCarRegistration == null
-                    ? 'N/A'
-                    : record.parkedCarRegistration.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.temporaryIncome == null
-                    ? 'N/A'
-                    : record.temporaryIncome.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.parkingStart == null
-                    ? 'N/A'
-                    : record.parkingStart.toString(),
-                style: TextStyle(color: Colors.white)))
-          ]);
-        }).toList(),
+      SizedBox(
+        height: 500,
+        width: 1400,
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      columnNames[0],
+                      style: TextStyle(color: Colors.white),
+                    )),
+                    DataColumn(
+                        label: Text(columnNames[1],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[2],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[3],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[4],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[5],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[6],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[7],
+                            style: TextStyle(color: Colors.white))),
+                  ],
+                  rows: spotRecords.map((SpotRecord record) {
+                    return DataRow(cells: [
+                      DataCell(Text(record.parkingName,
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.spotId.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.totalIncome.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.dailyIncome.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.isTaken.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.parkedCarRegistration == null
+                              ? 'N/A'
+                              : record.parkedCarRegistration.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.temporaryIncome == null
+                              ? 'N/A'
+                              : record.temporaryIncome.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.parkingStart == null
+                              ? 'N/A'
+                              : record.parkingStart.toString(),
+                          style: TextStyle(color: Colors.white)))
+                    ]);
+                  }).toList(),
+                ),
+              );
+            }),
       )
     ]);
   }

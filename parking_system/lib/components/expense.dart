@@ -8,6 +8,6 @@ class Expense {
 
   @override
   String toString() {
-    return 'Type: $type; Amount: ${amount.toStringAsFixed(2)}';
+    return 'Type: $type; Amount: ${amount.toStringAsFixed(2)}; Cyclical: ${cyclical ? 'Yes' : 'No'}';
   }
 }

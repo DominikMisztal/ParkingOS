@@ -34,28 +34,25 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   _ParkingStatisticsWidgetState({required this.selectedParking});
   var filterController = TextEditingController();
 
-
   void getParkingRecords() async {
-    
-
     List<String>? fetchedParkingNames = await parkingServices.getParkingNames();
-    if(fetchedParkingNames != null){
+    if (fetchedParkingNames != null) {
       parkingNames.addAll(fetchedParkingNames);
     }
 
     List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
-    if(fetchedParkings != null){
+    if (fetchedParkings != null) {
       parkings.clear();
       parkingRecords.clear();
       parkings.addAll(fetchedParkings);
       for (var parking in parkings) {
         parkingRecords.add(ParkingRecord(
-        parkingName: parking.name,
-        amountOfSpots: parking.spots.length,
-        takenSpots: 50,//todo: change 50 to actual number of taken spots
-        totalIncome: parking.income,
-        todayIncome: parking.dailyIncome,
-      ));
+          parkingName: parking.name,
+          amountOfSpots: parking.spots.length,
+          takenSpots: 50, //todo: change 50 to actual number of taken spots
+          totalIncome: parking.income,
+          todayIncome: parking.dailyIncome,
+        ));
       }
     }
   }
@@ -222,40 +219,51 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
         ],
       ),
       Padding(padding: EdgeInsets.all(10)),
-      DataTable(
-        columns: [
-          DataColumn(
-              label: Text(
-            'Parking Name',
-            style: TextStyle(color: Colors.white),
-          )),
-          DataColumn(
-              label: Text('Amount of Spots',
-                  style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text('Taken Spots', style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text('Total Income', style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label: Text('Today\'s Income',
-                  style: TextStyle(color: Colors.white))),
-        ],
-        rows: parkingRecords.map((ParkingRecord record) {
-          return DataRow(cells: [
-            DataCell(Text(record.parkingName,
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.amountOfSpots.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.takenSpots.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.totalIncome.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.todayIncome.toString(),
-                style: TextStyle(color: Colors.white))),
-          ]);
-        }).toList(),
+      SizedBox(
+        height: 500,
+        width: 1400,
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      'Parking Name',
+                      style: TextStyle(color: Colors.white),
+                    )),
+                    DataColumn(
+                        label: Text('Amount of Spots',
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text('Taken Spots',
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text('Total Income',
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text('Today\'s Income',
+                            style: TextStyle(color: Colors.white))),
+                  ],
+                  rows: parkingRecords.map((ParkingRecord record) {
+                    return DataRow(cells: [
+                      DataCell(Text(record.parkingName,
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.amountOfSpots.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.takenSpots.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.totalIncome.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.todayIncome.toString(),
+                          style: TextStyle(color: Colors.white))),
+                    ]);
+                  }).toList(),
+                ),
+              );
+            }),
       )
     ]);
   }

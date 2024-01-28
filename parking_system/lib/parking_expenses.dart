@@ -11,6 +11,8 @@ class ParkingExpenses extends StatefulWidget {
 
 class _ParkingExpensesrState extends State<ParkingExpenses> {
   List<String> _items = ['Item 1', 'Item 2', 'Item 3'];
+  List<String> parkingNames = ['Parking 1', 'Parking 2'];
+  late String selectedParking;
   String expensesLabel = 'Expenses for ';
   List<Expense> expensesRecords = [];
 
@@ -24,6 +26,10 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   ];
   final expenseAmountController = TextEditingController();
   bool isCyclical = false;
+
+  void getParkings() {
+    //connect to DB
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -58,7 +64,8 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    getParkings();
+    selectedParking = parkingNames[0];
     addExpenses();
     updateListView();
     expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
@@ -93,6 +100,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                 ),
                               ),
                             ),
+                            Padding(padding: EdgeInsets.all(10)),
                             Text(
                               'Date: ',
                               style: TextStyle(color: Colors.white),
@@ -106,6 +114,23 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
+                            Padding(padding: EdgeInsets.all(10)),
+                            DropdownButton<String>(
+                              value: selectedParking,
+                              style: TextStyle(color: Colors.white),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedParking = newValue!;
+                                });
+                              },
+                              items: parkingNames.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             ),
                           ],
                         ),
