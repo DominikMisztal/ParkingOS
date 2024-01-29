@@ -13,7 +13,7 @@ class TicketService {
       'endDate': ticket.endDate,
       'parkingId': ticket.parkingId,
       'spotId': ticket.spotId,
-      'car': ticket.car.toMap(),
+      'car': ticket.car,
     };
 
     _dbRef.child(ticketKey).set(ticketMap);
