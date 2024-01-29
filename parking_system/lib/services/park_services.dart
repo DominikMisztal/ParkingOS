@@ -25,6 +25,13 @@ class ParkingServices {
     return ParkingDb.fromMap(userData);
   }
 
+  Future<Map<String, List<double>>> getTarifs(String parkId) async {
+    DataSnapshot snapshot = await _dbRef.child(parkId).get();
+    Map<String, dynamic> userData = json.decode(json.encode(snapshot.value));
+    ParkingDb park = ParkingDb.fromMap(userData);
+    return park.tarifs;
+  }
+
   Future<List<String>?> getParkingNames() async {
   DataSnapshot snapshot = await _dbRef.get();
   if (snapshot.value == null) return null;
@@ -70,23 +77,28 @@ Future<List<ParkingDb>?> getParkings() async {
     ticketService.addTicket(ticket, ticketKey);
   }
 
-  Future<void> moveFromParking(int spotId, String parkingName, int level, double cost) async {
-    Map<String, dynamic> spotMap = {
-      'registrationNumber': "",
-      'date': "",
-      'level': level,
-      'idNumber': spotId,
-    };
+  Future<void> moveFromParking(int spotId, String parkingName, double cost, String userLogin) async {
 
     DataSnapshot dataSnapshot = await _dbRef.child(parkingName).child('spots').child(spotId.toString()).get();
     Map<String, dynamic>? spotData = dataSnapshot.value as Map<String, dynamic>?;
     if(spotData != null){
       String date = spotData['date'] ?? '';
       String registrationNumber = spotData['registrationNumber'] ?? '';
+
+      spotData['registrationNumber'] = '';
+      spotData['date'] = '';
       
+      print(date);
+      if(date == ''){
+        date = DateTime.now().toString();
+      }
+
       parkHistory.addToParkingHistory(parkingName, spotId.toString(), registrationNumber, DateTime.parse(date), DateTime.now(), cost);
-      await _dbRef.child(parkingName).child('spots').child(spotId.toString()).set(spotMap);
-      ticketService.payForTicket();
+      //print(parkingName);
+      //print(spotData);
+      await _dbRef.child(parkingName).child('spots').child(spotId.toString()).update(spotData);
+      
+      ticketService.updateTicketEndDate(userLogin);
     }
   }
 }

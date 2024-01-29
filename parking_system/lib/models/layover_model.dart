@@ -25,12 +25,12 @@ class Layover {
 
   factory Layover.fromMap(Map<String, dynamic> map) {
     return Layover(
-      map['startDate'],
+      map['startDate'] ?? '',
       map['endDate'] ?? '',
-      map['parkingId'],
-      map['spotId'],
-      map['car'],
-      map['userId'],
+      map['parkingId'] ?? '',
+      map['spotId'] ?? '',
+      map['car'] ?? '',
+      map['userId'] ?? '',
     );
   }
 }

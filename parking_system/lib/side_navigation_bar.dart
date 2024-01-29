@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     pages = [
       userPage(user: widget.user),
       Parkfinder(),
-      UserTicketScreen(),
+      UserTicketScreen(user: widget.user),
     ];
   }
 
