@@ -68,21 +68,17 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                 future: fetchData(),
                 builder: (context, AsyncSnapshot<List<Car>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Display a loading screen while waiting for data
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
-                    // Display an error message if data loading fails
-                    return Center(
+                    return const Center(
                       child: Text('Error loading data'),
                     );
                   } else {
-                    // Display your actual content when data is loaded
                     List<Car> data = snapshot.data!;
                     return DropdownMenu<Car>(
-                      textStyle: TextStyle(color: Colors.white60),
-                      //initialSelection: _placeholderCars.first,
+                      textStyle: const TextStyle(color: Colors.white60),
                       controller: carController,
                       requestFocusOnTap: true,
                       label: Text('Your Car: $selectedCar'),
@@ -131,6 +127,8 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                           ElevatedButton(
                             onPressed: () {
                               _takeTicket();
+                              Future.delayed(Duration(seconds: 2));
+                              showToast('Ticket was taken');
                             },
                             child: Text('Take a ticket'),
                           ),
@@ -157,7 +155,6 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
 
     String? tempLogin = await userService.getLoginForCurrentUser();
     if (tempLogin == null) return false;
-    ;
     tempLogin = tempLogin.replaceAll('.', '');
     print(tempLogin);
 
@@ -167,7 +164,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
         widget.parking.name,
         widget.spot.number.toString(),
         selectedCar!.registration_num,
-        tempLogin!);
+        tempLogin);
     parkingServices.startParking(widget.spot.number, widget.parking.name,
         selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin!);
 
