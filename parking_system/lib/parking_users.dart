@@ -16,6 +16,7 @@ class _ParkingUsersState extends State<ParkingUsers> {
 
   Future<List<UserDb>> addUsers() async {
     List<UserDb> users = await userService.getAllUsers();
+    _placeholderUsers.clear();
     _placeholderUsers.addAll(users);
     return users;
   }
@@ -59,7 +60,6 @@ class _ParkingUsersState extends State<ParkingUsers> {
                   style: TextStyle(fontSize: 32, color: Colors.white60),
                 ),
                 Expanded(
-
                   child: FutureBuilder(
                       future: addUsers(),
                       builder: (context, AsyncSnapshot<List<UserDb>> snapshot) {
@@ -82,7 +82,9 @@ class _ParkingUsersState extends State<ParkingUsers> {
                                     setState(() {
                                       _placeholderUsers[index].blocked =
                                           !_placeholderUsers[index].blocked;
-                                      userService.blockUser(_placeholderUsers[index].login, _placeholderUsers[index].blocked);
+                                      userService.blockUser(
+                                          _placeholderUsers[index].login,
+                                          _placeholderUsers[index].blocked);
                                     });
                                   },
                                 );
