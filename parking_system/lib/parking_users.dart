@@ -106,6 +106,7 @@ UserService userService = UserService();
                               setState(() {
                                 _placeholderUsers[index].blocked =
                                     !_placeholderUsers[index].blocked;
+                                  userService.blockUser(_placeholderUsers[index].login, _placeholderUsers[index].blocked);
                               });
                             },
                           );

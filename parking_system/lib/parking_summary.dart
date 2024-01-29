@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:parking_system/components/expense.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/expenses_services.dart';
 
 class ParkingSummary extends StatefulWidget {
   const ParkingSummary({super.key});
@@ -11,13 +14,15 @@ class ParkingSummary extends StatefulWidget {
 }
 
 class _ParkingSummaryState extends State<ParkingSummary> {
+  ParkingServices parkingServices = ParkingServices();
+  ExpensesServices  expenseServices = ExpensesServices();
   List<ChartData> incomeData = [];
   List<ChartData> expenseData = [];
   List<String> parkingNames = [];
   List<String> chartTypes = ['Column chart', 'Line chart'];
   String selectedParking = '';
   String selectedChartType = 'Column chart';
-
+  List<List<Expense>> expenses = [];
   void getParkingNames() {
     List<String> temp = [];
     temp.add('Parking 1');
@@ -26,9 +31,72 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     parkingNames = temp;
     selectedParking = parkingNames[0];
   }
+  
+  void setParkingNames() async{
+    List<String>? temp = await parkingServices.getParkingNames();
+    if(temp == null) return;
+    parkingNames.addAll(temp);
+    selectedParking = parkingNames[0];
+  }
+  
+  
 
+  @override
+  void initState() {
+    super.initState();
+    setParkingNames();
+    getExpenses();
+    //getIncome();
+  }
+
+  void getExpenses() async{
+    for (var name in parkingNames) {
+      List<Expense> tempExpense = await expenseServices.loadExpensesForParking(name);
+      expenses.add(tempExpense);
+    }
+  }
+  
   _ParkingSummaryState() {
     getParkingNames();
+  }
+  int selectedPark = 0;
+
+
+  void getDataToCharts() {
+    List<ChartData> incomeTemp = [];
+    List<ChartData> expensesTemp = [];
+    
+    if(expenses.isEmpty) return;
+    print(selectedPark);
+      double amount = 0;
+      for (var expense in expenses[selectedPark]){
+        if((expense.dateAdded.month == 11 && expense.dateAdded.year == DateTime.now().year - 1) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
+          amount += expense.amount;
+        }
+      }
+      expensesTemp.add(ChartData("11", amount));
+      amount = 0;
+      for (var expense in expenses[selectedPark]){
+        if((expense.dateAdded.month == 12 && expense.dateAdded.year == DateTime.now().year - 1) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
+            amount += expense.amount;
+        }
+      }
+      expensesTemp.add(ChartData("12", amount));
+      amount = 0;
+      for (var expense in expenses[selectedPark]){
+        if((expense.dateAdded.month == DateTime.now().month && expense.dateAdded.year == DateTime.now().year) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
+            amount += expense.amount;
+        }
+      }
+      expensesTemp.add(ChartData("1", amount));
+    
+    
+
+    incomeTemp.add(ChartData("11", Random().nextInt(100) + 50));
+    incomeTemp.add(ChartData("12", Random().nextInt(100) + 50));
+    incomeTemp.add(ChartData("1", Random().nextInt(100) + 50));
+    incomeData = incomeTemp;
+    expenseData = expensesTemp;
   }
 
   void getChartData() {
@@ -49,7 +117,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    getChartData();
+    getDataToCharts();
 
     if (selectedChartType == 'Column chart') {
       return Scaffold(
@@ -83,6 +151,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                 style: TextStyle(color: Colors.white),
                                 onChanged: (String? newValue) {
                                   setState(() {
+                                    selectedPark = parkingNames.indexOf(newValue!);
                                     selectedParking = newValue!;
                                   });
                                 },
@@ -174,6 +243,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                 style: TextStyle(color: Colors.white),
                                 onChanged: (String? newValue) {
                                   setState(() {
+                                    selectedPark = parkingNames.indexOf(newValue!);
                                     selectedParking = newValue!;
                                   });
                                 },
