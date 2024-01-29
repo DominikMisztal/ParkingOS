@@ -19,27 +19,37 @@ class TicketService {
     _dbRef.child(ticketKey).set(ticketMap);
   }
   
-  Future<void> payForTicket() async {
-    return;
+  Future<void> updateTicketEndDate(String holderOfTicket) async {
+  holderOfTicket = holderOfTicket.replaceAll('.', '');
+  DataSnapshot snapshot = await _dbRef.child(holderOfTicket.replaceAll('.', '')).get();
+  
+  if (snapshot.value != null) {
+      Map<String, dynamic> ticketData = snapshot.value as Map<String, dynamic>;
+      ticketData['endDate'] = DateTime.now().toString(); 
+      await _dbRef.child(holderOfTicket).update(ticketData);
   }
+}
 
+Future<Layover?> findTicket(String userId) async {
+  DataSnapshot snapshot = await _dbRef.get();
 
-  Future<Layover?> findTicket(String userId) async{
-    DataSnapshot snapshot = await _dbRef.get();
-
-    if (snapshot.value != null) {
+  if (snapshot.value != null) {
+    try {
       Map<dynamic, dynamic> ticketsData = snapshot.value as Map<dynamic, dynamic>;
 
       for (var ticketKey in ticketsData.keys) {
-        Map<String, dynamic> ticketMap = ticketsData[ticketKey];
-
+        
+        Map<String, dynamic> ticketMap = ticketsData[ticketKey] as Map<String, dynamic>;
         Layover ticket = Layover.fromMap(ticketMap);
-
-        if (ticket.userId == userId) {
-          return ticket;
+        if (ticketKey == userId.replaceAll('.', '')) {
+            return ticket;
         }
       }
+    } catch (e) {
+      print('Error parsing snapshot value: $e');
+      return null;
     }
-    return null;
   }
+  return null;
+}
 }

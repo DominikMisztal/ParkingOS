@@ -13,18 +13,28 @@ class ParkHistory {
 
   Future<void> addToParkingHistory(String parkingName, String spotId, String registration, DateTime parkingStarted, DateTime parkingEnded, double income) async {
 
+    int dotIndex = parkingStarted.toString().indexOf('.');
+    String newParkingStarted = parkingStarted.toString();
+    String newParkingEnded = parkingEnded.toString();
+    if (dotIndex != -1) {
+      newParkingStarted = parkingStarted.toString().substring(0, dotIndex);
+      newParkingEnded = parkingEnded.toString().substring(0, dotIndex);
+    }
+
     Map<String, dynamic> newRecord = {
       'registration': registration,
       'spot': spotId,
-      'parkingStarted': parkingStarted.toString(),
-      'parkingEnded': parkingEnded.toString(),
+      'parkingStarted': newParkingStarted.toString(),
+      'parkingEnded': newParkingEnded.toString(),
       'income': income,
     };
+
+    print(newRecord);
 
     await _dbRef
         .child(parkingName)
         .child(spotId)
-        .child(parkingStarted.toString())
+        .child(newParkingStarted)
         .set(newRecord);
   }
 

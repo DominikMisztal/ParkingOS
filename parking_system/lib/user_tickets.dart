@@ -1,21 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/layover_model.dart';
 import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
+import 'package:parking_system/models/user.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/payment_calculator.dart';
+import 'package:parking_system/services/ticket_services.dart';
+import 'package:parking_system/services/user_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class UserTicketScreen extends StatefulWidget {
-  const UserTicketScreen({
-    super.key,
-  });
-
+  const UserTicketScreen({super.key, required this.user});
+  final UserDb user;
   @override
   State<UserTicketScreen> createState() => UserPaymentStateScreen();
 }
 
 //Todo Do połączenia z bazą i wykminienia co zrobić z płatnością i taryfą.
 class UserPaymentStateScreen extends State<UserTicketScreen> {
+  ParkingServices parkingServices = ParkingServices();
+  TicketService ticketService = TicketService();
   Future<List<Layover>> getLayovers() async {
     //Todo
     List<Layover> lays = [];
@@ -23,8 +29,23 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
   }
 
   List<Layover> layovers = [
-    Layover(DateTime.now().toString(), '', 'Great Parking', '23', 'Abcd1', "userImplementIGuess?"),
+    Layover('2024-01-26 13:00:00', '', 'The Greatest Park', '23', 'Abcd1',
+        "userImplementIGuess?"),
   ];
+  Layover? ticket;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initializeTicket();
+  }
+
+  void initializeTicket() async {
+    Layover? tempTicket = await ticketService.findTicket(widget.user.login);
+    ticket = tempTicket!;
+    print(tempTicket);
+  }
+
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
@@ -99,13 +120,31 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
     );
   }
 
+  Future<double> countCost(Layover layover) async {
+    ParkingServices parkingServices = ParkingServices();
+    Map<String, List<double>> tarifs =
+        await parkingServices.getTarifs(layover.parkingId);
+    PaymentCalculator paymentCalculator = PaymentCalculator(tariffsMap: tarifs);
+    return paymentCalculator.calculatePaymentFromTime(
+        DateTime.parse(layover.startDate), DateTime.now());
+  }
+
   void _giveBackTicket(Layover layover) async {
     //Add end to layover and update database
     layover.endDate = DateTime.now().toString();
-
+    double cost = await countCost(layover);
+    if (cost < widget.user.balance) {
+      parkingServices.moveFromParking(int.parse(layover.spotId),
+          layover.parkingId, cost, widget.user.login);
+      UserService userService = UserService();
+      double newBalance = await userService.getBalance();
+      widget.user.balance = newBalance;
+      userService.addBalance(newBalance - cost);
+      widget.user.addBalance(-cost);
+      setState(() {
+        layovers.clear();
+      });
+    }
     //Clean Layover list
-    setState(() {
-      layovers.clear();
-    });
   }
 }

@@ -156,12 +156,20 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     }
 
     String? tempLogin = await userService.getLoginForCurrentUser();
-    if(tempLogin == null) return false;;
+    if (tempLogin == null) return false;
+    ;
     tempLogin = tempLogin.replaceAll('.', '');
     print(tempLogin);
-    
-    Layover ticket = Layover(DateTime.now().toString(), "", widget.parking.name, widget.spot.number.toString(), selectedCar!.registration_num, tempLogin!);
-    parkingServices.startParking(widget.spot.number, widget.parking.name, selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin!);
+
+    Layover ticket = Layover(
+        DateTime.now().toString(),
+        "",
+        widget.parking.name,
+        widget.spot.number.toString(),
+        selectedCar!.registration_num,
+        tempLogin!);
+    parkingServices.startParking(widget.spot.number, widget.parking.name,
+        selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin!);
 
     return true;
   }

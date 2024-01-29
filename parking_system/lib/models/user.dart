@@ -42,6 +42,7 @@ class UserDb {
     return {
       'login': login,
       'balance': balance,
+      'isBlocked': blocked,
       'listOfCars':
           listOfCars.map((key, value) => MapEntry(key, value.toMap())),
     };
@@ -53,6 +54,7 @@ class UserDb {
 
     return UserDb(
       login: map['login'] ?? '',
+      blocked: map['isBlocked'] ?? false,
       balance: map['balance'] ?? 0,
       listOfCars: listOfCarsMap != null
           ? listOfCarsMap
