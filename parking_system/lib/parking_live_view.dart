@@ -34,13 +34,16 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   String parkedCarRegistration = '';
   List<ParkingDb> parkings = [];
   int choosenPark = 0;
+  int parkingNameIndex = 0;
   Map<String, List<double>> tariffsMap = {
     '0': [2, 3, 4],
     '12': [2, 4, 5]
   };
+
   //Tu coś się psuje przy wybieraniu parkingów z dropdown !!!!!!!!
   Future<List<String>?> loadParking() async {
     //connect to DB
+    parkingNames.clear();
     List<String>? tempParking = await parkingServices.getParkingNames();
     if (tempParking == null) return null;
     for (String parkingName in tempParking) {
@@ -52,6 +55,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     List<ParkingDb>? tempParkings = await parkingServices.getParkings();
     if (tempParkings == null) return null;
     parkings = tempParkings;
+    selectedParking = parkingNames[parkingNameIndex];
     return parkingNames;
   }
 
@@ -100,7 +104,6 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   void initState() {
     super.initState();
     //loadParking();
-    selectedParking = parkingNames[0];
   }
 
   int parkingRows = 3, parkingCols = 4, parkingFloors = 2;
@@ -179,6 +182,10 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                               setValueForParking(selectedIndex);
                                               setState(() {
                                                 selectedParking = newValue!;
+                                                parkingNameIndex = parkingNames
+                                                    .indexWhere((element) =>
+                                                        element ==
+                                                        selectedParking);
                                                 currentlySelectedSpot = -1;
                                               });
                                             },
