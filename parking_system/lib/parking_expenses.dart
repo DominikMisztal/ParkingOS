@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/expense.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/expenses_services.dart';
 
 class ParkingExpenses extends StatefulWidget {
   const ParkingExpenses({super.key});
@@ -10,11 +12,13 @@ class ParkingExpenses extends StatefulWidget {
 }
 
 class _ParkingExpensesrState extends State<ParkingExpenses> {
+  ParkingServices parkingServices = ParkingServices();
   List<String> _items = ['Item 1', 'Item 2', 'Item 3'];
   List<String> parkingNames = ['Parking 1', 'Parking 2'];
   late String selectedParking;
   String expensesLabel = 'Expenses for ';
   List<Expense> expensesRecords = [];
+  ExpensesServices expensesServices = ExpensesServices();
 
   DateTime selectedDate = DateTime.now();
   String selectedCategory = 'Cleaning';
@@ -27,8 +31,14 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   final expenseAmountController = TextEditingController();
   bool isCyclical = false;
 
-  void getParkings() {
+  void getParkings() async {
+    List<String>? tempParkingNames = await parkingServices.getParkingNames();
+    if(tempParkingNames == null) return;
+    parkingNames = tempParkingNames;
     //connect to DB
+  }
+  void saveExpenses(String name, List<String> services){
+    expensesServices.saveExpensesForParking(name, services);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -272,6 +282,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   }
 
   void saveChanges() {
+    //saveExpenses(name, services)
     //send expensesRecords to database
   }
 }
