@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/parking_statistics.dart';
@@ -14,56 +12,21 @@ class ParkingUsers extends StatefulWidget {
 }
 
 class _ParkingUsersState extends State<ParkingUsers> {
-UserService userService = UserService();
-  
-  void addUsers() async {
+  UserService userService = UserService();
+
+  Future<List<UserDb>> addUsers() async {
     List<UserDb> users = await userService.getAllUsers();
-    print(users);
-   _placeholderUsers.addAll(users);
+    _placeholderUsers.addAll(users);
+    return users;
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     addUsers();
   }
 
-  final List<UserDb> _placeholderUsers = [
-    UserDb(login: 'jankowalski@gmail.com', balance: 10, listOfCars: {
-      'Car1': Car(
-          brand: 'Scoda',
-          model: 'Octavia',
-          registration_num: 'Abcd',
-          expences: 100),
-      'Car2': Car(
-          brand: 'Scoda',
-          model: 'Octavia',
-          registration_num: 'XYZQ',
-          expences: 100),
-      'Car3': Car(
-          brand: 'Mercedes',
-          model: 'Benz',
-          registration_num: '1234',
-          expences: 100),
-    }),
-    UserDb(login: 'marek.walczak@gmail.com', balance: 14, listOfCars: {
-      'Car1': Car(
-          brand: 'Scoda',
-          model: 'Octavia',
-          registration_num: 'Abcd',
-          expences: 100),
-      'Car2': Car(
-          brand: 'Scoda',
-          model: 'Octavia',
-          registration_num: 'XYZQ',
-          expences: 100),
-      'Car3': Car(
-          brand: 'Mercedes',
-          model: 'Benz',
-          registration_num: '1234',
-          expences: 100),
-    }),
-  ];
+  final List<UserDb> _placeholderUsers = [];
 
   void deleteItem(int index) {
     setState(() {
@@ -96,20 +59,35 @@ UserService userService = UserService();
                   style: TextStyle(fontSize: 32, color: Colors.white60),
                 ),
                 Expanded(
-                    child: ListView.builder(
-                        itemCount: _placeholderUsers.length,
-                        itemBuilder: ((context, index) {
-                          return UserTile(
-                            user: _placeholderUsers[index],
-                            onBlock: () {
-                              //deleteItem(index);
-                              setState(() {
-                                _placeholderUsers[index].blocked =
-                                    !_placeholderUsers[index].blocked;
-                              });
-                            },
+                  child: FutureBuilder(
+                      future: addUsers(),
+                      builder: (context, AsyncSnapshot<List<UserDb>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
-                        }))),
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('Error loading data'),
+                          );
+                        } else {
+                          return ListView.builder(
+                              itemCount: _placeholderUsers.length,
+                              itemBuilder: ((context, index) {
+                                return UserTile(
+                                  user: _placeholderUsers[index],
+                                  onBlock: () {
+                                    setState(() {
+                                      _placeholderUsers[index].blocked =
+                                          !_placeholderUsers[index].blocked;
+                                    });
+                                  },
+                                );
+                              }));
+                        }
+                      }),
+                ),
               ],
             ))
       ]),
