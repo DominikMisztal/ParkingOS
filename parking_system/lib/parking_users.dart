@@ -101,10 +101,12 @@ UserService userService = UserService();
                         itemBuilder: ((context, index) {
                           return UserTile(
                             user: _placeholderUsers[index],
-                            onDelete: () {
-
-                              deleteItem(index);
-                              userService.blockUser(_placeholderUsers[index].login, true);
+                            onBlock: () {
+                              //deleteItem(index);
+                              setState(() {
+                                _placeholderUsers[index].blocked =
+                                    !_placeholderUsers[index].blocked;
+                              });
                             },
                           );
                         }))),
@@ -115,21 +117,42 @@ UserService userService = UserService();
   }
 }
 
-class UserTile extends StatelessWidget {
+class UserTile extends StatefulWidget {
   final UserDb user;
-  final VoidCallback onDelete;
-  const UserTile({super.key, required this.user, required this.onDelete});
+  final VoidCallback onBlock;
+  const UserTile({super.key, required this.user, required this.onBlock});
+
+  @override
+  State<UserTile> createState() => _UserTileState();
+}
+
+class _UserTileState extends State<UserTile> {
+  late Color tileColor;
+  late String blockText;
+  void changeOnBlocked() {
+    setState(() {
+      blockText = widget.user.blocked == true ? 'Unblock user' : 'Block user';
+      tileColor = widget.user.blocked == true ? Colors.grey : Colors.white;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    blockText = widget.user.blocked == true ? 'Unblock user' : 'Block user';
+    tileColor = widget.user.blocked == true ? Colors.grey : Colors.white;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Car> _userCars = user.listOfCars.values.toList();
+    List<Car> _userCars = widget.user.listOfCars.values.toList();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(90),
         child: Container(
           padding: const EdgeInsets.all(8.0),
-          color: Colors.white,
+          color: tileColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -138,7 +161,10 @@ class UserTile extends StatelessWidget {
                 size: 32,
               ),
               Column(
-                children: [Text(user.login), Text('balance: ${user.balance}')],
+                children: [
+                  Text(widget.user.login),
+                  Text('balance: ${widget.user.balance}')
+                ],
               ),
               SizedBox(
                 width: 600,
@@ -152,9 +178,12 @@ class UserTile extends StatelessWidget {
               ),
               Column(
                 children: [
-                  const Text('Block User'),
+                  Text(blockText),
                   IconButton(
-                    onPressed: onDelete,
+                    onPressed: () {
+                      widget.onBlock();
+                      changeOnBlocked();
+                    },
                     icon: Icon(
                       Icons.block,
                       color: Colors.red,
@@ -181,17 +210,16 @@ class CarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Todo: Ask about how to do it
     void goToStatistics() {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => ParkingStatistics(
-      //           category: 'Parking Spots',
-      //           parkingName: ParkingLiveView.parkingName,
-      //           spotId: currentlySelectedSpot.toString(),
-      //           vehicleReg: '')),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ParkingStatistics(
+                category: 'Vehicles',
+                parkingName: '',
+                spotId: '',
+                vehicleReg: car.registration_num)),
+      );
     }
 
     return Card(

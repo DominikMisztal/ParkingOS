@@ -43,97 +43,131 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('User_Panel'),
         centerTitle: true,
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SideMenu(
-            controller: sideMenu,
-            style: SideMenuStyle(
-              unselectedTitleTextStyle: TextStyle(color: Colors.white60),
-              unselectedIconColor: Colors.white60,
-              displayMode: SideMenuDisplayMode.open,
-              hoverColor: Colors.blue[100],
-              selectedHoverColor: Colors.blue[100],
-              selectedColor: Colors.lightBlue,
-              selectedTitleTextStyle: const TextStyle(color: Colors.white),
-              selectedIconColor: Colors.white,
-            ),
-            title: Column(
+      body: widget.user.blocked
+          ? BlockedContainer()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxHeight: 150,
-                      maxWidth: 200,
+                SideMenu(
+                  controller: sideMenu,
+                  style: SideMenuStyle(
+                    unselectedTitleTextStyle: TextStyle(color: Colors.white60),
+                    unselectedIconColor: Colors.white60,
+                    displayMode: SideMenuDisplayMode.open,
+                    hoverColor: Colors.blue[100],
+                    selectedHoverColor: Colors.blue[100],
+                    selectedColor: Colors.lightBlue,
+                    selectedTitleTextStyle:
+                        const TextStyle(color: Colors.white),
+                    selectedIconColor: Colors.white,
+                  ),
+                  title: Column(
+                    children: [
+                      ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxHeight: 150,
+                            maxWidth: 200,
+                          ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Welcome: ',
+                                style: TextStyle(
+                                    color: Colors.white60, fontSize: 32),
+                              ),
+                              Text(
+                                widget.title,
+                                style: const TextStyle(
+                                    color: Colors.white60, fontSize: 16),
+                              ),
+                            ],
+                          )),
+                      const Divider(
+                        indent: 8.0,
+                        endIndent: 8.0,
+                      ),
+                    ],
+                  ),
+                  footer: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.amber[100],
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 10),
+                        child: Text(
+                          'Parking OS ©',
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Welcome: ',
-                          style: TextStyle(color: Colors.white60, fontSize: 32),
-                        ),
-                        Text(
-                          widget.title,
-                          style: const TextStyle(
-                              color: Colors.white60, fontSize: 16),
-                        ),
-                      ],
-                    )),
-                const Divider(
-                  indent: 8.0,
-                  endIndent: 8.0,
+                  ),
+                  items: [
+                    SideMenuItem(
+                      title: 'Account',
+                      onTap: (index, _) {
+                        sideMenu.changePage(index);
+                      },
+                      icon: const Icon(
+                        Icons.person,
+                        color: Colors.white60,
+                      ),
+                    ),
+                    SideMenuItem(
+                      title: 'Parkfinder',
+                      onTap: (index, _) {
+                        sideMenu.changePage(index);
+                      },
+                      icon: const Icon(Icons.search),
+                    ),
+                    SideMenuItem(
+                      title: 'Tickets',
+                      onTap: (index, _) {
+                        sideMenu.changePage(index);
+                      },
+                      icon: const Icon(Icons.airplane_ticket),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: pageController,
+                    children: pages,
+                  ),
                 ),
               ],
             ),
-            footer: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.amber[100],
-                    borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                  child: Text(
-                    'Parking OS ©',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[800]),
-                  ),
-                ),
+    );
+  }
+}
+
+class BlockedContainer extends StatelessWidget {
+  const BlockedContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AbsorbPointer(
+      absorbing: true,
+      child: Container(
+        width: double.infinity,
+        color: Colors.grey.withOpacity(0.8),
+        padding: EdgeInsets.all(16.0),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You have been blocked, contact administrator for further informations',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 64,
               ),
+              textAlign: TextAlign.center,
             ),
-            items: [
-              SideMenuItem(
-                title: 'Account',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(
-                  Icons.person,
-                  color: Colors.white60,
-                ),
-              ),
-              SideMenuItem(
-                title: 'Parkfinder',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.search),
-              ),
-              SideMenuItem(
-                title: 'Tickets',
-                onTap: (index, _) {
-                  sideMenu.changePage(index);
-                },
-                icon: const Icon(Icons.airplane_ticket),
-              ),
-            ],
-          ),
-          Expanded(
-            child: PageView(
-              controller: pageController,
-              children: pages,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
