@@ -99,7 +99,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
-    selectedParking = parkingNames[selectedPark];
+    selectedParking = parkingNames[selecterParkingIndex];
     changeExpenses();
     updateListView();
     expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
@@ -162,6 +162,9 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                         parkingNames.indexOf(newValue!);
                                     setState(() {
                                       selectedParking = newValue!;
+                                      selecterParkingIndex =
+                                          parkingNames.indexWhere((element) =>
+                                              element == selectedParking);
                                     });
                                   },
                                   items: parkingNames
