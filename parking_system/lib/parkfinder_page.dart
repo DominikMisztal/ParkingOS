@@ -33,31 +33,32 @@ class _ParkfinderState extends State<Parkfinder> {
   List<Spot> filteredSpaces = [];
   List<ParkingDb> parkingsDb = [];
   @override
-  void initState(){
+  void initState() {
     filteredSpaces = [];
     super.initState();
     addParkings();
   }
 
-  void addParkings() async{
-      List<ParkingDb>? tempParkingsDb = await parkingServices.getParkings();
-      if(tempParkingsDb != null){
-        parkingsDb = tempParkingsDb;
-      }
+  void addParkings() async {
+    List<ParkingDb>? tempParkingsDb = await parkingServices.getParkings();
+    if (tempParkingsDb != null) {
+      parkingsDb = tempParkingsDb;
+    }
 
-      for (var parking in parkingsDb) {
-        //todo: add tarifs
-        parkings.add(Parking(parking.address, parking.name, parking.address, parking.level, parking.height * parking.width, 1));
-        for (var spot in parking.spots) {
-          spots.add(Spot(parking.address, spot.level, spot.idNumber, spot.registrationNumber == "" ? false : true));
-        }
+    for (var parking in parkingsDb) {
+      //todo: add tarifs
+      parkings.add(Parking(parking.address, parking.name, parking.address,
+          parking.level, parking.height * parking.width, 1));
+      for (var spot in parking.spots) {
+        spots.add(Spot(parking.address, spot.level, spot.idNumber,
+            spot.registrationNumber == "" ? false : true));
       }
+    }
   }
 
-  List<Parking> parkings = [
-  ];
-  List<Spot> spots = [
-  ];
+  List<Parking> parkings = [];
+  List<Spot> spots = [];
+
 
   void filterSpaces(Parking parking) {
     List<Spot> searchResult = spots

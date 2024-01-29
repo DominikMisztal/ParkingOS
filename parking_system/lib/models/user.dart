@@ -4,15 +4,16 @@ import 'package:parking_system/services/user_services.dart';
 
 @immutable
 class UserDb {
-  UserDb({
-    required this.login,
-    required this.balance,
-    required this.listOfCars,
-  });
+  UserDb(
+      {required this.login,
+      required this.balance,
+      required this.listOfCars,
+      this.blocked = false});
 
   final String login;
   double balance;
   final Map<String, Car> listOfCars;
+  bool blocked;
 
   void addBalance(double value) {
     balance += value;
