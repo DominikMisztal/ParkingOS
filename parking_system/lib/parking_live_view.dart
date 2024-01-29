@@ -6,6 +6,7 @@ import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/parking_board_live_view.dart';
 import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/models/parkingDB.dart';
+import 'package:parking_system/services/payment_calculator.dart';
 
 import 'parking_statistics.dart';
 import 'dart:developer' as developer;
@@ -34,6 +35,10 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   String parkedCarRegistration = '';
   List<ParkingDb> parkings = [];
   int choosenPark = 0;
+  Map<String, List<double>> tariffsMap = {
+    '0': [2, 3, 4],
+    '12': [2, 4, 5]
+  };
 
   void loadParking() async {
     //connect to DB
@@ -71,10 +76,13 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
         // UPDATE FROM DB
         parkedSinceDate = DateTime.now();
         parkedCarRegistration = "KL-12345";
+        PaymentCalculator calculator =
+            PaymentCalculator(tariffsMap: this.tariffsMap);
         spotStateDetails = "Spot is taken by: ${parkedCarRegistration}";
         parkingSinceText =
             "Current vehicle is parked since: ${parkedSinceDate.toString()}";
-        requiredPaymentText = "Current payment: ${requiredPayment}";
+        requiredPaymentText =
+            "Current payment: ${calculator.calculatePaymentFromTime(DateTime.now(), DateTime.now().add(Duration(hours: 4)))}";
       } else {
         spotStateDetails = "Spot is empty";
         parkingSinceText = "";
