@@ -76,6 +76,34 @@ class _ParkfinderState extends State<Parkfinder> {
     });
   }
 
+  Map<String, double> parkingsAndPayments = {};
+
+  double findCheapestStay(int stayDuration) {
+    DateTime now = DateTime.now();
+    double lowestPayment = -1;
+    for (var parking in parkings) {
+      //add tariff to each parking
+      String name = parking.name;
+      PaymentCalculator calculator = PaymentCalculator(tariffsMap: tariffsMap);
+      double payment = calculator.calculatePaymentFromHours(now, stayDuration);
+      parkingsAndPayments[name] = payment;
+      if (lowestPayment == -1) {
+        lowestPayment = payment;
+      }
+      if (payment < lowestPayment) {
+        lowestPayment = payment;
+      }
+    }
+    sortParkingsAndPayments();
+    return lowestPayment;
+  }
+
+  void sortParkingsAndPayments() {
+    var sortedEntries = parkingsAndPayments.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+    parkingsAndPayments = Map.fromEntries(sortedEntries);
+  }
+
   void listener() {
     String text = parkingTimeController.text;
     try {
@@ -87,12 +115,7 @@ class _ParkfinderState extends State<Parkfinder> {
           if (stayDuration < 1) {
             requiredPayment = 0.0;
           } else {
-            PaymentCalculator calculator =
-                PaymentCalculator(tariffsMap: this.tariffsMap);
-            DateTime now = DateTime.now();
-            requiredPayment =
-                calculator.calculatePaymentFromHours(now, stayDuration);
-            DateTime temp = DateTime.now();
+            requiredPayment = findCheapestStay(stayDuration);
           }
         });
       }
