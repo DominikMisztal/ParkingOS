@@ -137,6 +137,7 @@ Layover? ticket;
       parkingServices.moveFromParking(int.parse(layover.spotId), layover.parkingId, cost, widget.user.login);
       UserService userService = UserService();
       double newBalance = await userService.getBalance();
+      widget.user.balance = newBalance;
       userService.addBalance(newBalance - cost);
       setState(() {
       layovers.clear();
