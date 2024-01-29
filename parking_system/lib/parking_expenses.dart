@@ -30,15 +30,21 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   ];
   final expenseAmountController = TextEditingController();
   bool isCyclical = false;
+  List<List<Expense>?> loadExpensesForParkings = [];
 
   void getParkings() async {
     List<String>? tempParkingNames = await parkingServices.getParkingNames();
     if(tempParkingNames == null) return;
-    parkingNames = tempParkingNames;
+    parkingNames.addAll(tempParkingNames);
+    for (var park in tempParkingNames) {
+      List<Expense>? tempExpenses = await expensesServices.loadExpensesForParking(park);
+      loadExpensesForParkings.add(tempExpenses);
+    }
+    print(loadExpensesForParkings);
     //connect to DB
   }
-  void saveExpenses(String name, List<String> services){
-    expensesServices.saveExpensesForParking(name, services);
+  void saveExpenses(String name, List<Expense> expenses){
+    expensesServices.saveExpensesForParking(name, expenses);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -69,14 +75,21 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
       });
     }
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getParkings();
+  }
+  int selectedPark = 0;
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    getParkings();
-    selectedParking = parkingNames[0];
-    addExpenses();
+    
+    selectedParking = parkingNames[selectedPark];
+    changeExpenses();
     updateListView();
     expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
     return Scaffold(
@@ -130,6 +143,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                               value: selectedParking,
                               style: TextStyle(color: Colors.white),
                               onChanged: (String? newValue) {
+                                selectedPark = parkingNames.indexOf(newValue!);
                                 setState(() {
                                   selectedParking = newValue!;
                                 });
@@ -257,7 +271,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
 
   void addExpenseToParking() {
     setState(() {
-      expensesRecords.add(Expense(selectedCategory, isCyclical,
+      loadExpensesForParkings[selectedPark]!.add(Expense(selectedCategory, isCyclical,
           double.parse(expenseAmountController.text), selectedDate));
     });
   }
@@ -281,8 +295,20 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     }
   }
 
+  void changeExpenses() {
+    //get expenses from database
+    if(loadExpensesForParkings.isEmpty) return;
+      List<Expense> temp = [];
+      for (var expense in loadExpensesForParkings[selectedPark]!) {
+        if((expense.dateAdded.month == selectedDate.month && expense.dateAdded.year == selectedDate.year) || (expense.cyclical == true && expense.dateAdded.isBefore(selectedDate)) ){
+        temp.add(expense);
+      }
+      expensesRecords = temp;
+  }
+  }
+
   void saveChanges() {
-    //saveExpenses(name, services)
+    saveExpenses(selectedParking, expensesRecords);
     //send expensesRecords to database
   }
 }

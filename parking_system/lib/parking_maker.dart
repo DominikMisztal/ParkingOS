@@ -73,12 +73,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
 
   //todo: set from this dummie values to actual ones, '12', '0', [1,2,3], [2,4,6]
   Map<String, List<double>> setTariff() {
-    Map<String, List<double>> tarifs = {};
-    List<double> tarif1 = [1, 2, 3];
-    List<double> tarif2 = [2, 4, 6];
-    tarifs['12'] = (tarif1);
-    tarifs['0'] = (tarif2);
-    return tarifs;
+    return tariffsMap;
   }
 
   late BuildContext tempContext;
