@@ -9,7 +9,6 @@ import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/services/payment_calculator.dart';
 
 import 'parking_statistics.dart';
-import 'dart:developer' as developer;
 
 class ParkingLiveView extends StatefulWidget {
   const ParkingLiveView({super.key});
@@ -39,7 +38,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     '0': [2, 3, 4],
     '12': [2, 4, 5]
   };
-
+  //Tu coś się psuje przy wybieraniu parkingów z dropdown !!!!!!!!
   Future<List<String>?> loadParking() async {
     //connect to DB
     List<String>? tempParking = await parkingServices.getParkingNames();
