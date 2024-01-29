@@ -7,7 +7,7 @@ class Layover {
   String endDate = '';
   final String parkingId;
   final String spotId;
-  final Car car;
+  final String car;
   final String userId;
 
   Layover(this.startDate, this.endDate, this.parkingId, this.spotId, this.car, this.userId);

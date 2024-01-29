@@ -23,8 +23,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
   }
 
   List<Layover> layovers = [
-    Layover(DateTime.now().toString(), '', 'Great Parking', '23',
-        Car(brand: 'Scoda', model: 'Octavia', registration_num: 'Abcd1', expences: 0), "userImplementIGuess?"),
+    Layover(DateTime.now().toString(), '', 'Great Parking', '23', 'Abcd1', "userImplementIGuess?"),
   ];
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -69,7 +68,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
           Container(
             color: Colors.white,
             child: QrImageView(
-              data: '${layover.car.registration_num} ',
+              data: '${layover.car} ',
               version: QrVersions.auto,
               size: 200.0,
             ),

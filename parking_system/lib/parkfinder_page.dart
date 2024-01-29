@@ -59,6 +59,7 @@ class _ParkfinderState extends State<Parkfinder> {
   List<Parking> parkings = [];
   List<Spot> spots = [];
 
+
   void filterSpaces(Parking parking) {
     List<Spot> searchResult = spots
         .where((spot) => !spot.isTaken && spot.parkingId == parking.parkingId)

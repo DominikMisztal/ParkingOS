@@ -35,9 +35,9 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
   var filterController = TextEditingController();
 
   void getHistoryRecords() async {
-
-    List<ParkingHistoryRecord>? temp = await parkHistory.getParkingHistoryData();
-    if(temp != null){
+    List<ParkingHistoryRecord>? temp =
+        await parkHistory.getParkingHistoryData();
+    if (temp != null) {
       historyRecords = temp;
       return;
     }
@@ -213,50 +213,61 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
         ],
       ),
       Padding(padding: EdgeInsets.all(10)),
-      DataTable(
-        columns: [
-          DataColumn(
-              label: Text(
-            columnNames[0],
-            style: TextStyle(color: Colors.white),
-          )),
-          DataColumn(
-              label:
-                  Text(columnNames[1], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[2], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[3], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[4], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[5], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[6], style: TextStyle(color: Colors.white))),
-        ],
-        rows: historyRecords.map((ParkingHistoryRecord record) {
-          return DataRow(cells: [
-            DataCell(Text(record.parkingName,
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.spotId.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.vehicleRegistration.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.vehicleBrand.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.parkingStart.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.parkingEnd.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.cost.toString(),
-                style: TextStyle(color: Colors.white))),
-          ]);
-        }).toList(),
+      SizedBox(
+        width: 1400,
+        height: 500,
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      columnNames[0],
+                      style: TextStyle(color: Colors.white),
+                    )),
+                    DataColumn(
+                        label: Text(columnNames[1],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[2],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[3],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[4],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[5],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[6],
+                            style: TextStyle(color: Colors.white))),
+                  ],
+                  rows: historyRecords.map((ParkingHistoryRecord record) {
+                    return DataRow(cells: [
+                      DataCell(Text(record.parkingName,
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.spotId.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.vehicleRegistration.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.vehicleBrand.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.parkingStart.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.parkingEnd.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.cost.toString(),
+                          style: TextStyle(color: Colors.white))),
+                    ]);
+                  }).toList(),
+                ),
+              );
+            }),
       )
     ]);
   }

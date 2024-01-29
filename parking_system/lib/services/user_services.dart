@@ -37,7 +37,6 @@ Future<bool?> canAddCar(String registrationPlate) async {
       }
     }
   }
-  print('returned true');
   return true;
 }
 
@@ -50,6 +49,35 @@ Future<bool?> canAddCar(String registrationPlate) async {
     print(userData);
     return UserDb.fromMap(userData);
   }
+
+Future<void> blockUser(String login, bool block) async {
+  DataSnapshot snapshot = await _userRef.get();
+
+  if (snapshot.value != null) {
+    Map<String, dynamic> userData = json.decode(json.encode(snapshot.value));
+
+    userData.forEach((key, value) async {
+      if (value['login'] == login) {
+        await _userRef.child(key).update({'isBlocked': block});
+      }
+    });
+  }
+}
+
+  Future<List<UserDb>> getAllUsers() async {
+  DataSnapshot snapshot = await _userRef.get();
+  List<UserDb> userList = [];
+
+  if (snapshot.value == null) return userList;
+
+  Map<String, dynamic> userData = Map<String, dynamic>.from(snapshot.value as Map<dynamic, dynamic>);
+
+  userData.forEach((key, value) {
+    userList.add(UserDb.fromMap(value));
+  });
+
+  return userList;
+}
 
   Future<Car?> getCarByRegistration(String registrationNum) async {
     DataSnapshot usersSnapshot = await _userRef.get();
@@ -68,6 +96,24 @@ Future<bool?> canAddCar(String registrationPlate) async {
     }
 
     return null;
+}
+
+Future<String?> getLoginForCurrentUser() async {
+  String? uid = await userAuth.getCurrentUserUid();
+  if (uid != null) {
+    DataSnapshot snapshot = await _userRef.child(uid).child('login').get();
+
+    if (snapshot.value != null) {
+      String login;
+
+      String carsMap = snapshot.value as String;
+      login = carsMap;
+      return login;
+      };
+    } 
+    else {
+      return "";
+    }
 }
 
 Future<List<Car>> getCars() async {

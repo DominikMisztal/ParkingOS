@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/expense.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/expenses_services.dart';
 
 class ParkingExpenses extends StatefulWidget {
   const ParkingExpenses({super.key});
@@ -10,9 +12,13 @@ class ParkingExpenses extends StatefulWidget {
 }
 
 class _ParkingExpensesrState extends State<ParkingExpenses> {
+  ParkingServices parkingServices = ParkingServices();
   List<String> _items = ['Item 1', 'Item 2', 'Item 3'];
+  List<String> parkingNames = ['Parking 1', 'Parking 2'];
+  late String selectedParking;
   String expensesLabel = 'Expenses for ';
   List<Expense> expensesRecords = [];
+  ExpensesServices expensesServices = ExpensesServices();
 
   DateTime selectedDate = DateTime.now();
   String selectedCategory = 'Cleaning';
@@ -24,6 +30,22 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   ];
   final expenseAmountController = TextEditingController();
   bool isCyclical = false;
+  List<List<Expense>?> loadExpensesForParkings = [];
+
+  void getParkings() async {
+    List<String>? tempParkingNames = await parkingServices.getParkingNames();
+    if(tempParkingNames == null) return;
+    parkingNames.addAll(tempParkingNames);
+    for (var park in tempParkingNames) {
+      List<Expense>? tempExpenses = await expensesServices.loadExpensesForParking(park);
+      loadExpensesForParkings.add(tempExpenses);
+    }
+    print(loadExpensesForParkings);
+    //connect to DB
+  }
+  void saveExpenses(String name, List<Expense> expenses){
+    expensesServices.saveExpensesForParking(name, expenses);
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -53,13 +75,21 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
       });
     }
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getParkings();
+  }
+  int selectedPark = 0;
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
-    addExpenses();
+    
+    selectedParking = parkingNames[selectedPark];
+    changeExpenses();
     updateListView();
     expensesLabel = 'Expenses for ${selectedDate.month}.${selectedDate.year}';
     return Scaffold(
@@ -93,6 +123,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                 ),
                               ),
                             ),
+                            Padding(padding: EdgeInsets.all(10)),
                             Text(
                               'Date: ',
                               style: TextStyle(color: Colors.white),
@@ -106,6 +137,24 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
+                            Padding(padding: EdgeInsets.all(10)),
+                            DropdownButton<String>(
+                              value: selectedParking,
+                              style: TextStyle(color: Colors.white),
+                              onChanged: (String? newValue) {
+                                selectedPark = parkingNames.indexOf(newValue!);
+                                setState(() {
+                                  selectedParking = newValue!;
+                                });
+                              },
+                              items: parkingNames.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             ),
                           ],
                         ),
@@ -222,7 +271,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
 
   void addExpenseToParking() {
     setState(() {
-      expensesRecords.add(Expense(selectedCategory, isCyclical,
+      loadExpensesForParkings[selectedPark]!.add(Expense(selectedCategory, isCyclical,
           double.parse(expenseAmountController.text), selectedDate));
     });
   }
@@ -246,7 +295,20 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     }
   }
 
+  void changeExpenses() {
+    //get expenses from database
+    if(loadExpensesForParkings.isEmpty) return;
+      List<Expense> temp = [];
+      for (var expense in loadExpensesForParkings[selectedPark]!) {
+        if((expense.dateAdded.month == selectedDate.month && expense.dateAdded.year == selectedDate.year) || (expense.cyclical == true && expense.dateAdded.isBefore(selectedDate)) ){
+        temp.add(expense);
+      }
+      expensesRecords = temp;
+  }
+  }
+
   void saveChanges() {
+    saveExpenses(selectedParking, expensesRecords);
     //send expensesRecords to database
   }
 }

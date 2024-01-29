@@ -39,23 +39,22 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
 
   void getParkingRecords() async {
     List<String>? carRegistrations = await parkHistory.getAllRegistrations();
-    if(carRegistrations == null) return;
+    if (carRegistrations == null) return;
     Set<String> uniqueSet = Set<String>.from(carRegistrations);
     carRegistrations = uniqueSet.toList();
     print(carRegistrations);
-    
+
     for (var registration in carRegistrations) {
       Car? car = await userService.getCarByRegistration(registration);
-      if(car == null) continue;
-        vehicleRecords.add(VehicleRecord(
+      if (car == null) continue;
+      vehicleRecords.add(VehicleRecord(
         vehicleRegistration: car.registration_num,
         vehicleBrand: car.brand,
         isParked: false,
         totalExpenses: car.expences,
         model: car.model,
-        ));
+      ));
     }
-
   }
 
   @override
@@ -220,57 +219,70 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
         ],
       ),
       Padding(padding: EdgeInsets.all(10)),
-      DataTable(
-        columns: [
-          DataColumn(
-              label: Text(
-            columnNames[0],
-            style: TextStyle(color: Colors.white),
-          )),
-          DataColumn(
-              label:
-                  Text(columnNames[1], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[2], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[3], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[4], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[5], style: TextStyle(color: Colors.white))),
-          DataColumn(
-              label:
-                  Text(columnNames[6], style: TextStyle(color: Colors.white))),
-        ],
-        rows: vehicleRecords.map((VehicleRecord record) {
-          return DataRow(cells: [
-            DataCell(Text(record.vehicleRegistration,
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.vehicleBrand.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.totalExpenses.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(record.isParked.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.model == null
-                    ? 'N/A'
-                    : record.model.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.spotId == null ? 'N/A' : record.spotId.toString(),
-                style: TextStyle(color: Colors.white))),
-            DataCell(Text(
-                record.parkingSince == null
-                    ? 'N/A'
-                    : record.parkingSince.toString(),
-                style: TextStyle(color: Colors.white))),
-          ]);
-        }).toList(),
+      SizedBox(
+        height: 500,
+        width: 1400,
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      columnNames[0],
+                      style: TextStyle(color: Colors.white),
+                    )),
+                    DataColumn(
+                        label: Text(columnNames[1],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[2],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[3],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[4],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[5],
+                            style: TextStyle(color: Colors.white))),
+                    DataColumn(
+                        label: Text(columnNames[6],
+                            style: TextStyle(color: Colors.white))),
+                  ],
+                  rows: vehicleRecords.map((VehicleRecord record) {
+                    return DataRow(cells: [
+                      DataCell(Text(record.vehicleRegistration,
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.vehicleBrand.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.totalExpenses.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(record.isParked.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.model == null
+                              ? 'N/A'
+                              : record.model.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.spotId == null
+                              ? 'N/A'
+                              : record.spotId.toString(),
+                          style: TextStyle(color: Colors.white))),
+                      DataCell(Text(
+                          record.parkingSince == null
+                              ? 'N/A'
+                              : record.parkingSince.toString(),
+                          style: TextStyle(color: Colors.white))),
+                    ]);
+                  }).toList(),
+                ),
+              );
+            }),
       )
     ]);
   }

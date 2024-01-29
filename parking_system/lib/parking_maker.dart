@@ -25,6 +25,10 @@ class _ParkingMakerState extends State<ParkingMaker> {
   final widthController = TextEditingController(text: "8");
   final heightController = TextEditingController(text: "8");
   final floorsController = TextEditingController(text: "3");
+  Map<String, List<double>> tariffsMap = {
+    '0': [0, 0, 0],
+    '12': [0, 0, 0]
+  };
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 3;
@@ -46,33 +50,30 @@ class _ParkingMakerState extends State<ParkingMaker> {
     List<SpotDb> spots = [];
     int amountOfSpots = width * height * level;
     for (int i = 0; i < amountOfSpots; i++) {
-      level = (i/(width * height)).toInt();
-      SpotDb spot = SpotDb(registrationNumber: "", date: "", idNumber: i, level: level );
+      level = (i / (width * height)).toInt();
+      SpotDb spot =
+          SpotDb(registrationNumber: "", date: "", idNumber: i, level: level);
       spots.add(spot);
     }
     Map<String, List<double>> tarifs = setTariff();
 
     ParkingDb parking = ParkingDb(
-        tarifs: tarifs,
-        height: height,
-        width: width,
-        level: level,
-        address: address,
-        name: name,
-        spots: spots,
-        income: 0,
-        dailyIncome: 0,);
+      tarifs: tarifs,
+      height: height,
+      width: width,
+      level: level,
+      address: address,
+      name: name,
+      spots: spots,
+      income: 0,
+      dailyIncome: 0,
+    );
     _parkingServices.addParking(parking);
   }
 
   //todo: set from this dummie values to actual ones, '12', '0', [1,2,3], [2,4,6]
   Map<String, List<double>> setTariff() {
-    Map<String, List<double>> tarifs = {};
-    List<double> tarif1 = [1, 2, 3];
-    List<double> tarif2 = [2, 4, 6];
-    tarifs['12'] = (tarif1);
-    tarifs['0'] = (tarif2);
-    return tarifs;
+    return tariffsMap;
   }
 
   late BuildContext tempContext;
@@ -155,13 +156,13 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                     ),
                                   ),
                                   Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: switchParkingNTarrifs,
-                                  child: const Text('Parking / Tarrifs'),
-                                ),
-                              ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: switchParkingNTarrifs,
+                                      child: const Text('Parking / Tarrifs'),
+                                    ),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 16.0),
@@ -179,10 +180,19 @@ class _ParkingMakerState extends State<ParkingMaker> {
                     ))),
             Container(
               width: (2 * width / 3),
-              child: _toggleTariffParking ? TarrifStiffDataTable() : ParkingBoard(),
+              child: _toggleTariffParking
+                  ? TarrifStiffDataTable(
+                      onValueChanged: updateTariffValues,
+                      tariffsMap: this.tariffsMap,
+                    )
+                  : ParkingBoard(),
             )
           ])
         ]));
+  }
+
+  void updateTariffValues(Map<String, List<double>> tariffsUpdatedMap) {
+    tariffsMap = tariffsUpdatedMap;
   }
 
   void saveParking() {
