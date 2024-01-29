@@ -6,6 +6,7 @@ import 'package:parking_system/models/spot_model.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
 import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/payment_calculator.dart';
 
 import 'package:parking_system/user_payment.dart';
 
@@ -29,6 +30,12 @@ class _ParkfinderState extends State<Parkfinder> {
     );
   }
 
+  Map<String, List<double>> tariffsMap = {
+    '0': [2, 3, 4],
+    '12': [4, 5, 6]
+  };
+  final parkingTimeController = TextEditingController();
+  double requiredPayment = 0;
   late Parking currentParking;
   List<Spot> filteredSpaces = [];
   List<ParkingDb> parkingsDb = [];
@@ -59,7 +66,6 @@ class _ParkfinderState extends State<Parkfinder> {
   List<Parking> parkings = [];
   List<Spot> spots = [];
 
-
   void filterSpaces(Parking parking) {
     List<Spot> searchResult = spots
         .where((spot) => !spot.isTaken && spot.parkingId == parking.parkingId)
@@ -70,12 +76,38 @@ class _ParkfinderState extends State<Parkfinder> {
     });
   }
 
+  void listener() {
+    String text = parkingTimeController.text;
+    try {
+      if (text.isEmpty) {
+        requiredPayment = 0.0;
+      } else {
+        int stayDuration = int.parse(text);
+        setState(() {
+          if (stayDuration < 1) {
+            requiredPayment = 0.0;
+          } else {
+            PaymentCalculator calculator =
+                PaymentCalculator(tariffsMap: this.tariffsMap);
+            DateTime now = DateTime.now();
+            requiredPayment =
+                calculator.calculatePaymentFromHours(now, stayDuration);
+            DateTime temp = DateTime.now();
+          }
+        });
+      }
+    } on Exception catch (_) {
+      requiredPayment = 0.0;
+    }
+  }
+
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    final parkingTimeController = TextEditingController();
+
+    parkingTimeController.addListener(listener);
 
     return Stack(alignment: AlignmentDirectional.center, children: [
       Container(
@@ -100,6 +132,12 @@ class _ParkfinderState extends State<Parkfinder> {
                 controller: parkingTimeController,
                 labelText: 'Enter time',
                 obscureText: false),
+            Padding(padding: EdgeInsets.all(10)),
+            Text(
+              requiredPayment.toString(),
+              style: TextStyle(color: Colors.white),
+            ),
+            Padding(padding: EdgeInsets.all(10)),
             const SizedBox(
               height: 32,
             ),

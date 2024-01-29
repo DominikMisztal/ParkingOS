@@ -29,12 +29,14 @@ class PaymentCalculator {
             ? tariff_1_values[currentStayDuration]
             : tariff_1_values.last;
         currentStayDuration += 1;
+        parkingStart.add(Duration(hours: 1));
       } else if (parkingStart.hour > tariff_2_start ||
           parkingStart.hour < tariff_1_start) {
         currentPayment += currentStayDuration < tariff_2_len
             ? tariff_2_values[currentStayDuration]
             : tariff_2_values.last;
         currentStayDuration += 1;
+        parkingStart.add(Duration(hours: 1));
       }
     }
     return currentPayment;
