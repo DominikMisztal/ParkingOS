@@ -32,18 +32,25 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   bool isCyclical = false;
   List<List<Expense>?> loadExpensesForParkings = [];
 
-  void getParkings() async {
+  Future<List<String>?> getParkings() async {
     List<String>? tempParkingNames = await parkingServices.getParkingNames();
-    if(tempParkingNames == null) return;
-    parkingNames.addAll(tempParkingNames);
+    if (tempParkingNames == null) return null;
+    for (String parkingName in tempParkingNames) {
+      if (!parkingNames.contains(parkingName)) {
+        parkingNames.add(parkingName);
+      }
+    }
     for (var park in tempParkingNames) {
-      List<Expense>? tempExpenses = await expensesServices.loadExpensesForParking(park);
+      List<Expense>? tempExpenses =
+          await expensesServices.loadExpensesForParking(park);
       loadExpensesForParkings.add(tempExpenses);
     }
+    Future.delayed(Duration(seconds: 2));
     print(loadExpensesForParkings);
-    //connect to DB
+    return tempParkingNames;
   }
-  void saveExpenses(String name, List<Expense> expenses){
+
+  void saveExpenses(String name, List<Expense> expenses) {
     expensesServices.saveExpensesForParking(name, expenses);
   }
 
@@ -75,19 +82,20 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
       });
     }
   }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getParkings();
   }
+
   int selectedPark = 0;
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    
+
     selectedParking = parkingNames[selectedPark];
     changeExpenses();
     updateListView();
@@ -115,7 +123,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                           children: [
                             ElevatedButton(
                               onPressed: () => {Navigator.pop(context)},
-                              child: Text(
+                              child: const Text(
                                 'Go back',
                                 style: TextStyle(
                                   fontSize: 16.0,
@@ -123,8 +131,8 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                 ),
                               ),
                             ),
-                            Padding(padding: EdgeInsets.all(10)),
-                            Text(
+                            const Padding(padding: EdgeInsets.all(10)),
+                            const Text(
                               'Date: ',
                               style: TextStyle(color: Colors.white),
                             ),
@@ -132,29 +140,37 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                               onPressed: () => _selectDate(context),
                               child: Text(
                                 '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                             Padding(padding: EdgeInsets.all(10)),
-                            DropdownButton<String>(
-                              value: selectedParking,
-                              style: TextStyle(color: Colors.white),
-                              onChanged: (String? newValue) {
-                                selectedPark = parkingNames.indexOf(newValue!);
-                                setState(() {
-                                  selectedParking = newValue!;
-                                });
-                              },
-                              items: parkingNames.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                            FutureBuilder(
+                              future: getParkings(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot) {
+                                return DropdownButton<String>(
+                                  value: selectedParking,
+                                  style: TextStyle(color: Colors.white),
+                                  onChanged: (String? newValue) {
+                                    selectedPark =
+                                        parkingNames.indexOf(newValue!);
+                                    setState(() {
+                                      selectedParking = newValue!;
+                                    });
+                                  },
+                                  items: parkingNames
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 );
-                              }).toList(),
+                              },
                             ),
                           ],
                         ),
@@ -231,34 +247,51 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                     ),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: _items.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = _items[index];
-                        return Dismissible(
-                          key: Key(item),
-                          onDismissed: (direction) {
-                            setState(() {
-                              expensesRecords.removeAt(index);
-                              _items.removeAt(index);
-                            });
-                          },
-                          child: ListTile(
-                            title: Text(
-                              item,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                setState(() {
-                                  expensesRecords.removeAt(index);
-                                  _items.removeAt(index);
-                                });
-                              },
-                            ),
-                          ),
-                        );
+                    child: FutureBuilder(
+                      future: getParkings(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('Error loading data'),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemCount: _items.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = _items[index];
+                              return Dismissible(
+                                key: Key(item),
+                                onDismissed: (direction) {
+                                  setState(() {
+                                    expensesRecords.removeAt(index);
+                                    _items.removeAt(index);
+                                  });
+                                },
+                                child: ListTile(
+                                  title: Text(
+                                    item,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      setState(() {
+                                        expensesRecords.removeAt(index);
+                                        _items.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                     ),
                   )
@@ -271,8 +304,11 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
 
   void addExpenseToParking() {
     setState(() {
-      loadExpensesForParkings[selectedPark]!.add(Expense(selectedCategory, isCyclical,
-          double.parse(expenseAmountController.text), selectedDate));
+      loadExpensesForParkings[selectedPark]!.add(Expense(
+          selectedCategory,
+          isCyclical,
+          double.parse(expenseAmountController.text),
+          selectedDate));
     });
   }
 
@@ -297,14 +333,17 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
 
   void changeExpenses() {
     //get expenses from database
-    if(loadExpensesForParkings.isEmpty) return;
-      List<Expense> temp = [];
-      for (var expense in loadExpensesForParkings[selectedPark]!) {
-        if((expense.dateAdded.month == selectedDate.month && expense.dateAdded.year == selectedDate.year) || (expense.cyclical == true && expense.dateAdded.isBefore(selectedDate)) ){
+    if (loadExpensesForParkings.isEmpty) return;
+    List<Expense> temp = [];
+    for (var expense in loadExpensesForParkings[selectedPark]!) {
+      if ((expense.dateAdded.month == selectedDate.month &&
+              expense.dateAdded.year == selectedDate.year) ||
+          (expense.cyclical == true &&
+              expense.dateAdded.isBefore(selectedDate))) {
         temp.add(expense);
       }
       expensesRecords = temp;
-  }
+    }
   }
 
   void saveChanges() {

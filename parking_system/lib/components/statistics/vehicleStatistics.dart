@@ -37,9 +37,9 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   _VehicleStatisticsWidgetState({required this.selectedParking});
   var filterController = TextEditingController();
 
-  void getParkingRecords() async {
+  Future<List<String>?> getParkingRecords() async {
     List<String>? carRegistrations = await parkHistory.getAllRegistrations();
-    if (carRegistrations == null) return;
+    if (carRegistrations == null) return null;
     Set<String> uniqueSet = Set<String>.from(carRegistrations);
     carRegistrations = uniqueSet.toList();
     print(carRegistrations);
@@ -55,6 +55,7 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
         model: car.model,
       ));
     }
+    return carRegistrations;
   }
 
   @override
@@ -62,229 +63,246 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
     var width = MediaQuery.of(context).size.width;
 
     getParkingRecords();
-    return Column(children: [
-      Autocomplete<String>(
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          return parkingNames.where((String parking) {
-            return parking
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase());
-          });
-        },
-        onSelected: (String value) {
-          setState(() {
-            selectedParking = value;
-          });
-        },
-        fieldViewBuilder: (BuildContext context,
-            TextEditingController textEditingController,
-            FocusNode focusNode,
-            VoidCallback onFieldSubmitted) {
-          textEditingController.text = selectedParking;
-          return TextFormField(
-            controller: textEditingController,
-            focusNode: focusNode,
-            style: TextStyle(color: Colors.white),
-            onFieldSubmitted: (_) => onFieldSubmitted(),
-            decoration: InputDecoration(
-              labelText: 'Select parking',
-              border: OutlineInputBorder(),
-            ),
+    return FutureBuilder(
+      future: getParkingRecords(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        },
-        optionsViewBuilder: (BuildContext context,
-            AutocompleteOnSelected<String> onSelected,
-            Iterable<String> options) {
-          return Align(
-            alignment: Alignment.topLeft,
-            child: Material(
-              elevation: 4.0,
-              child: SizedBox(
-                height: 200.0,
-                width: width / 2,
-                child: ListView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  itemCount: options.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final String option = options.elementAt(index);
-                    return GestureDetector(
-                      onTap: () {
-                        onSelected(option);
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text('Error loading data'),
+          );
+        }
+        return Column(children: [
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              return parkingNames.where((String parking) {
+                return parking
+                    .toLowerCase()
+                    .contains(textEditingValue.text.toLowerCase());
+              });
+            },
+            onSelected: (String value) {
+              setState(() {
+                selectedParking = value;
+              });
+            },
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
+              textEditingController.text = selectedParking;
+              return TextFormField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                style: const TextStyle(color: Colors.white),
+                onFieldSubmitted: (_) => onFieldSubmitted(),
+                decoration: const InputDecoration(
+                  labelText: 'Select parking',
+                  border: OutlineInputBorder(),
+                ),
+              );
+            },
+            optionsViewBuilder: (BuildContext context,
+                AutocompleteOnSelected<String> onSelected,
+                Iterable<String> options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4.0,
+                  child: SizedBox(
+                    height: 200.0,
+                    width: width / 2,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: options.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final String option = options.elementAt(index);
+                        return GestureDetector(
+                          onTap: () {
+                            onSelected(option);
+                          },
+                          child: ListTile(
+                            title: Text(
+                              option,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
                       },
-                      child: ListTile(
-                        title: Text(
-                          option,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  },
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              const Text(
+                'Order by: ',
+                style: TextStyle(color: Colors.white),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
+              DropdownButton<String>(
+                value: selectedColumn,
+                style: const TextStyle(color: Colors.white),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedColumn = newValue!;
+                  });
+                },
+                items:
+                    columnNames.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
+              DropdownButton<String>(
+                value: selectedOrdering,
+                style: const TextStyle(color: Colors.white),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedOrdering = newValue!;
+                  });
+                },
+                items:
+                    orderingTypes.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
+              ElevatedButton(
+                onPressed: sortTable,
+                child: const Text(
+                  'Sort',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
-      Row(
-        children: [
-          Text(
-            'Order by: ',
-            style: TextStyle(color: Colors.white),
+            ],
           ),
-          Padding(padding: EdgeInsets.all(10)),
-          DropdownButton<String>(
-            value: selectedColumn,
-            style: TextStyle(color: Colors.white),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedColumn = newValue!;
-              });
-            },
-            items: columnNames.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          Padding(padding: EdgeInsets.all(10)),
-          DropdownButton<String>(
-            value: selectedOrdering,
-            style: TextStyle(color: Colors.white),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedOrdering = newValue!;
-              });
-            },
-            items: orderingTypes.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          Padding(padding: EdgeInsets.all(10)),
-          ElevatedButton(
-            onPressed: sortTable,
-            child: Text(
-              'Sort',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+          Row(
+            children: [
+              const Text(
+                'Filter: ',
+                style: TextStyle(color: Colors.white),
               ),
-            ),
+              SizedBox(
+                width: 200,
+                child: MyCustomTextField(
+                  controller: filterController,
+                  labelText: 'Filter by',
+                  obscureText: false,
+                ),
+              ),
+              DropdownButton<String>(
+                value: selectedColumnForFiltering,
+                style: const TextStyle(color: Colors.white),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedColumnForFiltering = newValue!;
+                  });
+                },
+                items:
+                    columnNames.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
+              ElevatedButton(
+                onPressed: filterTable,
+                child: const Text(
+                  'Filter',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      Row(
-        children: [
-          Text(
-            'Filter: ',
-            style: TextStyle(color: Colors.white),
-          ),
+          const Padding(padding: EdgeInsets.all(10)),
           SizedBox(
-            width: 200,
-            child: MyCustomTextField(
-              controller: filterController,
-              labelText: 'Filter by',
-              obscureText: false,
-            ),
-          ),
-          DropdownButton<String>(
-            value: selectedColumnForFiltering,
-            style: TextStyle(color: Colors.white),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedColumnForFiltering = newValue!;
-              });
-            },
-            items: columnNames.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          Padding(padding: EdgeInsets.all(10)),
-          ElevatedButton(
-            onPressed: filterTable,
-            child: Text(
-              'Filter',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-      Padding(padding: EdgeInsets.all(10)),
-      SizedBox(
-        height: 500,
-        width: 1400,
-        child: ListView.builder(
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: DataTable(
-                  columns: [
-                    DataColumn(
-                        label: Text(
-                      columnNames[0],
-                      style: TextStyle(color: Colors.white),
-                    )),
-                    DataColumn(
-                        label: Text(columnNames[1],
-                            style: TextStyle(color: Colors.white))),
-                    DataColumn(
-                        label: Text(columnNames[2],
-                            style: TextStyle(color: Colors.white))),
-                    DataColumn(
-                        label: Text(columnNames[3],
-                            style: TextStyle(color: Colors.white))),
-                    DataColumn(
-                        label: Text(columnNames[4],
-                            style: TextStyle(color: Colors.white))),
-                    DataColumn(
-                        label: Text(columnNames[5],
-                            style: TextStyle(color: Colors.white))),
-                    DataColumn(
-                        label: Text(columnNames[6],
-                            style: TextStyle(color: Colors.white))),
-                  ],
-                  rows: vehicleRecords.map((VehicleRecord record) {
-                    return DataRow(cells: [
-                      DataCell(Text(record.vehicleRegistration,
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(record.vehicleBrand.toString(),
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(record.totalExpenses.toString(),
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(record.isParked.toString(),
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(
-                          record.model == null
-                              ? 'N/A'
-                              : record.model.toString(),
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(
-                          record.spotId == null
-                              ? 'N/A'
-                              : record.spotId.toString(),
-                          style: TextStyle(color: Colors.white))),
-                      DataCell(Text(
-                          record.parkingSince == null
-                              ? 'N/A'
-                              : record.parkingSince.toString(),
-                          style: TextStyle(color: Colors.white))),
-                    ]);
-                  }).toList(),
-                ),
-              );
-            }),
-      )
-    ]);
+            height: 500,
+            width: 1400,
+            child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(
+                            label: Text(
+                          columnNames[0],
+                          style: const TextStyle(color: Colors.white),
+                        )),
+                        DataColumn(
+                            label: Text(columnNames[1],
+                                style: const TextStyle(color: Colors.white))),
+                        DataColumn(
+                            label: Text(columnNames[2],
+                                style: const TextStyle(color: Colors.white))),
+                        DataColumn(
+                            label: Text(columnNames[3],
+                                style: const TextStyle(color: Colors.white))),
+                        DataColumn(
+                            label: Text(columnNames[4],
+                                style: const TextStyle(color: Colors.white))),
+                        DataColumn(
+                            label: Text(columnNames[5],
+                                style: const TextStyle(color: Colors.white))),
+                        DataColumn(
+                            label: Text(columnNames[6],
+                                style: const TextStyle(color: Colors.white))),
+                      ],
+                      rows: vehicleRecords.map((VehicleRecord record) {
+                        return DataRow(cells: [
+                          DataCell(Text(record.vehicleRegistration,
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(record.vehicleBrand.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(record.totalExpenses.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(record.isParked.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(
+                              record.model == null
+                                  ? 'N/A'
+                                  : record.model.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(
+                              record.spotId == null
+                                  ? 'N/A'
+                                  : record.spotId.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                          DataCell(Text(
+                              record.parkingSince == null
+                                  ? 'N/A'
+                                  : record.parkingSince.toString(),
+                              style: const TextStyle(color: Colors.white))),
+                        ]);
+                      }).toList(),
+                    ),
+                  );
+                }),
+          )
+        ]);
+      },
+    );
   }
 
   void sortTable() {

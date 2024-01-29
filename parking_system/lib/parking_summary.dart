@@ -157,23 +157,43 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                 ),
                               ),
                               Padding(padding: EdgeInsets.all(10)),
-                              DropdownButton<String>(
-                                value: selectedParking,
-                                style: TextStyle(color: Colors.white),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedPark = parkingNames.indexOf(newValue!);
-                                    selectedParking = newValue!;
-                                  });
-                                },
-                                items: parkingNames
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
+
+                              FutureBuilder(
+                                future: null,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<dynamic> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    // Display a loading screen while waiting for data
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    // Display an error message if data loading fails
+                                    return const Center(
+                                      child: Text('Error loading data'),
+                                    );
+                                  }
+                                  return DropdownButton<String>(
+                                    value: selectedParking,
+                                    style: TextStyle(color: Colors.white),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedPark = parkingNames.indexOf(newValue!);
+                                        selectedParking = newValue!;
+                                      });
+                                    },
+                                    items: parkingNames
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+
                                   );
-                                }).toList(),
+                                },
                               ),
                               Padding(padding: EdgeInsets.all(10)),
                               DropdownButton<String>(

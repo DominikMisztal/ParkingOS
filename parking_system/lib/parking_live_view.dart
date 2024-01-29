@@ -9,7 +9,6 @@ import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/services/payment_calculator.dart';
 
 import 'parking_statistics.dart';
-import 'dart:developer' as developer;
 
 class ParkingLiveView extends StatefulWidget {
   const ParkingLiveView({super.key});
@@ -39,15 +38,21 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     '0': [2, 3, 4],
     '12': [2, 4, 5]
   };
-
-  void loadParking() async {
+  //Tu coś się psuje przy wybieraniu parkingów z dropdown !!!!!!!!
+  Future<List<String>?> loadParking() async {
     //connect to DB
     List<String>? tempParking = await parkingServices.getParkingNames();
-    if (tempParking == null) return;
-    parkingNames.addAll(tempParking);
+    if (tempParking == null) return null;
+    for (String parkingName in tempParking) {
+      if (!parkingNames.contains(parkingName)) {
+        parkingNames.add(parkingName);
+      }
+    }
+    // parkingNames.addAll(tempParking);
     List<ParkingDb>? tempParkings = await parkingServices.getParkings();
-    if (tempParkings == null) return;
+    if (tempParkings == null) return null;
     parkings = tempParkings;
+    return parkingNames;
   }
 
   void setValueForParking(int pos) {
@@ -94,7 +99,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   @override
   void initState() {
     super.initState();
-    loadParking();
+    //loadParking();
     selectedParking = parkingNames[0];
   }
 
@@ -142,7 +147,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                 children: [
                                   ElevatedButton(
                                     onPressed: () => {Navigator.pop(context)},
-                                    child: Text(
+                                    child: const Text(
                                       'Go back',
                                       style: TextStyle(
                                         fontSize: 16.0,
@@ -150,27 +155,44 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                       ),
                                     ),
                                   ),
-                                  DropdownButton<String>(
-                                    value: selectedParking,
-                                    style: TextStyle(color: Colors.white),
-                                    onChanged: (String? newValue) {
-                                      int selectedIndex =
-                                          parkingNames.indexOf(newValue!);
-                                      setValueForParking(selectedIndex);
-                                      setState(() {
-                                        selectedParking = newValue!;
-                                        currentlySelectedSpot = -1;
-                                      });
-                                    },
-                                    items: parkingNames
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
+                                  FutureBuilder(
+                                      future: loadParking(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<dynamic> snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return const Center(
+                                            child: Text('Error loading data'),
+                                          );
+                                        } else {
+                                          return DropdownButton<String>(
+                                            value: selectedParking,
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                            onChanged: (String? newValue) {
+                                              int selectedIndex = parkingNames
+                                                  .indexOf(newValue!);
+                                              setValueForParking(selectedIndex);
+                                              setState(() {
+                                                selectedParking = newValue!;
+                                                currentlySelectedSpot = -1;
+                                              });
+                                            },
+                                            items: parkingNames
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          );
+                                        }
+                                      }),
                                   Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 16),
