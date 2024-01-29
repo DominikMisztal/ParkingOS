@@ -17,10 +17,14 @@ class ParkingTileLiveView extends StatefulWidget {
       required this.tappedTile});
 
   @override
-  State<ParkingTileLiveView> createState() => _ParkingTileLiveViewState();
+  State<ParkingTileLiveView> createState() =>
+      _ParkingTileLiveViewState(changeSelectedSpot: this.changeSelectedSpot);
 }
 
 class _ParkingTileLiveViewState extends State<ParkingTileLiveView> {
+  final ValueChanged<int> changeSelectedSpot;
+  _ParkingTileLiveViewState({required this.changeSelectedSpot});
+
   @override
   Widget build(BuildContext context) {
     Color spotColor;
@@ -64,6 +68,7 @@ class _ParkingTileLiveViewState extends State<ParkingTileLiveView> {
 
     setState(() {
       widget.tappedTile.setId(widget.id);
+      changeSelectedSpot(widget.id);
     });
   }
 }

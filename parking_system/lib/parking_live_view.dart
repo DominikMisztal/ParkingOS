@@ -26,44 +26,71 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   List<String> parkingNames = ['Parking 1', 'Parking 2'];
   int currentlySelectedSpot = -1;
   late String selectedParking = "Parking 2";
+  String parkingSinceText = "";
+  String requiredPaymentText = "";
+  String spotStateDetails = "";
+  double requiredPayment = 0;
+  late DateTime parkedSinceDate;
+  String parkedCarRegistration = '';
   List<ParkingDb> parkings = [];
   int choosenPark = 0;
 
   void loadParking() async {
     //connect to DB
     List<String>? tempParking = await parkingServices.getParkingNames();
-    if(tempParking == null) return;
+    if (tempParking == null) return;
     parkingNames.addAll(tempParking);
     List<ParkingDb>? tempParkings = await parkingServices.getParkings();
-    if(tempParkings == null) return;
+    if (tempParkings == null) return;
     parkings = tempParkings;
-  
   }
 
-  void setValueForParking(int pos){
+  void setValueForParking(int pos) {
     choosenPark = pos;
-    parkingRows = parkings[pos].height; 
-    parkingCols = parkings[pos].width; 
+    parkingRows = parkings[pos].height;
+    parkingCols = parkings[pos].width;
     parkingFloors = parkings[pos].level + 1;
     setSpots(pos);
   }
 
-  void setSpots(int pos){
-
+  void setSpots(int pos) {
     List<bool> testPlacements = [];
     for (int i = 0; i < parkingRows * parkingCols * (parkingFloors); i++) {
-          
-      testPlacements.add(parkings[pos].spots[i].registrationNumber == "" ? false : true);
+      testPlacements
+          .add(parkings[pos].spots[i].registrationNumber == "" ? false : true);
     }
     ParkingLiveView.spotsTaken = testPlacements;
+  }
+
+  void updateView() {
+    if (currentlySelectedSpot == -1) {
+      spotStateDetails = "No spot selected";
+      requiredPaymentText = '';
+    } else {
+      if (ParkingLiveView.spotsTaken[currentlySelectedSpot]) {
+        // UPDATE FROM DB
+        parkedSinceDate = DateTime.now();
+        parkedCarRegistration = "KL-12345";
+        spotStateDetails = "Spot is taken by: ${parkedCarRegistration}";
+        parkingSinceText =
+            "Current vehicle is parked since: ${parkedSinceDate.toString()}";
+        requiredPaymentText = "Current payment: ${requiredPayment}";
+      } else {
+        spotStateDetails = "Spot is empty";
+        parkingSinceText = "";
+        requiredPaymentText = "No payment pending";
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
     loadParking();
+    selectedParking = parkingNames[0];
   }
-  int parkingRows = 3, parkingCols = 4, parkingFloors = 2; 
+
+  int parkingRows = 3, parkingCols = 4, parkingFloors = 2;
   @override
   Widget build(BuildContext context) {
     TappedTile tappedt = TappedTile();
@@ -76,16 +103,6 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
       generateTestPlacements();
     }
     ParkingBoardLiveView.spotsBusy = ParkingLiveView.spotsTaken;
-    String spotStateDetails;
-    if (currentlySelectedSpot == -1) {
-      spotStateDetails = "No spot selected";
-    } else {
-      if (ParkingBoard.spotsBusy[currentlySelectedSpot]) {
-        spotStateDetails = "Spot is taken by: KL-12345";
-      } else {
-        spotStateDetails = "Spot is empty";
-      }
-    }
 
     return Scaffold(
         appBar: AppBar(
@@ -129,10 +146,12 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                     value: selectedParking,
                                     style: TextStyle(color: Colors.white),
                                     onChanged: (String? newValue) {
-                                      int selectedIndex = parkingNames.indexOf(newValue!);
+                                      int selectedIndex =
+                                          parkingNames.indexOf(newValue!);
                                       setValueForParking(selectedIndex);
                                       setState(() {
                                         selectedParking = newValue!;
+                                        currentlySelectedSpot = -1;
                                       });
                                     },
                                     items: parkingNames
@@ -161,10 +180,9 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                         },
                                       )),
                                   CustomFormattedText(text: spotStateDetails),
+                                  CustomFormattedText(text: parkingSinceText),
                                   CustomFormattedText(
-                                      text: "Parking since: 8:00"),
-                                  CustomFormattedText(
-                                      text: "Currently required to pay: 50 zł"),
+                                      text: requiredPaymentText),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 16.0),
@@ -199,14 +217,16 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
               category: 'Parking Spots',
               parkingName: parkings[choosenPark].name,
               spotId: currentlySelectedSpot.toString(),
-              vehicleReg: parkings[choosenPark].spots[currentlySelectedSpot].registrationNumber)),
+              vehicleReg: parkings[choosenPark]
+                  .spots[currentlySelectedSpot]
+                  .registrationNumber)),
     );
   }
 
   void changeSelectedSpot(int newSelectedSpot) {
     setState(() {
       currentlySelectedSpot = newSelectedSpot;
-      developer.log('Live view selected spot: ${currentlySelectedSpot}');
+      updateView();
     });
   }
 
