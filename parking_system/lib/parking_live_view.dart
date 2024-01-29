@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/custom_formatted_text.dart';
 import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/parking_board_live_view.dart';
+import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/models/parkingDB.dart';
 
 import 'parking_statistics.dart';
 import 'dart:developer' as developer;
@@ -20,24 +22,56 @@ class ParkingLiveView extends StatefulWidget {
 }
 
 class _ParkingLiveViewState extends State<ParkingLiveView> {
+  ParkingServices parkingServices = ParkingServices();
   List<String> parkingNames = ['Parking 1', 'Parking 2'];
   int currentlySelectedSpot = -1;
-  late String selectedParking;
+  late String selectedParking = "Parking 2";
+  List<ParkingDb> parkings = [];
+  int choosenPark = 0;
 
-  void loadParking() {
+  void loadParking() async {
     //connect to DB
+    List<String>? tempParking = await parkingServices.getParkingNames();
+    if(tempParking == null) return;
+    parkingNames.addAll(tempParking);
+    List<ParkingDb>? tempParkings = await parkingServices.getParkings();
+    if(tempParkings == null) return;
+    parkings = tempParkings;
+  
+  }
+
+  void setValueForParking(int pos){
+    choosenPark = pos;
+    parkingRows = parkings[pos].height; 
+    parkingCols = parkings[pos].width; 
+    parkingFloors = parkings[pos].level + 1;
+    setSpots(pos);
+  }
+
+  void setSpots(int pos){
+
+    List<bool> testPlacements = [];
+    for (int i = 0; i < parkingRows * parkingCols * (parkingFloors); i++) {
+          
+      testPlacements.add(parkings[pos].spots[i].registrationNumber == "" ? false : true);
+    }
+    ParkingLiveView.spotsTaken = testPlacements;
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     loadParking();
-    selectedParking = parkingNames[0];
+  }
+  int parkingRows = 3, parkingCols = 4, parkingFloors = 2; 
+  @override
+  Widget build(BuildContext context) {
     TappedTile tappedt = TappedTile();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    ParkingBoardLiveView.cols = ParkingLiveView.parkingCols;
-    ParkingBoardLiveView.rows = ParkingLiveView.parkingRows;
-    ParkingBoardLiveView.floors = ParkingLiveView.parkingFloors;
+    ParkingBoardLiveView.cols = parkingCols;
+    ParkingBoardLiveView.rows = parkingRows;
+    ParkingBoardLiveView.floors = parkingFloors;
     if (ParkingLiveView.spotsTaken.isEmpty) {
       generateTestPlacements();
     }
@@ -95,6 +129,8 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                     value: selectedParking,
                                     style: TextStyle(color: Colors.white),
                                     onChanged: (String? newValue) {
+                                      int selectedIndex = parkingNames.indexOf(newValue!);
+                                      setValueForParking(selectedIndex);
                                       setState(() {
                                         selectedParking = newValue!;
                                       });
@@ -161,9 +197,9 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
       MaterialPageRoute(
           builder: (context) => ParkingStatistics(
               category: 'Parking Spots',
-              parkingName: ParkingLiveView.parkingName,
+              parkingName: parkings[choosenPark].name,
               spotId: currentlySelectedSpot.toString(),
-              vehicleReg: '')),
+              vehicleReg: parkings[choosenPark].spots[currentlySelectedSpot].registrationNumber)),
     );
   }
 
