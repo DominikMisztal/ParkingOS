@@ -11,11 +11,8 @@ import 'package:parking_system/services/ticket_services.dart';
 import 'package:parking_system/services/user_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-
 class UserTicketScreen extends StatefulWidget {
-  const UserTicketScreen({
-    super.key, required this.user
-  });
+  const UserTicketScreen({super.key, required this.user});
   final UserDb user;
   @override
   State<UserTicketScreen> createState() => UserPaymentStateScreen();
@@ -32,9 +29,10 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
   }
 
   List<Layover> layovers = [
-    Layover('2024-01-26 13:00:00', '', 'The Greatest Park', '23', 'Abcd1', "userImplementIGuess?"),
+    Layover('2024-01-26 13:00:00', '', 'The Greatest Park', '23', 'Abcd1',
+        "userImplementIGuess?"),
   ];
-Layover? ticket;
+  Layover? ticket;
   @override
   void initState() {
     // TODO: implement initState
@@ -42,7 +40,7 @@ Layover? ticket;
     initializeTicket();
   }
 
-  void initializeTicket() async{
+  void initializeTicket() async {
     Layover? tempTicket = await ticketService.findTicket(widget.user.login);
     ticket = tempTicket!;
     print(tempTicket);
@@ -124,25 +122,28 @@ Layover? ticket;
 
   Future<double> countCost(Layover layover) async {
     ParkingServices parkingServices = ParkingServices();
-    Map<String, List<double>> tarifs = await parkingServices.getTarifs(layover.parkingId);
+    Map<String, List<double>> tarifs =
+        await parkingServices.getTarifs(layover.parkingId);
     PaymentCalculator paymentCalculator = PaymentCalculator(tariffsMap: tarifs);
-    return paymentCalculator.calculatePaymentFromTime(DateTime.parse(layover.startDate), DateTime.now());
+    return paymentCalculator.calculatePaymentFromTime(
+        DateTime.parse(layover.startDate), DateTime.now());
   }
 
   void _giveBackTicket(Layover layover) async {
     //Add end to layover and update database
     layover.endDate = DateTime.now().toString();
     double cost = await countCost(layover);
-    if(cost < widget.user.balance){
-      parkingServices.moveFromParking(int.parse(layover.spotId), layover.parkingId, cost, widget.user.login);
+    if (cost < widget.user.balance) {
+      parkingServices.moveFromParking(int.parse(layover.spotId),
+          layover.parkingId, cost, widget.user.login);
       UserService userService = UserService();
       double newBalance = await userService.getBalance();
       userService.addBalance(newBalance - cost);
+      widget.user.addBalance(-cost);
       setState(() {
-      layovers.clear();
-    });
+        layovers.clear();
+      });
     }
     //Clean Layover list
-    
   }
 }
