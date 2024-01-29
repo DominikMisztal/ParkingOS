@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/services/user_auth.dart';
 import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/utils/Utils.dart';
 
 import '../models/user.dart';
 
@@ -102,9 +103,9 @@ class _ChargeDialogState extends State<ChargeDialog> {
       title: Column(
         children: [
           TextField(
-            style: TextStyle(color: Colors.white60),
+            style: const TextStyle(color: Colors.white60),
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Enter a number',
             ),
             onChanged: (val) {
@@ -138,6 +139,10 @@ class SaldoChargerModel with ChangeNotifier {
   double get charge => _charge;
 
   void chargeSaldo(double price) {
+    if (price < 0) {
+      showToast('Charge have to be bigger than 0');
+      return;
+    }
     _charge += price;
     notifyListeners();
   }
