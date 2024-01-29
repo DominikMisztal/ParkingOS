@@ -19,6 +19,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
   String expensesLabel = 'Expenses for ';
   List<Expense> expensesRecords = [];
   ExpensesServices expensesServices = ExpensesServices();
+  int selecterParkingIndex = 0;
 
   DateTime selectedDate = DateTime.now();
   String selectedCategory = 'Cleaning';
@@ -34,6 +35,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
 
   Future<List<String>?> getParkings() async {
     List<String>? tempParkingNames = await parkingServices.getParkingNames();
+    parkingNames.clear();
     if (tempParkingNames == null) return null;
     for (String parkingName in tempParkingNames) {
       if (!parkingNames.contains(parkingName)) {
@@ -47,6 +49,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
     }
     Future.delayed(Duration(seconds: 2));
     print(loadExpensesForParkings);
+    selectedParking = parkingNames[selecterParkingIndex];
     return tempParkingNames;
   }
 
