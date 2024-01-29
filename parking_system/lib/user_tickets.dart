@@ -138,6 +138,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
           layover.parkingId, cost, widget.user.login);
       UserService userService = UserService();
       double newBalance = await userService.getBalance();
+      widget.user.balance = newBalance;
       userService.addBalance(newBalance - cost);
       widget.user.addBalance(-cost);
       setState(() {

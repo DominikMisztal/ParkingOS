@@ -26,8 +26,6 @@ class _ParkingSummaryState extends State<ParkingSummary> {
   void getParkingNames() {
     List<String> temp = [];
     temp.add('Parking 1');
-    temp.add('Parking 2');
-    temp.add('Parking 3');
     parkingNames = temp;
     selectedParking = parkingNames[0];
   }
@@ -46,8 +44,15 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     super.initState();
     setParkingNames();
     getExpenses();
-    //getIncome();
   }
+  // Map<String, double> getIncome() async{
+  //   Map<String, double> tempExpense = {};
+  //   for (var name in parkingNames) {
+        
+  //       tempExpense['11'] = temp;
+  //   }
+  //   return tempExpense;
+  // }
 
   void getExpenses() async{
     for (var name in parkingNames) {
@@ -62,7 +67,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
   int selectedPark = 0;
 
 
-  void getDataToCharts() {
+  void getDataToCharts() async {
     List<ChartData> incomeTemp = [];
     List<ChartData> expensesTemp = [];
     
@@ -90,11 +95,17 @@ class _ParkingSummaryState extends State<ParkingSummary> {
       }
       expensesTemp.add(ChartData("1", amount));
     
-    
+    double temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2023,11,1));
+    print(temp);
+    incomeTemp.add(ChartData("11", temp));
+    temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2023,12,1));
+    print(temp);
+    incomeTemp.add(ChartData("12",temp));
+    temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2024,1,1));
+    print(temp);
+    incomeTemp.add(ChartData("1", temp));
 
-    incomeTemp.add(ChartData("11", Random().nextInt(100) + 50));
-    incomeTemp.add(ChartData("12", Random().nextInt(100) + 50));
-    incomeTemp.add(ChartData("1", Random().nextInt(100) + 50));
+
     incomeData = incomeTemp;
     expenseData = expensesTemp;
   }
