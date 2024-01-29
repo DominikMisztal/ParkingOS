@@ -1,15 +1,7 @@
 class PaymentCalculator {
-  DateTime tariff_1_start;
-  List<double> tariff_1_values;
-  DateTime tariff_2_start;
-  List<double> tariff_2_values;
+  Map<String, List<double>> tariffsMap = {};
 
-  PaymentCalculator({
-    required this.tariff_1_start,
-    required this.tariff_1_values,
-    required this.tariff_2_start,
-    required this.tariff_2_values,
-  });
+  PaymentCalculator({required this.tariffsMap});
 
   double calculatePaymentFromTime(DateTime parkingStart, DateTime parkingEnd) {
     int parkingDuration = parkingEnd.difference(parkingStart).inHours;
@@ -24,20 +16,24 @@ class PaymentCalculator {
     int currentStayDuration = 0;
     int parkingDuration = hours;
     double currentPayment = 0.0;
+    List<double> tariff_1_values = tariffsMap[tariffsMap.keys.first]!;
+    List<double> tariff_2_values = tariffsMap[tariffsMap.keys.last]!;
+    int tariff_1_start = int.parse(tariffsMap.keys.first);
+    int tariff_2_start = int.parse(tariffsMap.keys.last);
 
     int tariff_1_len = tariff_1_values.length;
     int tariff_2_len = tariff_2_values.length;
     for (; hours > 0; hours--) {
-      if (parkingStart.hour > tariff_1_start.hour) {
-        currentPayment += currentStayDuration > tariff_1_len
+      if (parkingStart.hour > tariff_1_start) {
+        currentPayment += currentStayDuration < tariff_1_len
             ? tariff_1_values[currentStayDuration]
             : tariff_1_values.last;
         currentStayDuration += 1;
-      } else if (parkingStart.hour > tariff_2_start.hour ||
-          parkingStart.hour < tariff_1_start.hour) {
-        currentPayment += currentStayDuration > tariff_1_len
-            ? tariff_1_values[currentStayDuration]
-            : tariff_1_values.last;
+      } else if (parkingStart.hour > tariff_2_start ||
+          parkingStart.hour < tariff_1_start) {
+        currentPayment += currentStayDuration < tariff_2_len
+            ? tariff_2_values[currentStayDuration]
+            : tariff_2_values.last;
         currentStayDuration += 1;
       }
     }
