@@ -31,11 +31,6 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
   ParkingServices parkingServices = ParkingServices();
   TicketService ticketService = TicketService();
 
-  List<Layover> layovers = [
-    Layover('2024-01-26 13:00:00', '', 'The Greatest Park', '23', 'Abcd1',
-        "userImplementIGuess?"),
-  ];
-
   Layover? ticket;
   @override
   void initState() {
@@ -119,7 +114,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
           Container(
             color: Colors.white,
             child: QrImageView(
-              data: '${layover.car} ',
+              data: layover.ticketDataForQRcode(),
               version: QrVersions.auto,
               size: 200.0,
             ),
@@ -132,10 +127,6 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
             style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
           Text(
-            'End Date: ${layover.endDate}',
-            style: const TextStyle(color: Colors.white60, fontSize: 16),
-          ),
-          Text(
             'Parking: ${layover.parkingId}',
             style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
@@ -143,15 +134,12 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
             'Spot: ${layover.spotId}',
             style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
-          //Todo Fajnie byłoby tu dać stoper odmierzający czas parkingu
           ElevatedButton(
               onPressed: () {
                 _giveBackTicket(layover);
-
                 setState(() {});
-                myWidgetKey.currentState?.forceRefresh();
               },
-              child: Text('Give Ticket Back'))
+              child: const Text('Give Ticket Back and Confirm')),
         ],
       ),
     );
@@ -166,15 +154,14 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
         DateTime.parse(layover.startDate), DateTime.now());
   }
 
-  void _giveBackTicket(Layover layover) async {
-    //Add end to layover and update database
+  Future<bool> _giveBackTicket(Layover layover) async {
     try {
       layover.endDate = DateTime.now().toString();
       double cost = await countCost(layover);
       if (cost < widget.user.balance) {
         setState(() {
-          layovers.clear();
           ticket = null;
+          myWidgetKey.currentState?.forceRefresh();
         });
         parkingServices.moveFromParking(int.parse(layover.spotId),
             layover.parkingId, cost, widget.user.login);
@@ -184,11 +171,10 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
         userService.addBalance(newBalance - cost);
         widget.user.addBalance(-cost);
       }
-    } catch (e) {
-      print('ojoj');
-    }
+    } catch (e) {}
     setState(() {
       ticket = null;
     });
+    return true;
   }
 }

@@ -22,7 +22,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
   UserService userService = UserService();
   List<Car> _placeholderCars = [];
   Car? selectedCar;
-
+  Layover? tempTicket;
   @override
   void initState() {
     super.initState();
@@ -86,6 +86,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                         selectedCar = car;
                         setState(() {
                           selectedCar = car;
+                          getTempTicket();
                         });
                       },
                       dropdownMenuEntries: _placeholderCars
@@ -113,13 +114,24 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                           const SizedBox(
                             height: 32,
                           ),
-                          Container(
-                            color: Colors.white,
-                            child: QrImageView(
-                              data: '${selectedCar?.registration_num}',
-                              version: QrVersions.auto,
-                              size: 200.0,
-                            ),
+                          FutureBuilder(
+                            future: getTempTicket(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              }
+
+                              return Container(
+                                color: Colors.white,
+                                child: QrImageView(
+                                  data: '${tempTicket?.ticketDataForQRcode()}',
+                                  version: QrVersions.auto,
+                                  size: 200.0,
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 16,
@@ -156,7 +168,6 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     String? tempLogin = await userService.getLoginForCurrentUser();
     if (tempLogin == null) return false;
     tempLogin = tempLogin.replaceAll('.', '');
-    print(tempLogin);
 
     Layover ticket = Layover(
         DateTime.now().toString(),
@@ -165,9 +176,26 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
         widget.spot.number.toString(),
         selectedCar!.registration_num,
         tempLogin);
+
     parkingServices.startParking(widget.spot.number, widget.parking.name,
-        selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin!);
+        selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin);
 
     return true;
+  }
+
+  Future<Layover?> getTempTicket() async {
+    String? tempLogin = await userService.getLoginForCurrentUser();
+    if (tempLogin == null) return null;
+    tempLogin = tempLogin.replaceAll('.', '');
+
+    Layover ticket = Layover(
+        DateTime.now().toString(),
+        "",
+        widget.parking.name,
+        widget.spot.number.toString(),
+        selectedCar!.registration_num,
+        tempLogin);
+    tempTicket = ticket;
+    return ticket;
   }
 }
