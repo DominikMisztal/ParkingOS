@@ -25,6 +25,10 @@ class _ParkingMakerState extends State<ParkingMaker> {
   final widthController = TextEditingController(text: "8");
   final heightController = TextEditingController(text: "8");
   final floorsController = TextEditingController(text: "3");
+  List<String> parkingNames = ['Parking 1', 'Parking 2'];
+  late String selectedParking;
+  int selectedParkingIndex = 0;
+
   Map<String, List<double>> tariffsMap = {
     '0': [0, 0, 0],
     '12': [0, 0, 0]
@@ -33,6 +37,20 @@ class _ParkingMakerState extends State<ParkingMaker> {
   int parkingRows = 8;
   int parkingFloors = 3;
   bool _toggleTariffParking = false;
+
+  void getParkingNames() {
+    //TO DO GET PARKING NAMES
+    selectedParking = parkingNames[selectedParkingIndex];
+  }
+
+  void updateParkingData() {
+    nameController.text = '';
+    addressController.text = '';
+    widthController.text = '8';
+    heightController.text = '8';
+    floorsController.text = '0';
+  }
+
   void _addParking() {
     int width = int.parse(widthController.text);
     int height = int.parse(heightController.text);
@@ -83,7 +101,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
     tempContext = context;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    getParkingNames();
     return Scaffold(
         appBar: AppBar(
           title: const Text('Parking Maker'),
@@ -122,6 +140,28 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                       ),
                                     ),
                                   ),
+                                  Padding(padding: EdgeInsets.all(10)),
+                                  DropdownButton<String>(
+                                    value: selectedParking,
+                                    style: TextStyle(color: Colors.white),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedParkingIndex =
+                                            parkingNames.indexOf(newValue!);
+                                        selectedParking = newValue!;
+                                        updateParkingData();
+                                      });
+                                    },
+                                    items: parkingNames
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(10)),
                                   MyCustomTextField(
                                       controller: nameController,
                                       labelText: 'Name',

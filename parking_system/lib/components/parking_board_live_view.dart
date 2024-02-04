@@ -23,18 +23,30 @@ class ParkingBoardLiveView extends StatefulWidget {
 class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
   int _currentFloor = 1;
   final ValueChanged<int> changeSelectedSpot;
+  late List<FloorButtonModel> floorButtons;
+
+  void generateFloorButtons() {
+    floorButtons = List.generate(
+      ParkingBoardLiveView.floors,
+      (index) => FloorButtonModel(index + 1),
+    );
+    floorButtons[_currentFloor - 1].isSelected = true;
+  }
 
   _ParkingBoardLiveViewState(this.changeSelectedSpot);
 
   void _changeFloor(int newFloor) {
     setState(() {
+      floorButtons[_currentFloor - 1].isSelected = false;
       _currentFloor = newFloor;
+      floorButtons[_currentFloor - 1].isSelected = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     //TappedTile tappedt = TappedTile();
+    generateFloorButtons();
     return Column(
       children: [
         SizedBox(
@@ -42,20 +54,24 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
           child: Row(
             children: [
               Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: ParkingBoardLiveView.floors,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () => _changeFloor(index + 1),
-                        child: Text('Floor ${index + 1}'),
+                  child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: ParkingBoardLiveView.floors,
+                itemBuilder: (BuildContext context, int index) {
+                  final floorButton = floorButtons[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () => _changeFloor(floorButton.floorNumber),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            floorButton.isSelected ? Colors.green : Colors.blue,
                       ),
-                    );
-                  },
-                ),
-              ),
+                      child: Text('Floor ${floorButton.floorNumber}'),
+                    ),
+                  );
+                },
+              )),
             ],
           ),
         ),
@@ -90,4 +106,11 @@ class TappedTile extends ChangeNotifier {
     }
     notifyListeners();
   }
+}
+
+class FloorButtonModel {
+  final int floorNumber;
+  bool isSelected;
+
+  FloorButtonModel(this.floorNumber, {this.isSelected = false});
 }
