@@ -28,8 +28,8 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
     'Total income',
     'Average Daily income',
     'Is taken',
-    'Temporary income',
     'Parked car',
+    'Temporary income',
     'Parked since'
   ];
   List<String> orderingTypes = ['Asc', 'Desc'];

@@ -207,10 +207,10 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                         listenable: tappedt,
                                         builder: (BuildContext context,
                                             Widget? child) {
-                                          this.currentlySelectedSpot =
-                                              tappedt.selectedId;
+                                          // this.currentlySelectedSpot =
+                                          //     tappedt.selectedId;
                                           return Text(
-                                            "Currently selected: ${tappedt.selectedId}",
+                                            "Currently selected: ${this.currentlySelectedSpot}",
                                             style: const TextStyle(
                                                 color: Colors.white60),
                                           );
@@ -228,6 +228,14 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                       child: const Text('Spot statistics'),
                                     ),
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: goToVehicleStatistics,
+                                      child: const Text('Vehicle statistics'),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -240,6 +248,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
               child: ParkingBoardLiveView(
                 changeSelectedSpot: changeSelectedSpot,
                 tappedTile: tappedt,
+                currentlySelectedSpot: this.currentlySelectedSpot,
               ),
             )
           ])
@@ -252,6 +261,20 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
       MaterialPageRoute(
           builder: (context) => ParkingStatistics(
               category: 'Parking Spots',
+              parkingName: parkings[choosenPark].name,
+              spotId: currentlySelectedSpot.toString(),
+              vehicleReg: parkings[choosenPark]
+                  .spots[currentlySelectedSpot]
+                  .registrationNumber)),
+    );
+  }
+
+  void goToVehicleStatistics() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ParkingStatistics(
+              category: 'Vehicles',
               parkingName: parkings[choosenPark].name,
               spotId: currentlySelectedSpot.toString(),
               vehicleReg: parkings[choosenPark]

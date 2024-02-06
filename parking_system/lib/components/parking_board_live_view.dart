@@ -6,7 +6,10 @@ import 'package:parking_system/components/parking_board_tile_live_view.dart';
 
 class ParkingBoardLiveView extends StatefulWidget {
   const ParkingBoardLiveView(
-      {super.key, required this.changeSelectedSpot, required this.tappedTile});
+      {super.key,
+      required this.changeSelectedSpot,
+      required this.tappedTile,
+      required this.currentlySelectedSpot});
   static int rows = 8;
   static int cols = 8;
   static int floors = 3;
@@ -15,6 +18,7 @@ class ParkingBoardLiveView extends StatefulWidget {
   static List<bool> spotsBusy = [];
   final ValueChanged<int> changeSelectedSpot;
   final TappedTile tappedTile;
+  final int currentlySelectedSpot;
   @override
   State<ParkingBoardLiveView> createState() =>
       _ParkingBoardLiveViewState(changeSelectedSpot);
@@ -78,7 +82,6 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
         Expanded(
           child: GridView.builder(
             itemCount: ParkingBoardLiveView.rows * ParkingBoardLiveView.cols,
-            //physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ParkingBoardLiveView.cols, childAspectRatio: 2),
             itemBuilder: (context, index) => Material(
@@ -88,6 +91,7 @@ class _ParkingBoardLiveViewState extends State<ParkingBoardLiveView> {
                       (ParkingBoardLiveView.cols * ParkingBoardLiveView.rows))),
               changeSelectedSpot: this.changeSelectedSpot,
               tappedTile: widget.tappedTile,
+              currentlySelectedSpot: widget.currentlySelectedSpot,
             )),
           ),
         ),

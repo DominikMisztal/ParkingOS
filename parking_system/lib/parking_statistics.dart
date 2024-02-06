@@ -226,7 +226,8 @@ class _ParkingStatisticsState extends State<ParkingStatistics> {
                               ),
                               Padding(padding: EdgeInsets.all(10)),
                               VehicleStatisticsWidget(
-                                  selectedParking: selectedParking)
+                                  selectedParking: selectedParking,
+                                  selectedVehicle: this.selectedVehicle)
                             ]),
                           )))),
                 ])

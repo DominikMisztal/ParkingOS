@@ -6,12 +6,17 @@ import 'package:parking_system/services/user_services.dart';
 import 'package:parking_system/models/car_model.dart';
 
 class VehicleStatisticsWidget extends StatefulWidget {
-  const VehicleStatisticsWidget({super.key, required this.selectedParking});
+  const VehicleStatisticsWidget(
+      {super.key,
+      required this.selectedParking,
+      required this.selectedVehicle});
 
   final String selectedParking;
+  final String selectedVehicle;
   @override
-  State<VehicleStatisticsWidget> createState() =>
-      _VehicleStatisticsWidgetState(selectedParking: this.selectedParking);
+  State<VehicleStatisticsWidget> createState() => _VehicleStatisticsWidgetState(
+      selectedParking: this.selectedParking,
+      selectedVehicleForFiltering: this.selectedVehicle);
 }
 
 class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
@@ -23,8 +28,8 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   List<String> columnNames = [
     'Vehicle Registration',
     'Vehicle Brand',
-    'Is Parked',
     'Total Payments',
+    'Is Parked',
     'Model',
     'Spot ID',
     'Parking Since'
@@ -33,8 +38,11 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   String selectedOrdering = 'Asc';
   String selectedColumn = 'Vehicle Registration';
   String selectedColumnForFiltering = 'Vehicle Registration';
+  String selectedVehicleForFiltering = '';
 
-  _VehicleStatisticsWidgetState({required this.selectedParking});
+  _VehicleStatisticsWidgetState(
+      {required this.selectedParking,
+      required this.selectedVehicleForFiltering});
   var filterController = TextEditingController();
 
   Future<List<String>?> getParkingRecords() async {
@@ -43,10 +51,11 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
     Set<String> uniqueSet = Set<String>.from(carRegistrations);
     carRegistrations = uniqueSet.toList();
     print(carRegistrations);
-
+    vehicleRecords.clear();
     for (var registration in carRegistrations) {
       Car? car = await userService.getCarByRegistration(registration);
       if (car == null) continue;
+
       vehicleRecords.add(VehicleRecord(
         vehicleRegistration: car.registration_num,
         vehicleBrand: car.brand,

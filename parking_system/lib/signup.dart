@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parking_system/components/myCustomTextField.dart';
+import 'package:parking_system/utils/AccountDataValidator.dart';
 import 'package:parking_system/utils/Utils.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,15 +20,20 @@ class SignUpUser extends StatelessWidget {
   TextEditingController passwordConfirmController = TextEditingController();
 
   void _registerIfPossible(BuildContext context) async {
-    UserCredential? userCredential = await _userAuth.signUp(emailController.text.trim(), passwordController.text.trim());
-    if (userCredential != null) {
-      UserDb user = UserDb(
+    if (!validateAccount()) {
+      showToast('Incorrect data', length: Toast.LENGTH_SHORT);
+    } else {
+      UserCredential? userCredential = await _userAuth.signUp(
+          emailController.text.trim(), passwordController.text.trim());
+      if (userCredential != null) {
+        UserDb user = UserDb(
           login: emailController.text,
           balance: 0,
           listOfCars: {},
-          );
-          _userService.addUser(userCredential.user!.uid, user);
-      Navigator.pop(context);
+        );
+        _userService.addUser(userCredential.user!.uid, user);
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -119,8 +126,21 @@ class SignUpUser extends StatelessWidget {
       ),
     );
   }
-}
 
-bool validateAccount(String email, String password1, String password2) {
-  return true;
+  bool validateAccount() {
+    String password = passwordController.text;
+    String passwordConfirmed = passwordConfirmController.text;
+    String email = emailController.text;
+    if (password != passwordConfirmed) {
+      return false;
+    }
+    if (!AccountDataValidator.validateEmail(email)) {
+      return false;
+    }
+    if (!AccountDataValidator.validatePassword(password)) {
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -13,12 +13,17 @@ class ParkingUsers extends StatefulWidget {
 
 class _ParkingUsersState extends State<ParkingUsers> {
   UserService userService = UserService();
-
+  bool updateUsersFromDB = true;
   Future<List<UserDb>> addUsers() async {
-    List<UserDb> users = await userService.getAllUsers();
-    _placeholderUsers.clear();
-    _placeholderUsers.addAll(users);
-    return users;
+    if (updateUsersFromDB == true) {
+      List<UserDb> users = await userService.getAllUsers();
+      _placeholderUsers.clear();
+      _placeholderUsers.addAll(users);
+      return users;
+    } else {
+      updateUsersFromDB = true;
+      return _placeholderUsers;
+    }
   }
 
   @override
@@ -80,6 +85,7 @@ class _ParkingUsersState extends State<ParkingUsers> {
                                   user: _placeholderUsers[index],
                                   onBlock: () {
                                     setState(() {
+                                      updateUsersFromDB = false;
                                       _placeholderUsers[index].blocked =
                                           !_placeholderUsers[index].blocked;
                                       userService.blockUser(

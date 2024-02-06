@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/services/user_auth.dart';
 import 'package:parking_system/services/user_services.dart';
+import 'package:parking_system/utils/Utils.dart';
 
 import '../models/user.dart';
 
@@ -89,7 +90,8 @@ class ChargeDialog extends StatefulWidget {
 
 class _ChargeDialogState extends State<ChargeDialog> {
   double value = 0;
-
+  bool validData = false;
+  bool numericValue = false;
   @override
   void initState() {
     super.initState();
@@ -110,7 +112,19 @@ class _ChargeDialogState extends State<ChargeDialog> {
             onChanged: (val) {
               setState(() {
                 // Update enteredNumber when the text changes
-                value = double.tryParse(val) ?? 0;
+                try {
+                  value = double.parse(val);
+                  numericValue = true;
+                  if (value >= 10) {
+                    validData = true;
+                  } else {
+                    validData = false;
+                  }
+                } catch (e) {
+                  numericValue = false;
+                  validData = false;
+                  value = 0;
+                }
               });
             },
           ),
@@ -123,7 +137,17 @@ class _ChargeDialogState extends State<ChargeDialog> {
             height: 8,
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, value),
+            onPressed: (() {
+              if (validData) {
+                Navigator.pop(context, value);
+              } else {
+                if (numericValue) {
+                  showToast("Please enter value that's 10 or higher");
+                } else {
+                  showToast("Please enter a number");
+                }
+              }
+            }),
             child: const Text('Charge'),
           ),
         ],

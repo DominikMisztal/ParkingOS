@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/user_auth.dart';
+import 'package:parking_system/utils/AccountDataValidator.dart';
 import 'package:parking_system/utils/Utils.dart';
 
 class ChangePasswordDialog extends StatefulWidget {
@@ -75,6 +76,12 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               showToast('Passwords don\'t match');
               return;
             }
+            if (!AccountDataValidator.validatePassword(
+                _newPasswordController.text)) {
+              showToast('Password too weak');
+              return;
+            }
+            //add check old password if matches
 
             _userAuth.changePassword(widget.user.login,
                 _oldPasswordController.text, _newPasswordController.text);
