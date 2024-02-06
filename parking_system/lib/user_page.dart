@@ -185,19 +185,13 @@ class _userPageState extends State<userPage> {
                               showToast('Registration must not be empty');
                               return;
                             }
-                            if (car.registration_num.length > 7 ||
-                                car.registration_num.length < 5) {
+                            RegExp regex =
+                                RegExp(r'^[A-Z0-9]{1,7}[ -]?[A-Z0-9]{1,7}$');
+                            if (!regex.hasMatch(car.registration_num)) {
                               showToast('Invalid registration format');
-                              return;
                             }
-                            // bool canAddCar = await userService.canAddCar(car.registration_num);
-                            // if(){
+
                             getCars(car);
-                            //deleteCar(car);
-                            //MapEntry<String, Car> entry = MapEntry(car.registration_num, car);
-                            //user.listOfCars.addEntries(entry);
-                            //_placeholderCars.add(car);
-                            //}
                           });
                         },
                       ),

@@ -115,6 +115,7 @@ class UserTile extends StatefulWidget {
 }
 
 class _UserTileState extends State<UserTile> {
+  final ScrollController _scrollController = ScrollController();
   late Color tileColor;
   late String blockText;
   void changeOnBlocked() {
@@ -131,9 +132,21 @@ class _UserTileState extends State<UserTile> {
     tileColor = widget.user.blocked == true ? Colors.grey : Colors.white;
   }
 
+  void _scroll(int direction) {
+    final currentPosition = _scrollController.position.pixels;
+    const itemWidth = 600.0;
+
+    _scrollController.animateTo(
+      currentPosition + (itemWidth * direction),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.linear,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Car> _userCars = widget.user.listOfCars.values.toList();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
@@ -154,15 +167,32 @@ class _UserTileState extends State<UserTile> {
                   Text('balance: ${widget.user.balance}')
                 ],
               ),
-              SizedBox(
-                width: 600,
-                height: 80,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _userCars.length,
-                    itemBuilder: ((context, index) {
-                      return CarTile(car: _userCars[index]);
-                    })),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      _scroll(-1);
+                    },
+                  ),
+                  SizedBox(
+                    width: 600,
+                    height: 80,
+                    child: ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _userCars.length,
+                        itemBuilder: ((context, index) {
+                          return CarTile(car: _userCars[index]);
+                        })),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward),
+                    onPressed: () {
+                      _scroll(1);
+                    },
+                  ),
+                ],
               ),
               Column(
                 children: [
@@ -172,7 +202,7 @@ class _UserTileState extends State<UserTile> {
                       widget.onBlock();
                       changeOnBlocked();
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.block,
                       color: Colors.red,
                       size: 32,
@@ -214,18 +244,18 @@ class CarTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.directions_car,
             size: 24,
             color: Colors.black87,
           ),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '${car.model}\n${car.brand}\n${car.registration_num}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12.0,
                 ),
               ),

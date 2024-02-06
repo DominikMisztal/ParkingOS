@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/layover_model.dart';
-import 'package:parking_system/models/parking_model.dart';
-import 'package:parking_system/models/spot_model.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/services/payment_calculator.dart';
 import 'package:parking_system/services/ticket_services.dart';
 import 'package:parking_system/services/user_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+GlobalKey<UserPaymentStateScreen> myWidgetKey =
+    GlobalKey<UserPaymentStateScreen>();
 
 class UserTicketScreen extends StatefulWidget {
   const UserTicketScreen({super.key, required this.user});
@@ -18,32 +18,35 @@ class UserTicketScreen extends StatefulWidget {
   State<UserTicketScreen> createState() => UserPaymentStateScreen();
 }
 
-//Todo Do połączenia z bazą i wykminienia co zrobić z płatnością i taryfą.
 class UserPaymentStateScreen extends State<UserTicketScreen> {
-  ParkingServices parkingServices = ParkingServices();
-  TicketService ticketService = TicketService();
-  Future<List<Layover>> getLayovers() async {
-    //Todo
-    List<Layover> lays = [];
-    return lays;
+  void forceRefresh() {
+    // Access the widget state using the key and trigger a rebuild
+    (widget.key as GlobalKey<UserPaymentStateScreen>)
+        .currentState
+        ?.setState(() {
+      // Update your widget state or perform any tasks that trigger a rebuild
+    });
   }
 
-  List<Layover> layovers = [
-    Layover('2024-01-26 13:00:00', '', 'The Greatest Park', '23', 'Abcd1',
-        "userImplementIGuess?"),
-  ];
+  ParkingServices parkingServices = ParkingServices();
+  TicketService ticketService = TicketService();
+
   Layover? ticket;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    initializeTicket();
   }
 
-  void initializeTicket() async {
+  Future<Layover?> initializeTicket() async {
     Layover? tempTicket = await ticketService.findTicket(widget.user.login);
-    ticket = tempTicket!;
-    print(tempTicket);
+    if (tempTicket == null) {
+      ticket = null;
+      return null;
+    }
+    tempTicket = tempTicket;
+    ticket = tempTicket;
+    print(ticket?.startDate.toString());
+    return tempTicket;
   }
 
   Widget build(BuildContext context) {
@@ -61,13 +64,35 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
         Container(
           width: width / 3 * 2,
           child: Expanded(
-            child: Column(
-              children: [
-                layovers.isEmpty
-                    ? const Text('There is no active ticket',
-                        style: TextStyle(color: Colors.white60, fontSize: 32))
-                    : _layoverItem(layovers[0]),
-              ],
+            child: FutureBuilder(
+              future: initializeTicket(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error loading data'),
+                  );
+                }
+                if (snapshot.data == null) {
+                  return const Column(
+                    children: [
+                      Text('There is no active ticket',
+                          style:
+                              TextStyle(color: Colors.white60, fontSize: 32)),
+                    ],
+                  );
+                } else if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      _layoverItem(snapshot.data),
+                    ],
+                  );
+                }
+                return Container();
+              },
             ),
           ),
         )
@@ -89,7 +114,7 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
           Container(
             color: Colors.white,
             child: QrImageView(
-              data: '${layover.car} ',
+              data: layover.ticketDataForQRcode(),
               version: QrVersions.auto,
               size: 200.0,
             ),
@@ -98,23 +123,23 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
             height: 16,
           ),
           Text(
-            'Date: ${layover.startDate}',
-            style: TextStyle(color: Colors.white60, fontSize: 16),
+            'Start Date: ${layover.startDate}',
+            style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
           Text(
             'Parking: ${layover.parkingId}',
-            style: TextStyle(color: Colors.white60, fontSize: 16),
+            style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
           Text(
             'Spot: ${layover.spotId}',
-            style: TextStyle(color: Colors.white60, fontSize: 16),
+            style: const TextStyle(color: Colors.white60, fontSize: 16),
           ),
-          //Todo Fajnie byłoby tu dać stoper odmierzający czas parkingu
           ElevatedButton(
               onPressed: () {
                 _giveBackTicket(layover);
+                setState(() {});
               },
-              child: Text('Give Ticket Back'))
+              child: const Text('Give Ticket Back and Confirm')),
         ],
       ),
     );
@@ -129,22 +154,27 @@ class UserPaymentStateScreen extends State<UserTicketScreen> {
         DateTime.parse(layover.startDate), DateTime.now());
   }
 
-  void _giveBackTicket(Layover layover) async {
-    //Add end to layover and update database
-    layover.endDate = DateTime.now().toString();
-    double cost = await countCost(layover);
-    if (cost < widget.user.balance) {
-      parkingServices.moveFromParking(int.parse(layover.spotId),
-          layover.parkingId, cost, widget.user.login);
-      UserService userService = UserService();
-      double newBalance = await userService.getBalance();
-      widget.user.balance = newBalance;
-      userService.addBalance(newBalance - cost);
-      widget.user.addBalance(-cost);
-      setState(() {
-        layovers.clear();
-      });
-    }
-    //Clean Layover list
+  Future<bool> _giveBackTicket(Layover layover) async {
+    try {
+      layover.endDate = DateTime.now().toString();
+      double cost = await countCost(layover);
+      if (cost < widget.user.balance) {
+        setState(() {
+          ticket = null;
+          myWidgetKey.currentState?.forceRefresh();
+        });
+        parkingServices.moveFromParking(int.parse(layover.spotId),
+            layover.parkingId, cost, widget.user.login);
+        UserService userService = UserService();
+        double newBalance = await userService.getBalance();
+        widget.user.balance = newBalance;
+        userService.addBalance(newBalance - cost);
+        widget.user.addBalance(-cost);
+      }
+    } catch (e) {}
+    setState(() {
+      ticket = null;
+    });
+    return true;
   }
 }

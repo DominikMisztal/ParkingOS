@@ -33,4 +33,13 @@ class Layover {
       map['userId'] ?? '',
     );
   }
+  String ticketDataForQRcode() {
+    Layover ticket = this;
+    String ticketData = 'User: ${ticket.userId}\n';
+    ticketData += 'Parking: ${ticket.parkingId}\n';
+    ticketData += 'Spot: ${ticket.spotId}\n';
+    ticketData += 'Vehicle: ${ticket.car}\n';
+    ticketData += 'StartDate: ${ticket.startDate}\n';
+    return ticketData;
+  }
 }
