@@ -274,10 +274,12 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
   }
 
   void sortTable() {
+    setState(() {});
     //Change to DB connection
   }
 
   void filterTable() {
+    setState(() {});
     //change to DB connection
   }
 }

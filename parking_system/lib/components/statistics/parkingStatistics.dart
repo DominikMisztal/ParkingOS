@@ -259,7 +259,11 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
     );
   }
 
-  void sortTable() {}
+  void sortTable() {
+    setState(() {});
+  }
 
-  void filterTable() {}
+  void filterTable() {
+    setState(() {});
+  }
 }

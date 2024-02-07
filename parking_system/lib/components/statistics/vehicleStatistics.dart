@@ -422,10 +422,12 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   }
 
   void sortTable() {
+    setState(() {});
     //Change to DB connection
   }
 
   void filterTable() {
+    setState(() {});
     //change to DB connection
   }
 }
