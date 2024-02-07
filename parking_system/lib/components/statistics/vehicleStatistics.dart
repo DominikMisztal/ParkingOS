@@ -51,29 +51,36 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   Future<List<String>?> getParkingRecords() async {
     List<Car?> cars;
     bool ascending = selectedOrdering == "Asc" ? true : false;
-    if(filterController.text != ""){
-      if(selectedColumnForFiltering == "Vehicle Registration"){
-        cars = await userService.getAllCars(registration: (filterController.text), sortBy: selectedColumn, asc: ascending);
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Vehicle Registration") {
+        cars = await userService.getAllCars(
+            registration: (filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Vehicle Brand") {
+        cars = await userService.getAllCars(
+            brand: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Model") {
+        cars = await userService.getAllCars(
+            model: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else {
+        cars = await userService.getAllCars(
+            sortBy: selectedColumn, asc: ascending);
       }
-      else if(selectedColumnForFiltering == "Vehicle Brand"){
-        cars = await userService.getAllCars(brand: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Model"){
-        cars = await userService.getAllCars(model: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else{
-        cars = await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
-      }
-    }
-    else{
-      cars = await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
+    } else {
+      cars =
+          await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
     }
 
-    if(cars == null) return [];
+    if (cars == null) return [];
     vehicleRecords.clear();
     for (var car in cars) {
       List<String> values = await checkSpot(car!.registration_num);
-      
+
       int? spot = int.tryParse(values[0]);
       DateTime? dateTime = DateTime.tryParse(values[1]);
       spot ??= -1;
@@ -81,124 +88,148 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
         vehicleRegistration: car!.registration_num,
         vehicleBrand: car.brand,
         totalExpenses: 0,
-        model: car.model, 
-        spotId: spot == -1 ? "": spot.toString(),
+        model: car.model,
+        spotId: spot == -1 ? "" : spot.toString(),
         isParked: spot == -1 ? false : true,
       ));
-      if(dateTime != null) vehicleRecords[vehicleRecords.length - 1].parkingSince = dateTime;
-      
+      if (dateTime != null)
+        vehicleRecords[vehicleRecords.length - 1].parkingSince = dateTime;
     }
-    
+
     vehicleRecords = removeDuplicates(vehicleRecords);
     for (var element in vehicleRecords) {
-      double expenses = await parkHistory.findCarHistory(element.vehicleRegistration);
-      if(expenses != null) element.totalExpenses = expenses;
+      double expenses =
+          await parkHistory.findCarHistory(element.vehicleRegistration);
+      if (expenses != null) element.totalExpenses = expenses;
     }
-    
-    if(filterController.text != ""){
-      if(selectedColumnForFiltering == "Vehicle Registration"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, vehicleRegistration: (filterController.text), sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Vehicle Brand"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, vehicleBrand: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Total Payments"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, totalExpenses: double.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Is Parked"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, isParked: bool.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Model"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, model: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Spot ID"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, spotId: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Parking Since"){
-        vehicleRecords = filterVehicleRecords(vehicleRecords, parkingSince: DateTime.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
+
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Vehicle Registration") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            vehicleRegistration: (filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Vehicle Brand") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            vehicleBrand: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Total Payments") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            totalExpenses: double.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Is Parked") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            isParked: bool.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Model") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            model: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Spot ID") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            spotId: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Parking Since") {
+        vehicleRecords = filterVehicleRecords(vehicleRecords,
+            parkingSince: DateTime.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
       }
     }
-    
 
     return [];
   }
 
-List<VehicleRecord> filterVehicleRecords(List<VehicleRecord> records, {String? vehicleRegistration,  String? vehicleBrand,  bool? isParked,  String? model,  String? spotId,  DateTime? parkingSince,double? totalExpenses, String? sortBy, bool? asc
-}) {
-  List<VehicleRecord> filteredRecords = [];
+  List<VehicleRecord> filterVehicleRecords(List<VehicleRecord> records,
+      {String? vehicleRegistration,
+      String? vehicleBrand,
+      bool? isParked,
+      String? model,
+      String? spotId,
+      DateTime? parkingSince,
+      double? totalExpenses,
+      String? sortBy,
+      bool? asc}) {
+    List<VehicleRecord> filteredRecords = [];
 
-  for (var record in records) {
-    if (vehicleRegistration != null && record.vehicleRegistration != vehicleRegistration) {
-      continue; 
-    }
-    if (vehicleBrand != null && record.vehicleBrand != vehicleBrand) {
-      continue; 
-    }
-    if (isParked != null && record.isParked != isParked) {
-      continue; 
-    }
-    if (model != null && record.model != model) {
-      continue; 
-    }
-    if (spotId != null && record.spotId != spotId) {
-      continue; 
-    }
-    if (parkingSince != null && record.parkingSince != parkingSince) {
-      continue; 
-    }
-    if (totalExpenses != null && record.totalExpenses != totalExpenses) {
-      continue; 
-    }
-    filteredRecords.add(record);
-  }
-
-  if (sortBy != null) {
-    filteredRecords.sort((a, b) {
-      int result = 0;
-      switch (sortBy) {
-        case 'Vehicle Registration':
-          result = a!.vehicleRegistration.compareTo(b!.vehicleRegistration);
-          break;
-        case 'Vehicle Brand':
-          result = a!.vehicleBrand.compareTo(b!.vehicleBrand);
-          break;
-        case 'Total Payments':
-          result = a!.totalExpenses.compareTo(b!.totalExpenses);
-          break;
-        case 'Spot ID':
-          result = (a?.spotId ?? '').compareTo(b?.spotId ?? '');
-          break;
-        case 'Model':
-          result = (a?.model ?? '').compareTo(b?.model ?? '');
-          break;         
-        default:
-          break;
+    for (var record in records) {
+      if (vehicleRegistration != null &&
+          record.vehicleRegistration != vehicleRegistration) {
+        continue;
       }
-      return asc != null && asc == true ? result : -result;
-    });
-  }
+      if (vehicleBrand != null && record.vehicleBrand != vehicleBrand) {
+        continue;
+      }
+      if (isParked != null && record.isParked != isParked) {
+        continue;
+      }
+      if (model != null && record.model != model) {
+        continue;
+      }
+      if (spotId != null && record.spotId != spotId) {
+        continue;
+      }
+      if (parkingSince != null && record.parkingSince != parkingSince) {
+        continue;
+      }
+      if (totalExpenses != null && record.totalExpenses != totalExpenses) {
+        continue;
+      }
+      filteredRecords.add(record);
+    }
 
-  return filteredRecords;
-}
+    if (sortBy != null) {
+      filteredRecords.sort((a, b) {
+        int result = 0;
+        switch (sortBy) {
+          case 'Vehicle Registration':
+            result = a!.vehicleRegistration.compareTo(b!.vehicleRegistration);
+            break;
+          case 'Vehicle Brand':
+            result = a!.vehicleBrand.compareTo(b!.vehicleBrand);
+            break;
+          case 'Total Payments':
+            result = a!.totalExpenses.compareTo(b!.totalExpenses);
+            break;
+          case 'Spot ID':
+            result = (a?.spotId ?? '').compareTo(b?.spotId ?? '');
+            break;
+          case 'Model':
+            result = (a?.model ?? '').compareTo(b?.model ?? '');
+            break;
+          default:
+            break;
+        }
+        return asc != null && asc == true ? result : -result;
+      });
+    }
+
+    return filteredRecords;
+  }
 
   List<VehicleRecord> removeDuplicates(List<VehicleRecord> cars) {
-  Set<String> seenRegistrations = Set<String>();
-  List<VehicleRecord> filteredCars = [];
+    Set<String> seenRegistrations = Set<String>();
+    List<VehicleRecord> filteredCars = [];
 
-  for (VehicleRecord car in cars) {
-    if (!seenRegistrations.contains(car.vehicleRegistration)) {
-      filteredCars.add(car);
-      seenRegistrations.add(car.vehicleRegistration);
+    for (VehicleRecord car in cars) {
+      if (!seenRegistrations.contains(car.vehicleRegistration)) {
+        filteredCars.add(car);
+        seenRegistrations.add(car.vehicleRegistration);
+      }
     }
+    return filteredCars;
   }
-  return filteredCars;
-}
 
-  Future<List<String>> checkSpot(String regNumber) async{
+  Future<List<String>> checkSpot(String regNumber) async {
     String spot = "-1";
     String parkedSince = "";
     Layover? ticket = await ticketService.findCarWithTicket(regNumber);
-    if(ticket != null){
+    if (ticket != null) {
       spot = ticket.spotId;
       parkedSince = ticket.startDate;
     }
@@ -223,68 +254,6 @@ List<VehicleRecord> filterVehicleRecords(List<VehicleRecord> records, {String? v
           );
         }
         return Column(children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              return parkingNames.where((String parking) {
-                return parking
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String value) {
-              setState(() {
-                selectedParking = value;
-              });
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              textEditingController.text = selectedParking;
-              return TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                style: const TextStyle(color: Colors.white),
-                onFieldSubmitted: (_) => onFieldSubmitted(),
-                decoration: const InputDecoration(
-                  labelText: 'Select parking',
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            optionsViewBuilder: (BuildContext context,
-                AutocompleteOnSelected<String> onSelected,
-                Iterable<String> options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: 4.0,
-                  child: SizedBox(
-                    height: 200.0,
-                    width: width / 2,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      itemCount: options.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String option = options.elementAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            onSelected(option);
-                          },
-                          child: ListTile(
-                            title: Text(
-                              option,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
           Row(
             children: [
               const Text(
@@ -383,7 +352,7 @@ List<VehicleRecord> filterVehicleRecords(List<VehicleRecord> records, {String? v
           ),
           const Padding(padding: EdgeInsets.all(10)),
           SizedBox(
-            height: 500,
+            height: 650,
             width: 1400,
             child: ListView.builder(
                 itemCount: 1,

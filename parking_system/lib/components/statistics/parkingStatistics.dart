@@ -35,29 +35,36 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   var filterController = TextEditingController();
 
   Future<List<ParkingDb>?> getParkingRecords() async {
-
-    
     List<ParkingDb>? fetchedParkings = null;
     bool ascending = selectedOrdering == "Asc" ? true : false;
-    if(filterController.text != ""){
-      if(selectedColumnForFiltering == "Amount of Spots"){
-        fetchedParkings = await parkingServices.getParkings(amountOfSpots: int.tryParse(filterController.text), sortBy: selectedColumn, asc: ascending);
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Amount of Spots") {
+        fetchedParkings = await parkingServices.getParkings(
+            amountOfSpots: int.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Parking Name") {
+        fetchedParkings = await parkingServices.getParkings(
+            parkingName: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Total Income") {
+        fetchedParkings = await parkingServices.getParkings(
+            totalIncome: double.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Today's Income") {
+        fetchedParkings = await parkingServices.getParkings(
+            todayIncome: double.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else {
+        fetchedParkings = await parkingServices.getParkings(
+            sortBy: selectedColumn, asc: ascending);
       }
-      else if(selectedColumnForFiltering == "Parking Name"){
-        fetchedParkings = await parkingServices.getParkings(parkingName: filterController.text,  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Total Income"){
-        fetchedParkings = await parkingServices.getParkings(totalIncome: double.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
-      }
-      else if(selectedColumnForFiltering == "Today's Income"){
-        fetchedParkings = await parkingServices.getParkings(todayIncome: double.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
-      }
-      else{
-        fetchedParkings = await parkingServices.getParkings(sortBy: selectedColumn, asc: ascending);
-      }
-    }
-    else{
-      fetchedParkings = await parkingServices.getParkings(sortBy: selectedColumn, asc: ascending);
+    } else {
+      fetchedParkings = await parkingServices.getParkings(
+          sortBy: selectedColumn, asc: ascending);
     }
     if (fetchedParkings != null) {
       parkings.clear();
@@ -66,7 +73,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
       for (var parking in parkings) {
         int amountOfSpotsTaken = 0;
         for (var spot in parking.spots) {
-          if(spot.registrationNumber != "") amountOfSpotsTaken += 1; 
+          if (spot.registrationNumber != "") amountOfSpotsTaken += 1;
         }
         parkingRecords.add(ParkingRecord(
           parkingName: parking.name,
@@ -77,7 +84,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
         ));
       }
     }
-    if(fetchedParkings != null){
+    if (fetchedParkings != null) {
       for (var element in fetchedParkings) {
         parkingNames.add(element.name);
       }
@@ -104,68 +111,6 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
           );
         }
         return Column(children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              return parkingNames.where((String parking) {
-                return parking
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String value) {
-              setState(() {
-                selectedParking = value;
-              });
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              textEditingController.text = selectedParking;
-              return TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                style: const TextStyle(color: Colors.white),
-                onFieldSubmitted: (_) => onFieldSubmitted(),
-                decoration: const InputDecoration(
-                  labelText: 'Select parking',
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            optionsViewBuilder: (BuildContext context,
-                AutocompleteOnSelected<String> onSelected,
-                Iterable<String> options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: 4.0,
-                  child: SizedBox(
-                    height: 200.0,
-                    width: width / 2,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      itemCount: options.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String option = options.elementAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            onSelected(option);
-                          },
-                          child: ListTile(
-                            title: Text(
-                              option,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
           Row(
             children: [
               const Text(
@@ -264,7 +209,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
           ),
           const Padding(padding: EdgeInsets.all(10)),
           SizedBox(
-            height: 500,
+            height: 650,
             width: 1400,
             child: ListView.builder(
                 itemCount: 1,
@@ -314,11 +259,7 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
     );
   }
 
-  void sortTable() {
+  void sortTable() {}
 
-  }
-
-  void filterTable() {
-   
-  }
+  void filterTable() {}
 }

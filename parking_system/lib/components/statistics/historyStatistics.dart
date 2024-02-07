@@ -37,34 +37,49 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
   Future<List<ParkingHistoryRecord>?> getHistoryRecords() async {
     List<ParkingHistoryRecord>? temp;
     bool ascending = selectedOrdering == "Asc" ? true : false;
-    if(filterController.text != ""){
-      if(selectedColumnForFiltering == "Parking Name"){
-        temp = await parkHistory.getParkingHistoryData(parkingName:(filterController.text), orderBy: selectedColumn, ascending: ascending);
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Parking Name") {
+        temp = await parkHistory.getParkingHistoryData(
+            parkingName: (filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Spot ID") {
+        temp = await parkHistory.getParkingHistoryData(
+            spotId2: (filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Vehicle Registration") {
+        temp = await parkHistory.getParkingHistoryData(
+            registration: (filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Vehicle Brand") {
+        temp = await parkHistory.getParkingHistoryData(
+            vehicleBrand: filterController.text,
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Parking Start") {
+        temp = await parkHistory.getParkingHistoryData(
+            parkingStart: DateTime.tryParse(filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Parking End") {
+        temp = await parkHistory.getParkingHistoryData(
+            parkingEnd: DateTime.tryParse(filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else if (selectedColumnForFiltering == "Payment") {
+        temp = await parkHistory.getParkingHistoryData(
+            income: double.tryParse(filterController.text),
+            orderBy: selectedColumn,
+            ascending: ascending);
+      } else {
+        temp = await parkHistory.getParkingHistoryData(
+            orderBy: selectedColumn, ascending: ascending);
       }
-      else if(selectedColumnForFiltering == "Spot ID"){
-        temp = await parkHistory.getParkingHistoryData(spotId2:(filterController.text), orderBy: selectedColumn, ascending: ascending);
-      }
-      else if(selectedColumnForFiltering == "Vehicle Registration"){
-        temp = await parkHistory.getParkingHistoryData(registration:(filterController.text), orderBy: selectedColumn, ascending: ascending);
-      }
-      else if(selectedColumnForFiltering == "Vehicle Brand"){
-        temp = await parkHistory.getParkingHistoryData(vehicleBrand : filterController.text, orderBy: selectedColumn, ascending: ascending);
-      }
-      else if(selectedColumnForFiltering == "Parking Start"){
-        temp = await parkHistory.getParkingHistoryData(parkingStart:DateTime.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
-      }
-      else if(selectedColumnForFiltering == "Parking End"){
-        temp = await parkHistory.getParkingHistoryData(parkingEnd:DateTime.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
-      }
-      else if(selectedColumnForFiltering == "Payment"){
-        temp = await parkHistory.getParkingHistoryData(income:double.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
-      }
-      else{
-        temp = await parkHistory.getParkingHistoryData(orderBy: selectedColumn, ascending: ascending);
-      }
-    }
-    else{
-      temp = await parkHistory.getParkingHistoryData(orderBy: selectedColumn, ascending: ascending);
+    } else {
+      temp = await parkHistory.getParkingHistoryData(
+          orderBy: selectedColumn, ascending: ascending);
     }
 
     if (temp != null) {
@@ -100,68 +115,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
           );
         }
         return Column(children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              return parkingNames.where((String parking) {
-                return parking
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String value) {
-              setState(() {
-                selectedParking = value;
-              });
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              textEditingController.text = selectedParking;
-              return TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                style: const TextStyle(color: Colors.white),
-                onFieldSubmitted: (_) => onFieldSubmitted(),
-                decoration: const InputDecoration(
-                  labelText: 'Select parking',
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            optionsViewBuilder: (BuildContext context,
-                AutocompleteOnSelected<String> onSelected,
-                Iterable<String> options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: 4.0,
-                  child: SizedBox(
-                    height: 200.0,
-                    width: width / 2,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      itemCount: options.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String option = options.elementAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            onSelected(option);
-                          },
-                          child: ListTile(
-                            title: Text(
-                              option,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
           Row(
             children: [
               const Text(
@@ -261,7 +214,7 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
           const Padding(padding: EdgeInsets.all(10)),
           SizedBox(
             width: 1400,
-            height: 500,
+            height: 650,
             child: ListView.builder(
                 itemCount: 1,
                 itemBuilder: (BuildContext context, int index) {

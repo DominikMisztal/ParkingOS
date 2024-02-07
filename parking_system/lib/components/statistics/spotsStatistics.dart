@@ -143,68 +143,6 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
           );
         }
         return Column(children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              return parkingNames.where((String parking) {
-                return parking
-                    .toLowerCase()
-                    .contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String value) {
-              setState(() {
-                selectedParking = value;
-              });
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              textEditingController.text = selectedParking;
-              return TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                style: const TextStyle(color: Colors.white),
-                onFieldSubmitted: (_) => onFieldSubmitted(),
-                decoration: const InputDecoration(
-                  labelText: 'Select parking',
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            optionsViewBuilder: (BuildContext context,
-                AutocompleteOnSelected<String> onSelected,
-                Iterable<String> options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: 4.0,
-                  child: SizedBox(
-                    height: 200.0,
-                    width: width / 2,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      itemCount: options.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String option = options.elementAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            onSelected(option);
-                          },
-                          child: ListTile(
-                            title: Text(
-                              option,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
           Row(
             children: [
               const Text(
@@ -303,7 +241,7 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
           ),
           const Padding(padding: EdgeInsets.all(10)),
           SizedBox(
-            height: 500,
+            height: 650,
             width: 1400,
             child: ListView.builder(
                 itemCount: 1,
