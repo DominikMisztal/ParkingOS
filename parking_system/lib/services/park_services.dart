@@ -47,13 +47,62 @@ Future<List<ParkingDb>?> getParkings() async {
   Map<String, dynamic> parkingData = json.decode(json.encode(snapshot.value));
   List<ParkingDb> parkingList = [];
 
-  parkingData.forEach((parkingName, parkingSpotData) {
+  parkingData.forEach((parkingName, parkingSpotData){
+    
     ParkingDb parkingSpot = ParkingDb.fromMap(parkingSpotData);
+    
     parkingList.add(parkingSpot);
   });
 
+  for (var park in parkingList) {
+    park.income = await setIncome(park.name);
+    park.dailyIncome = await setTodayIncome(park.name);
+  }
+  
+
   return parkingList;
 }
+
+  Future<double> setIncome(String parkingName) async {
+      double totalIncome = 0;
+      DatabaseReference _dbRef2 = FirebaseDatabase.instance.ref().child('parking_history').child(parkingName);
+      DataSnapshot parkingSnapshot = await _dbRef2.get();
+
+      if (parkingSnapshot.value != null && parkingSnapshot.value is Map<String, dynamic>) {
+        Map<String, dynamic> parkingData = parkingSnapshot.value as Map<String, dynamic>;
+        
+        parkingData.forEach((spotKey, spotData) {
+          if (spotData is Map<String, dynamic>) {
+            spotData.forEach((date, takeIncome) {
+                totalIncome += takeIncome['income'] ;
+            });
+          }
+        });
+      }
+      return totalIncome;
+  }
+
+    Future<double> setTodayIncome(String parkingName) async {
+      double totalIncome = 0;
+      DatabaseReference _dbRef2 = FirebaseDatabase.instance.ref().child('parking_history').child(parkingName);
+      DataSnapshot parkingSnapshot = await _dbRef2.get();
+
+      if (parkingSnapshot.value != null && parkingSnapshot.value is Map<String, dynamic>) {
+        Map<String, dynamic> parkingData = parkingSnapshot.value as Map<String, dynamic>;
+        
+        parkingData.forEach((spotKey, spotData) {
+          if (spotData is Map<String, dynamic>) {
+            spotData.forEach((date, takeIncome) {
+              DateTime checkDate = DateTime.parse(date);
+              DateTime now = DateTime.now();
+              if(checkDate.day == now.day && checkDate.year == now.year && checkDate.month == now.month)
+                totalIncome += takeIncome['income'] ;
+            });
+          }
+        });
+      }
+      return totalIncome;
+  }
 
   Future<SpotDb?> getSpotFromParking(String parkingName, int spotName) async {
     DataSnapshot snapshot = await _dbRef.child(parkingName).get();

@@ -46,10 +46,14 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
       parkingRecords.clear();
       parkings.addAll(fetchedParkings);
       for (var parking in parkings) {
+        int amountOfSpotsTaken = 0;
+        for (var spot in parking.spots) {
+          if(spot.registrationNumber != "") amountOfSpotsTaken += 1; 
+        }
         parkingRecords.add(ParkingRecord(
           parkingName: parking.name,
           amountOfSpots: parking.spots.length,
-          takenSpots: 50, //todo: change 50 to actual number of taken spots
+          takenSpots: amountOfSpotsTaken, //todo: change 50 to actual number of taken spots
           totalIncome: parking.income,
           todayIncome: parking.dailyIncome,
         ));

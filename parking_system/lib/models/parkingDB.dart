@@ -3,7 +3,7 @@ import 'package:parking_system/models/spot.dart';
 
 @immutable
 class ParkingDb {
-  const ParkingDb ({
+  ParkingDb ({
     required this.name,
     required this.height,
     required this.width,
@@ -22,8 +22,8 @@ class ParkingDb {
   final int height;
   final int width;
   final int level;
-  final double income;
-  final double dailyIncome;
+  double income;
+  double dailyIncome;
 
   Map<String, dynamic> toMap() {
     return {
