@@ -10,6 +10,8 @@ import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/user_services.dart';
 import 'package:parking_system/utils/Utils.dart';
 
+import 'utils/AccountDataValidator.dart';
+
 class userPage extends StatefulWidget {
   const userPage({super.key, required this.user});
   final UserDb user;
@@ -185,10 +187,11 @@ class _userPageState extends State<userPage> {
                               showToast('Registration must not be empty');
                               return;
                             }
-                            RegExp regex =
-                                RegExp(r'^[A-Z0-9]{1,7}[ -]?[A-Z0-9]{1,7}$');
-                            if (!regex.hasMatch(car.registration_num)) {
+
+                            if (!AccountDataValidator.validateCarRegistration(
+                                car.registration_num)) {
                               showToast('Invalid registration format');
+                              return;
                             }
 
                             getCars(car);
