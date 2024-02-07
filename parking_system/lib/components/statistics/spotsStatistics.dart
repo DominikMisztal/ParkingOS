@@ -410,10 +410,12 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   }
 
   void sortTable() {
+    setState(() {});
     //Change to DB connection
   }
 
   void filterTable() {
+    setState(() {});
     //change to DB connection
   }
 }
