@@ -51,30 +51,9 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
   Future<List<String>?> getParkingRecords() async {
     List<Car?> cars;
     bool ascending = selectedOrdering == "Asc" ? true : false;
-    if (filterController.text != "") {
-      if (selectedColumnForFiltering == "Vehicle Registration") {
-        cars = await userService.getAllCars(
-            registration: (filterController.text),
-            sortBy: selectedColumn,
-            asc: ascending);
-      } else if (selectedColumnForFiltering == "Vehicle Brand") {
-        cars = await userService.getAllCars(
-            brand: filterController.text,
-            sortBy: selectedColumn,
-            asc: ascending);
-      } else if (selectedColumnForFiltering == "Model") {
-        cars = await userService.getAllCars(
-            model: filterController.text,
-            sortBy: selectedColumn,
-            asc: ascending);
-      } else {
-        cars = await userService.getAllCars(
-            sortBy: selectedColumn, asc: ascending);
-      }
-    } else {
-      cars =
-          await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
-    }
+
+      cars = await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
+    
 
     if (cars == null) return [];
     vehicleRecords.clear();
@@ -159,13 +138,13 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
 
     for (var record in records) {
       if (vehicleRegistration != null &&
-          record.vehicleRegistration != vehicleRegistration) {
+          !record.vehicleRegistration.contains(vehicleRegistration)) {
         continue;
       }
-      if (vehicleBrand != null && record.vehicleBrand != vehicleBrand) {
+      if (vehicleBrand != null && !record.vehicleBrand.contains(vehicleBrand)) {
         continue;
       }
-      if (isParked != null && record.isParked != isParked) {
+      if (isParked != null && !record.isParked.toString().contains(isParked.toString())) {
         continue;
       }
       if (model != null && record.model != model) {

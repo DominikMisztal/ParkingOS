@@ -144,7 +144,7 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
          if(spot.dailyIncome.toString() == filterController.text) return true;
       }
       else if (selectedColumnForFiltering == "Is taken") {
-         if(spot.isTaken.toString() == filterController.text) return true;
+         if(spot.isTaken.toString().contains(filterController.text)) return true;
       }
       else if (selectedColumnForFiltering == "Parked car") {
          if(spot.parkedCarRegistration.toString() == filterController.text) return true;

@@ -91,12 +91,12 @@ Future<List<ParkingHistoryRecord>?> getParkingHistoryData({ String? parkingName,
               double entryIncome = entry['income'] ?? 0.0;
 
               bool matchesFilter = true;
-              if (parkingName != null && entryParkingName != parkingName) matchesFilter = false;
-              if (vehicleBrand != null && entryVehicleBrand != vehicleBrand) matchesFilter = false;
-              if (spotId2 != null && entrySpotId != spotId2) matchesFilter = false;
-              if (registration != null && entryRegistration != registration) matchesFilter = false;
-              if (parkingStart != null && entryParkingStart != parkingStart) matchesFilter = false;
-              if (parkingEnd != null && entryParkingEnd != parkingEnd) matchesFilter = false;
+              if (parkingName != null && !entryParkingName.contains(parkingName)) matchesFilter = false;
+              if (vehicleBrand != null && !entryVehicleBrand.contains(vehicleBrand)) matchesFilter = false;
+              if (spotId2 != null && !entrySpotId.contains(spotId2)) matchesFilter = false;
+              if (registration != null && !entryRegistration.contains(registration)) matchesFilter = false;
+              if (parkingStart != null && !entryParkingStart.toString().contains(parkingStart.toString())) matchesFilter = false;
+              if (parkingEnd != null && !entryParkingEnd.toString().contains(parkingEnd.toString())) matchesFilter = false;
               if (income != null && entryIncome != income) matchesFilter = false;
 
               if (matchesFilter) {
