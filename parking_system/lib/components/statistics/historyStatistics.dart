@@ -35,8 +35,38 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
   var filterController = TextEditingController();
 
   Future<List<ParkingHistoryRecord>?> getHistoryRecords() async {
-    List<ParkingHistoryRecord>? temp =
-        await parkHistory.getParkingHistoryData();
+    List<ParkingHistoryRecord>? temp;
+    bool ascending = selectedOrdering == "Asc" ? true : false;
+    if(filterController.text != ""){
+      if(selectedColumnForFiltering == "Parking Name"){
+        temp = await parkHistory.getParkingHistoryData(parkingName:(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Spot ID"){
+        temp = await parkHistory.getParkingHistoryData(spotId2:(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Vehicle Registration"){
+        temp = await parkHistory.getParkingHistoryData(registration:(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Vehicle Brand"){
+        temp = await parkHistory.getParkingHistoryData(vehicleBrand : filterController.text, orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Parking Start"){
+        temp = await parkHistory.getParkingHistoryData(parkingStart:DateTime.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Parking End"){
+        temp = await parkHistory.getParkingHistoryData(parkingEnd:DateTime.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else if(selectedColumnForFiltering == "Payment"){
+        temp = await parkHistory.getParkingHistoryData(income:double.tryParse(filterController.text), orderBy: selectedColumn, ascending: ascending);
+      }
+      else{
+        temp = await parkHistory.getParkingHistoryData(orderBy: selectedColumn, ascending: ascending);
+      }
+    }
+    else{
+      temp = await parkHistory.getParkingHistoryData(orderBy: selectedColumn, ascending: ascending);
+    }
+
     if (temp != null) {
       historyRecords = temp;
       return temp;

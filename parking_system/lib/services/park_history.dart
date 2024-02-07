@@ -64,7 +64,8 @@ Future<List<String>?> getAllRegistrations() async {
 }
 
 
-Future<List<ParkingHistoryRecord>?> getParkingHistoryData() async {
+Future<List<ParkingHistoryRecord>?> getParkingHistoryData({ String? parkingName, String? vehicleBrand,  String? spotId2,  String? registration,  DateTime? parkingStart,  DateTime? parkingEnd,  double? income,  String? orderBy,bool? ascending,
+}) async {
   DataSnapshot dataSnapshot = await _dbRef.get();
   Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
 
@@ -72,34 +73,103 @@ Future<List<ParkingHistoryRecord>?> getParkingHistoryData() async {
 
   List<ParkingHistoryRecord> parkingHistory = [];
 
-  parkingHistoryData.forEach((parkingType, occurrences) {
-    if (occurrences is List) {
-      for (var occurrence in occurrences) {
-        if (occurrence is Map) {
-          occurrence.forEach((dateTimeString, entry) {
-            if (entry is Map) {
-              String registration = entry['registration'].toString() ?? "";
-              DateTime parkingEnd = DateTime.parse(entry['parkingEnded'].toString());
-              DateTime parkingStart = DateTime.parse(entry['parkingStarted'].toString());
-              double cost = entry['income'] ?? 0.0;
-              String spotId = entry['spot'].toString() ?? "";
-              getBrand(registration).then((vehicleBrand) {
+  parkingHistoryData.forEach((parkingType, parkingSpots) {
+    if (parkingSpots is Map<String, dynamic>) {
+      parkingSpots.forEach((spotId, spotData) {
+        if (spotData is Map<String, dynamic>) {
+          spotData.forEach((dateTimeString, entry) {
+            if (entry is Map<String, dynamic>) {
+              String entryParkingName = parkingType;
+              String entryVehicleBrand = entry['vehicleBrand'].toString();
+              String entrySpotId = spotId;
+              String entryRegistration = entry['registration'].toString();
+              DateTime entryParkingStart = DateTime.parse(entry['parkingStarted'].toString());
+              DateTime entryParkingEnd = DateTime.parse(entry['parkingEnded'].toString());
+              double entryIncome = entry['income'] ?? 0.0;
+
+              bool matchesFilter = true;
+              if (parkingName != null && entryParkingName != parkingName) matchesFilter = false;
+              if (vehicleBrand != null && entryVehicleBrand != vehicleBrand) matchesFilter = false;
+              if (spotId2 != null && entrySpotId != spotId2) matchesFilter = false;
+              if (registration != null && entryRegistration != registration) matchesFilter = false;
+              if (parkingStart != null && entryParkingStart != parkingStart) matchesFilter = false;
+              if (parkingEnd != null && entryParkingEnd != parkingEnd) matchesFilter = false;
+              if (income != null && entryIncome != income) matchesFilter = false;
+
+              if (matchesFilter) {
                 parkingHistory.add(ParkingHistoryRecord(
-                  vehicleRegistration: registration,
-                  vehicleBrand: vehicleBrand,
-                  parkingName: parkingType,
-                  spotId: spotId,
-                  parkingStart: parkingStart,
-                  parkingEnd: parkingEnd,
-                  cost: cost,
+                  vehicleRegistration: entryRegistration,
+                  vehicleBrand: entryVehicleBrand,
+                  parkingName: entryParkingName,
+                  spotId: entrySpotId,
+                  parkingStart: entryParkingStart,
+                  parkingEnd: entryParkingEnd,
+                  cost: entryIncome,
                 ));
-              });
+              }
             }
           });
         }
-      }
+      });
     }
   });
+
+
+  if (orderBy != null) {
+    parkingHistory.sort((a, b) {
+      dynamic aValue, bValue;
+      switch (orderBy) {
+        case 'Parking Name':
+          aValue = a.parkingName;
+          bValue = b.parkingName;
+          break;
+        case 'Vehicle Brand':
+          aValue = a.vehicleBrand;
+          bValue = b.vehicleBrand;
+          break;
+        case 'Spot ID':
+          aValue = a.spotId;
+          bValue = b.spotId;
+          break;
+        case 'Vehicle Registration':
+          aValue = a.vehicleRegistration;
+          bValue = b.vehicleRegistration;
+          break;
+        case 'Parking Start':
+          aValue = a.parkingStart;
+          bValue = b.parkingStart;
+          break;
+        case 'Parking End':
+          aValue = a.parkingEnd;
+          bValue = b.parkingEnd;
+          break;
+        case 'Payment':
+          aValue = a.cost;
+          bValue = b.cost;
+          break;
+        default:
+          // Default case if orderBy parameter is invalid
+          aValue = null;
+          bValue = null;
+          break;
+      }
+      // Compare values based on the specified order
+      if (aValue == null && bValue == null) {
+        return 0;
+      } else if (aValue == null) {
+        return ascending! ? 1 : -1;
+      } else if (bValue == null) {
+        return ascending! ? -1 : 1;
+      } else {
+        if (aValue is Comparable && bValue is Comparable) {
+          int comparison = aValue.compareTo(bValue);
+          return ascending! ? comparison : -comparison;
+        } else {
+          return 0;
+        }
+      }
+    });
+  }
 
   return parkingHistory;
 }
