@@ -93,8 +93,60 @@ Future<void> blockUser(String login, bool block) async {
         }
       }
     }
-
     return null;
+}
+
+Future<List<Car?>> getAllCars({String? registration, String? brand, String? model, String? sortBy, bool? asc}) async {
+  DataSnapshot usersSnapshot = await _userRef.get();
+  Map<dynamic, dynamic>? usersData = usersSnapshot.value as Map<String, dynamic>?;
+  List<Car?> allCars = [];
+  if (usersData != null) {
+    for (var userDataKey in usersData.keys) {
+      Map<dynamic, dynamic>? userData = usersData[userDataKey];
+      if (userData != null && userData['listOfCars'] != null) {
+        Map<dynamic, dynamic> listOfCars = userData['listOfCars'];
+        listOfCars.forEach((registrationNum, carData) {
+          Car? car = Car.fromMap(registrationNum, carData);
+          bool matchesFilter = true;
+          if (registration != null && car.registration_num != registration) {
+            matchesFilter = false;
+          }
+          if (brand != null && car.brand != brand) {
+            matchesFilter = false;
+          }
+          if (model != null && car.model != model) {
+            matchesFilter = false;
+          }
+
+          if (matchesFilter) {
+            allCars.add(car);
+          }
+        });
+      }
+    }
+  }
+
+  if (sortBy != null) {
+    allCars.sort((a, b) {
+      int result = 0;
+      switch (sortBy) {
+        case 'Vehicle Registration':
+          result = a!.registration_num.compareTo(b!.registration_num);
+          break;
+        case 'Vehicle Brand':
+          result = a!.brand.compareTo(b!.brand);
+          break;
+        case 'Model':
+          result = a!.model.compareTo(b!.model);
+          break;
+        default:
+          break;
+      }
+      return asc != null && asc == true ? result : -result;
+    });
+  }
+  return allCars;
+
 }
 
 Future<String?> getLoginForCurrentUser() async {

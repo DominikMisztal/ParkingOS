@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/login.dart';
 import 'package:parking_system/parking_expenses.dart';
 import 'package:parking_system/parking_live_view.dart';
 import 'package:parking_system/parking_maker.dart';
 import 'package:parking_system/parking_statistics.dart';
+import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/signup.dart';
 import 'homepage_user.dart';
 import 'homepage_admin.dart';
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: const Login(title: 'Parking OS login'),
+      home: const HomePageAdmin(email: 'admin'),
 
     );
   }

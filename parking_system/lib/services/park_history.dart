@@ -44,7 +44,7 @@ Future<List<String>?> getAllRegistrations() async {
 
     Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
     if(parkingHistoryData == null) return null;
-    print(parkingHistoryData);
+  
     List<String> registrations = [];
     parkingHistoryData.forEach((parkingType, occurrences) {
     if (occurrences is List) {
@@ -64,35 +64,44 @@ Future<List<String>?> getAllRegistrations() async {
 }
 
 
-Future<List<ParkingHistoryRecord>?> getParkingHistoryData() async{
-      DataSnapshot dataSnapshot = await _dbRef.get();
+Future<List<ParkingHistoryRecord>?> getParkingHistoryData() async {
+  DataSnapshot dataSnapshot = await _dbRef.get();
+  Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
 
-    Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
-    if(parkingHistoryData == null) return null;
-    print(parkingHistoryData);
-    List<ParkingHistoryRecord>? parkingHistory = [];
+  if (parkingHistoryData == null) return null;
 
-    parkingHistoryData.forEach((parkingType, occurrences) {
+  List<ParkingHistoryRecord> parkingHistory = [];
+
+  parkingHistoryData.forEach((parkingType, occurrences) {
     if (occurrences is List) {
       for (var occurrence in occurrences) {
         if (occurrence is Map) {
-          occurrence.forEach((dateTimeString, entry) async {
+          occurrence.forEach((dateTimeString, entry) {
             if (entry is Map) {
               String registration = entry['registration'].toString() ?? "";
-              DateTime parkingEnd =  DateTime.parse(entry['end'].toString());
-              DateTime parkingStart = DateTime.parse(entry['start'].toString());
+              DateTime parkingEnd = DateTime.parse(entry['parkingEnded'].toString());
+              DateTime parkingStart = DateTime.parse(entry['parkingStarted'].toString());
               double cost = entry['income'] ?? 0.0;
               String spotId = entry['spot'].toString() ?? "";
-              String vehicleBrand = await getBrand(registration);
-
-              parkingHistory.add(ParkingHistoryRecord(vehicleRegistration: registration, vehicleBrand: vehicleBrand, parkingName: parkingType, spotId: spotId, parkingStart: parkingStart, parkingEnd: parkingEnd, cost: cost));
+              getBrand(registration).then((vehicleBrand) {
+                parkingHistory.add(ParkingHistoryRecord(
+                  vehicleRegistration: registration,
+                  vehicleBrand: vehicleBrand,
+                  parkingName: parkingType,
+                  spotId: spotId,
+                  parkingStart: parkingStart,
+                  parkingEnd: parkingEnd,
+                  cost: cost,
+                ));
+              });
             }
           });
         }
       }
     }
   });
-    return parkingHistory;
+
+  return parkingHistory;
 }
 
   Future<String> getBrand(String registration) async {
@@ -107,4 +116,31 @@ Future<List<ParkingHistoryRecord>?> getParkingHistoryData() async{
     Map<String, dynamic> userData = json.decode(json.encode(snapshot.value));
     return SpotDb.fromMap(userData);
   }
+
+
+Future<double> findCarHistory(String carReg) async {
+  DataSnapshot dataSnapshot = await _dbRef.get();
+  double totalIncome = 0;
+
+  Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
+  if (parkingHistoryData == null) return totalIncome;
+
+  parkingHistoryData.forEach((parkingType, occurrences) {
+    if (occurrences is Map<String, dynamic>) {
+      occurrences.forEach((spotId, records) {
+        if (records is Map<String, dynamic>) {
+          records.forEach((recordId, entry) {
+            if (entry is Map<String, dynamic> && entry['registration'] == carReg) {
+              totalIncome += (entry['income'] ?? 0.0); // Accumulate income
+            }
+          });
+        }
+      });
+    }
+  });
+
+  return totalIncome;
+}
+
+
 }
