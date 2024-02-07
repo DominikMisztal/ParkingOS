@@ -32,13 +32,17 @@ class _userPageState extends State<userPage> {
   void getCars(Car car) async {
     bool? checkRegistration = await userService.canAddCar(car.registration_num);
     if (checkRegistration == null) return;
-    //if(checkRegistration){
+    print(checkRegistration);
+    if(checkRegistration == true){
     await user.addCar(car);
     _placeholderCars = user.userCars();
-    //}
     setState(() {
       _placeholderCars = user.userCars();
     });
+    }
+    else{
+      showToast("Auto z podaną rejestracją istnieje");
+    }
   }
 
   void deleteCar(Car car) async {
