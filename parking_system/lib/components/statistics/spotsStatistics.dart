@@ -40,6 +40,7 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   _SpotsStatisticsWidgetState(
       {required this.selectedParking, required this.selectedSpotId});
   var filterController = TextEditingController();
+  bool firstLoad = true;
 
   Future<List<ParkingDb>?> getSpotRecords() async {
     List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
@@ -124,11 +125,11 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
     var width = MediaQuery.of(context).size.width;
 
     getSpotRecords();
-    if (selectedSpotId != '' || selectedSpotId != '-1') {
-      filterController.text = selectedSpotId;
-      selectedColumnForFiltering = 'Spot ID';
-      // to do filtering
-    }
+    // if (firstLoad && selectedSpotId == '') {
+    //   filterController.text = selectedSpotId;
+    //   selectedColumnForFiltering = 'Spot ID';
+    //   // to do filtering
+    // }
 
     return FutureBuilder(
       future: getSpotRecords(),
