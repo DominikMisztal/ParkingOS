@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/models/statistics/spotRecotd.dart';
 import 'package:parking_system/models/parkingDB.dart';
+import 'package:parking_system/services/park_history.dart';
 import 'package:parking_system/services/park_services.dart';
 
 class SpotsStatisticsWidget extends StatefulWidget {
@@ -17,6 +18,7 @@ class SpotsStatisticsWidget extends StatefulWidget {
 }
 
 class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
+  ParkHistory parkHistory = ParkHistory();
   ParkingServices parkingServices = ParkingServices();
   String selectedSpotId;
   String selectedParking;
@@ -43,14 +45,37 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
   bool firstLoad = true;
 
   Future<List<ParkingDb>?> getSpotRecords() async {
-    List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
+
+  List<ParkingDb>? fetchedParkings = null;
+    bool ascending = selectedOrdering == "Asc" ? true : false;
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Amount of Spots") {
+        fetchedParkings = await parkingServices.getParkings(
+            amountOfSpots: int.tryParse(filterController.text),
+            sortBy: selectedColumn,
+            asc: ascending);
+      } else if (selectedColumnForFiltering == "Parking Name") {
+        fetchedParkings = await parkingServices.getParkings(
+            parkingName: filterController.text,
+            sortBy: selectedColumn,
+            asc: ascending);
+      }
+      else {
+        fetchedParkings = await parkingServices.getParkings(
+            sortBy: selectedColumn, asc: ascending);
+      }
+    } else {
+      fetchedParkings = await parkingServices.getParkings(
+          sortBy: selectedColumn, asc: ascending);
+    }
+
     if (fetchedParkings != null) {
       parkings.clear();
       spotRecords.clear();
       parkings.addAll(fetchedParkings);
       for (var parking in parkings) {
         for (var spot in parking.spots) {
-          spotRecords.add(SpotRecord(
+          SpotRecord tempSpot = (SpotRecord(
               spotId: spot.idNumber.toString(),
               parkingName: parking.name,
               isTaken: spot.date != "" ? true : false,
@@ -63,10 +88,78 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
               parkedCarRegistration: spot.registrationNumber,
               parkingStart:
                   spot.date == "" ? null : DateTime.parse(spot.date)));
+        tempSpot = await setTotalSpotIncomeAndDailyIncome(tempSpot);
+        
+
+        if(shouldAdd(tempSpot)){
+          spotRecords.add(tempSpot);
+          }
         }
       }
     }
+    spotRecords = removeDuplicates(spotRecords);
     return fetchedParkings;
+  }
+
+
+  List<SpotRecord> removeDuplicates(List<SpotRecord> cars) {
+    Map<String, String> seenRegistrations = Map<String, String>();
+    List<SpotRecord> filteredCars = [];
+
+    for (SpotRecord car in cars) {
+      bool shouldAdd = true;
+      for (var key in seenRegistrations.keys) {{
+        if (key == car.spotId && seenRegistrations[key] == car.parkingName) {
+          shouldAdd = false;
+      }};   
+    }
+    if(shouldAdd){
+        filteredCars.add(car);
+        seenRegistrations[car.spotId] = car.parkingName;
+      }
+    }
+    return filteredCars;
+  }
+
+
+
+  Future<SpotRecord> setTotalSpotIncomeAndDailyIncome(SpotRecord temp) async {
+    SpotRecord spot = await parkHistory.setIncomeForSpot(temp);
+    return spot;
+  }
+
+
+  bool shouldAdd(SpotRecord spot){
+    if (filterController.text != "") {
+      if (selectedColumnForFiltering == "Parking Name") {
+         if(spot.parkingName.contains(filterController.text)) return true;
+      }
+      else if (selectedColumnForFiltering == "Spot ID") {
+         if(spot.spotId == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Total income") {
+         if(spot.totalIncome.toString() == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Average Daily income") {
+         if(spot.dailyIncome.toString() == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Is taken") {
+         if(spot.isTaken.toString() == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Parked car") {
+         if(spot.parkedCarRegistration.toString() == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Temporary income") {
+         if(spot.temporaryIncome.toString() == filterController.text) return true;
+      }
+      else if (selectedColumnForFiltering == "Parked since") {
+         if(spot.parkingStart.toString().contains(filterController.text)) return true;
+      }
+    return false;
+    }
+    else{
+    return true;
+    }
   }
 
   double setTempIncome(

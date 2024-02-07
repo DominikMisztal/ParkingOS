@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:parking_system/models/Spot.dart';
 import 'package:parking_system/models/car_model.dart';
+
 import 'package:parking_system/services/user_services.dart';
 import 'package:parking_system/models/statistics/parkingHistoryRecord.dart';
+
+import '../models/statistics/spotRecotd.dart';
 
 class ParkHistory {
   UserService userService = UserService();
@@ -212,5 +215,35 @@ Future<double> findCarHistory(String carReg) async {
   return totalIncome;
 }
 
+Future<SpotRecord> setIncomeForSpot(SpotRecord temp) async {
+
+  DataSnapshot dataSnapshot = await _dbRef.get();
+  double totalIncome = 0;
+
+  Map<String, dynamic>? parkingHistoryData = dataSnapshot.value as Map<String, dynamic>?;
+  if (parkingHistoryData == null) return temp;
+
+  parkingHistoryData.forEach((parkingType, occurrences) {
+    if (occurrences is Map<String, dynamic> && parkingType == temp.parkingName) {
+      occurrences.forEach((spotId, records) {
+        if (records is Map<String, dynamic>) {
+          records.forEach((recordId, entry) {
+            if (entry is Map<String, dynamic> && entry['spot'] == temp.spotId) {
+              temp.totalIncome += (entry['income'] ?? 0.0);
+              DateTime now = DateTime.now();
+              DateTime check = DateTime.parse(entry['parkingEnded']);
+              if (check.day == now.day && check.month == now.month && check.year == now.year) {
+                temp.dailyIncome += (entry['income'] ?? 0.0);
+              }
+            }
+            
+          });
+        }
+      });
+    }
+  });
+
+  return temp;
+}
 
 }
