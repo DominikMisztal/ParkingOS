@@ -64,7 +64,7 @@ Future<List<ParkingDb>?> getParkings() async {
 
   Future<void> startParking(int spotId, String parkingName, String? registration, int lvl, Layover ticket, String ticketKey) async {
     if(registration == null) return;
-    SpotDb spot = SpotDb(registrationNumber: registration, date: "", level: lvl, idNumber: spotId);
+    SpotDb spot = SpotDb(registrationNumber: registration, date: DateTime.now().toString(), level: lvl, idNumber: spotId);
 
     Map<String, dynamic> spotMap = {
       'registrationNumber': spot.registrationNumber,

@@ -76,6 +76,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     ParkingLiveView.spotsTaken = testPlacements;
   }
 
+  
   void updateView() {
     if (currentlySelectedSpot == -1) {
       spotStateDetails = "No spot selected";
@@ -83,8 +84,10 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     } else {
       if (ParkingLiveView.spotsTaken[currentlySelectedSpot]) {
         // UPDATE FROM DB
-        parkedSinceDate = DateTime.now();
-        parkedCarRegistration = "KL-12345";
+        parkings[choosenPark].spots[currentlySelectedSpot].date == "" ? parkedSinceDate = DateTime.now() : parkedSinceDate =  DateTime.parse(parkings[choosenPark].spots[currentlySelectedSpot].date);
+        parkedCarRegistration = parkings[choosenPark].spots[currentlySelectedSpot].registrationNumber;
+
+
         PaymentCalculator calculator =
             PaymentCalculator(tariffsMap: this.tariffsMap);
         spotStateDetails = "Spot is taken by: ${parkedCarRegistration}";
