@@ -7,6 +7,7 @@ import 'package:parking_system/components/parking_board_live_view.dart';
 import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/services/payment_calculator.dart';
+import 'package:parking_system/utils/Utils.dart';
 
 import 'parking_statistics.dart';
 
@@ -76,7 +77,6 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     ParkingLiveView.spotsTaken = testPlacements;
   }
 
-  
   void updateView() {
     if (currentlySelectedSpot == -1) {
       spotStateDetails = "No spot selected";
@@ -84,9 +84,13 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
     } else {
       if (ParkingLiveView.spotsTaken[currentlySelectedSpot]) {
         // UPDATE FROM DB
-        parkings[choosenPark].spots[currentlySelectedSpot].date == "" ? parkedSinceDate = DateTime.now() : parkedSinceDate =  DateTime.parse(parkings[choosenPark].spots[currentlySelectedSpot].date);
-        parkedCarRegistration = parkings[choosenPark].spots[currentlySelectedSpot].registrationNumber;
-
+        parkings[choosenPark].spots[currentlySelectedSpot].date == ""
+            ? parkedSinceDate = DateTime.now()
+            : parkedSinceDate = DateTime.parse(
+                parkings[choosenPark].spots[currentlySelectedSpot].date);
+        parkedCarRegistration = parkings[choosenPark]
+            .spots[currentlySelectedSpot]
+            .registrationNumber;
 
         PaymentCalculator calculator =
             PaymentCalculator(tariffsMap: this.tariffsMap);
@@ -259,31 +263,44 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
   }
 
   void goToStatistics() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ParkingStatistics(
-              category: 'Parking Spots',
-              parkingName: parkings[choosenPark].name,
-              spotId: currentlySelectedSpot.toString(),
-              vehicleReg: parkings[choosenPark]
-                  .spots[currentlySelectedSpot]
-                  .registrationNumber)),
-    );
+    if (currentlySelectedSpot == -1) {
+      showToast('No spot selected');
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ParkingStatistics(
+                category: 'Parking Spots',
+                parkingName: parkings[choosenPark].name,
+                spotId: currentlySelectedSpot.toString(),
+                vehicleReg: parkings[choosenPark]
+                    .spots[currentlySelectedSpot]
+                    .registrationNumber)),
+      );
+    }
   }
 
   void goToVehicleStatistics() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ParkingStatistics(
-              category: 'Vehicles',
-              parkingName: parkings[choosenPark].name,
-              spotId: currentlySelectedSpot.toString(),
-              vehicleReg: parkings[choosenPark]
-                  .spots[currentlySelectedSpot]
-                  .registrationNumber)),
-    );
+    if (currentlySelectedSpot == -1) {
+      showToast('No spot selected');
+    } else if (parkings[choosenPark]
+            .spots[currentlySelectedSpot]
+            .registrationNumber ==
+        '') {
+      showToast('No vehicle parked at selected spot');
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ParkingStatistics(
+                category: 'Vehicles',
+                parkingName: parkings[choosenPark].name,
+                spotId: currentlySelectedSpot.toString(),
+                vehicleReg: parkings[choosenPark]
+                    .spots[currentlySelectedSpot]
+                    .registrationNumber)),
+      );
+    }
   }
 
   void changeSelectedSpot(int newSelectedSpot) {
