@@ -126,21 +126,25 @@ class _ParkingMakerState extends State<ParkingMaker> {
                             Container(
                               color: Colors.black87,
                               width: (width / 3) * 2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: ListView(
+                                clipBehavior: Clip.none,
+                                //mainAxisAlignment: MainAxisAlignment.center,
                                 //crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  ElevatedButton(
-                                    onPressed: () => {Navigator.pop(context)},
-                                    child: Text(
-                                      'Go back',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
+                                  Container(
+                                    child: ElevatedButton(
+                                      onPressed: () => {Navigator.pop(context)},
+                                      style: ElevatedButton.styleFrom(),
+                                      child: const Text(
+                                        'Go back',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  Padding(padding: EdgeInsets.all(10)),
+                                  const Padding(padding: EdgeInsets.all(10)),
                                   DropdownButton<String>(
                                     value: selectedParking,
                                     style: TextStyle(color: Colors.white),
