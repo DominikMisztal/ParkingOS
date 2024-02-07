@@ -35,7 +35,11 @@ class _ParkfinderState extends State<Parkfinder> {
                 spot: spot,
                 user: widget.user,
               )),
-    );
+    ).then((value) {
+      setState(() {
+        initializeTicket();
+      });
+    });
   }
 
   Layover? ticket;
@@ -47,7 +51,6 @@ class _ParkfinderState extends State<Parkfinder> {
     }
     tempTicket = tempTicket;
     ticket = tempTicket;
-    print(ticket?.startDate.toString());
     return tempTicket;
   }
 
@@ -151,7 +154,6 @@ class _ParkfinderState extends State<Parkfinder> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
 
     parkingTimeController.addListener(listener);
 

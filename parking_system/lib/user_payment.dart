@@ -46,7 +46,6 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     }
     tTicket = tTicket;
     oldTicket = tTicket;
-    print(oldTicket?.startDate.toString());
     return tTicket;
   }
 
@@ -161,6 +160,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                           ElevatedButton(
                             onPressed: () {
                               _takeTicket();
+                              Navigator.pop(context, true);
                             },
                             child: Text('Take a ticket'),
                           ),
