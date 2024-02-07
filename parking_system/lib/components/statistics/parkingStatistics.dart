@@ -35,12 +35,30 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   var filterController = TextEditingController();
 
   Future<List<ParkingDb>?> getParkingRecords() async {
-    List<String>? fetchedParkingNames = await parkingServices.getParkingNames();
-    if (fetchedParkingNames != null) {
-      parkingNames.addAll(fetchedParkingNames);
-    }
 
-    List<ParkingDb>? fetchedParkings = await parkingServices.getParkings();
+    
+    List<ParkingDb>? fetchedParkings = null;
+    bool ascending = selectedOrdering == "Asc" ? true : false;
+    if(filterController.text != ""){
+      if(selectedColumnForFiltering == "Amount of Spots"){
+        fetchedParkings = await parkingServices.getParkings(amountOfSpots: int.tryParse(filterController.text), sortBy: selectedColumn, asc: ascending);
+      }
+      else if(selectedColumnForFiltering == "Parking Name"){
+        fetchedParkings = await parkingServices.getParkings(parkingName: filterController.text,  sortBy: selectedColumn, asc: ascending);
+      }
+      else if(selectedColumnForFiltering == "Total Income"){
+        fetchedParkings = await parkingServices.getParkings(totalIncome: double.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
+      }
+      else if(selectedColumnForFiltering == "Today's Income"){
+        fetchedParkings = await parkingServices.getParkings(todayIncome: double.tryParse(filterController.text),  sortBy: selectedColumn, asc: ascending);
+      }
+      else{
+        fetchedParkings = await parkingServices.getParkings(sortBy: selectedColumn, asc: ascending);
+      }
+    }
+    else{
+      fetchedParkings = await parkingServices.getParkings(sortBy: selectedColumn, asc: ascending);
+    }
     if (fetchedParkings != null) {
       parkings.clear();
       parkingRecords.clear();
@@ -53,12 +71,18 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
         parkingRecords.add(ParkingRecord(
           parkingName: parking.name,
           amountOfSpots: parking.spots.length,
-          takenSpots: amountOfSpotsTaken, //todo: change 50 to actual number of taken spots
+          takenSpots: amountOfSpotsTaken,
           totalIncome: parking.income,
           todayIncome: parking.dailyIncome,
         ));
       }
     }
+    if(fetchedParkings != null){
+      for (var element in fetchedParkings) {
+        parkingNames.add(element.name);
+      }
+    }
+
     return fetchedParkings;
   }
 
@@ -291,10 +315,10 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
   }
 
   void sortTable() {
-    //Change to DB connection
+
   }
 
   void filterTable() {
-    //change to DB connection
+   
   }
 }

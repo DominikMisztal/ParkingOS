@@ -40,7 +40,7 @@ class ParkingServices {
   return parkingNames;
 }
 
-Future<List<ParkingDb>?> getParkings() async {
+Future<List<ParkingDb>?> getParkings({String? parkingName, int? amountOfSpots, int? takenSpots, double? totalIncome, double? todayIncome, String? sortBy, bool? asc}) async {
   DataSnapshot snapshot = await _dbRef.get();
   if (snapshot.value == null) return null;
 
@@ -48,9 +48,7 @@ Future<List<ParkingDb>?> getParkings() async {
   List<ParkingDb> parkingList = [];
 
   parkingData.forEach((parkingName, parkingSpotData){
-    
     ParkingDb parkingSpot = ParkingDb.fromMap(parkingSpotData);
-    
     parkingList.add(parkingSpot);
   });
 
@@ -58,7 +56,51 @@ Future<List<ParkingDb>?> getParkings() async {
     park.income = await setIncome(park.name);
     park.dailyIncome = await setTodayIncome(park.name);
   }
-  
+
+  if (parkingName != null) {
+    parkingList = parkingList.where((park) => park.name.contains(parkingName)).toList();
+  } else if (amountOfSpots != null) {
+    parkingList = parkingList.where((park) => park.spots.length == amountOfSpots).toList();
+  } else if (totalIncome != null) {
+    parkingList = parkingList.where((park) => park.income == totalIncome).toList();
+  } else if (todayIncome != null) {
+    parkingList = parkingList.where((park) => park.dailyIncome == todayIncome).toList();
+  }
+
+  if (sortBy != null) {
+    if(asc == true){
+    parkingList.sort((a, b) {
+      switch (sortBy) {
+        case 'Parking Name':
+          return a.name.compareTo(b.name);
+        case 'Amount Of Spots':
+          return a.spots.length.compareTo(b.spots.length);
+        case 'Total Income':
+          return a.income.compareTo(b.income);
+        case 'Today\'s Income':
+          return a.dailyIncome.compareTo(b.dailyIncome);
+        default:
+          return 0;
+      }
+    });
+    }
+    else{
+      parkingList.sort((a, b) {
+      switch (sortBy) {
+        case 'Parking Name':
+          return b.name.compareTo(a.name);
+        case 'Amount Of Spots':
+          return b.spots.length.compareTo(a.spots.length);
+        case 'Total Income':
+          return b.income.compareTo(a.income);
+        case 'Today\'s Income':
+          return b.dailyIncome.compareTo(a.dailyIncome);
+        default:
+          return 0;
+      }
+    });
+    }
+  }
 
   return parkingList;
 }
