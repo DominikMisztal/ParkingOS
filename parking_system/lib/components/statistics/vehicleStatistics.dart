@@ -45,15 +45,18 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
 
   _VehicleStatisticsWidgetState(
       {required this.selectedParking,
-      required this.selectedVehicleForFiltering});
+      required this.selectedVehicleForFiltering}) {
+    if (this.selectedVehicleForFiltering != '') {
+      filterController.text = this.selectedVehicleForFiltering;
+    }
+  }
   var filterController = TextEditingController();
 
   Future<List<String>?> getParkingRecords() async {
     List<Car?> cars;
     bool ascending = selectedOrdering == "Asc" ? true : false;
 
-      cars = await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
-    
+    cars = await userService.getAllCars(sortBy: selectedColumn, asc: ascending);
 
     if (cars == null) return [];
     vehicleRecords.clear();
@@ -144,7 +147,8 @@ class _VehicleStatisticsWidgetState extends State<VehicleStatisticsWidget> {
       if (vehicleBrand != null && !record.vehicleBrand.contains(vehicleBrand)) {
         continue;
       }
-      if (isParked != null && !record.isParked.toString().contains(isParked.toString())) {
+      if (isParked != null &&
+          !record.isParked.toString().contains(isParked.toString())) {
         continue;
       }
       if (model != null && record.model != model) {
