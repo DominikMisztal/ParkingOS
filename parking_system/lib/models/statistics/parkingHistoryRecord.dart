@@ -1,6 +1,5 @@
 class ParkingHistoryRecord {
   String vehicleRegistration;
-  String vehicleBrand;
   String parkingName;
   String spotId;
   DateTime parkingStart;
@@ -9,7 +8,6 @@ class ParkingHistoryRecord {
 
   ParkingHistoryRecord(
       {required this.vehicleRegistration,
-      required this.vehicleBrand,
       required this.parkingName,
       required this.spotId,
       required this.parkingStart,

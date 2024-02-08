@@ -21,7 +21,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
     'Parking Name',
     'Spot ID',
     'Vehicle Registration',
-    'Vehicle Brand',
     'Parking Start',
     'Parking End',
     'Payment'
@@ -51,11 +50,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
       } else if (selectedColumnForFiltering == "Vehicle Registration") {
         temp = await parkHistory.getParkingHistoryData(
             registration: (filterController.text),
-            orderBy: selectedColumn,
-            ascending: ascending);
-      } else if (selectedColumnForFiltering == "Vehicle Brand") {
-        temp = await parkHistory.getParkingHistoryData(
-            vehicleBrand: filterController.text,
             orderBy: selectedColumn,
             ascending: ascending);
       } else if (selectedColumnForFiltering == "Parking Start") {
@@ -88,7 +82,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
     }
     historyRecords.add(ParkingHistoryRecord(
         vehicleRegistration: 'kl-12345',
-        vehicleBrand: 'Mazda',
         parkingName: 'Parking 1',
         spotId: '123',
         parkingStart: DateTime.now(),
@@ -242,9 +235,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
                         DataColumn(
                             label: Text(columnNames[5],
                                 style: const TextStyle(color: Colors.white))),
-                        DataColumn(
-                            label: Text(columnNames[6],
-                                style: const TextStyle(color: Colors.white))),
                       ],
                       rows: historyRecords.map((ParkingHistoryRecord record) {
                         return DataRow(cells: [
@@ -253,8 +243,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
                           DataCell(Text(record.spotId.toString(),
                               style: const TextStyle(color: Colors.white))),
                           DataCell(Text(record.vehicleRegistration.toString(),
-                              style: const TextStyle(color: Colors.white))),
-                          DataCell(Text(record.vehicleBrand.toString(),
                               style: const TextStyle(color: Colors.white))),
                           DataCell(Text(record.parkingStart.toString(),
                               style: const TextStyle(color: Colors.white))),
