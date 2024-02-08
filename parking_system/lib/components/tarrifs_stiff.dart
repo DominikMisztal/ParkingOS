@@ -91,6 +91,12 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    String firstHour = controllersList[0][1].text;
+    String secondHour = controllersList[0][2].text;
+    void refresh(String newHour) {
+      setState(() {});
+    }
+
     updateControllers();
     controllersUpdated = true;
     return Scaffold(
@@ -111,11 +117,9 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
                   ? const Text('Tariffs',
                       style: TextStyle(color: Colors.white70))
                   : index == 1
-                      ? Text(
-                          '${controllersList[0][1].text}:00-${controllersList[0][2].text}:00',
+                      ? Text('${firstHour}:00-${secondHour}:00',
                           style: TextStyle(color: Colors.white70))
-                      : Text(
-                          '${controllersList[0][2].text}-${controllersList[0][1].text}',
+                      : Text('${secondHour}:00-${firstHour}:00',
                           style: TextStyle(color: Colors.white70)),
             ),
           ),
@@ -141,7 +145,9 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
                     );
                   } else if (rowIndex == 0) {
                     return DataCell(HourController(
-                        controller: controllersList[0][colIndex], start: true));
+                      controller: controllersList[0][colIndex],
+                      onChanged: refresh,
+                    ));
                   } else {
                     return DataCell(TextFormField(
                       controller: controllersList[rowIndex - 1][colIndex],
@@ -161,22 +167,23 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
 }
 
 class HourController extends StatelessWidget {
-  final bool start;
   final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
   const HourController({
     super.key,
     required this.controller,
-    required this.start,
+    required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        autovalidateMode: AutovalidateMode.always,
+        onChanged: onChanged,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: 'Enter an hour',
-            labelStyle: const TextStyle(color: Colors.white60)),
+            labelStyle: TextStyle(color: Colors.white60)),
         validator: ((value) {
           if (value == null) return null;
           if (value.isEmpty) {
@@ -184,27 +191,12 @@ class HourController extends StatelessWidget {
           }
 
           final int? number = int.tryParse(value);
-
           if (number == null || number < 1 || number > 24) {
             return 'Please enter a valid hour';
           }
           return null;
         }),
         style: TextStyle(color: Colors.white70));
-  }
-
-  String? _validateHour(String? value) {
-    if (value == null) return null;
-    if (value.isEmpty) {
-      return 'Please enter a value';
-    }
-
-    final int? number = int.tryParse(value);
-
-    if (number == null || number < 1 || number > 24) {
-      return 'Please enter a valid hour';
-    }
-    return null;
   }
 }
 
