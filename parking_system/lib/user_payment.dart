@@ -3,16 +3,22 @@ import 'package:parking_system/models/car_model.dart';
 import 'package:parking_system/models/layover_model.dart';
 import 'package:parking_system/models/parking_model.dart';
 import 'package:parking_system/models/spot_model.dart';
+import 'package:parking_system/models/user.dart';
 import 'package:parking_system/services/park_services.dart';
+import 'package:parking_system/services/ticket_services.dart';
 import 'package:parking_system/services/user_services.dart';
 import 'package:parking_system/utils/Utils.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class UserPaymentScreen extends StatefulWidget {
   const UserPaymentScreen(
-      {super.key, required this.parking, required this.spot});
+      {super.key,
+      required this.parking,
+      required this.spot,
+      required this.user});
   final Parking parking;
   final Spot spot;
+  final UserDb user;
   @override
   State<UserPaymentScreen> createState() => UserPaymentStateScreen();
 }
@@ -20,12 +26,27 @@ class UserPaymentScreen extends StatefulWidget {
 class UserPaymentStateScreen extends State<UserPaymentScreen> {
   ParkingServices parkingServices = ParkingServices();
   UserService userService = UserService();
+  TicketService ticketService = TicketService();
+
   List<Car> _placeholderCars = [];
   Car? selectedCar;
   Layover? tempTicket;
+  Layover? oldTicket;
   @override
   void initState() {
     super.initState();
+    initializeTicket();
+  }
+
+  Future<Layover?> initializeTicket() async {
+    Layover? tTicket = await ticketService.findTicket(widget.user.login);
+    if (tTicket == null) {
+      oldTicket = null;
+      return null;
+    }
+    tTicket = tTicket;
+    oldTicket = tTicket;
+    return tTicket;
   }
 
   Future<List<Car>> fetchData() async {
@@ -139,8 +160,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
                           ElevatedButton(
                             onPressed: () {
                               _takeTicket();
-                              Future.delayed(Duration(seconds: 2));
-                              showToast('Ticket was taken');
+                              Navigator.pop(context, true);
                             },
                             child: Text('Take a ticket'),
                           ),
@@ -158,13 +178,23 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
     );
   }
 
+  Future<void> _ticketTakingProcess() async {
+    Future<bool> taken = _takeTicket();
+    Future.delayed(Duration(seconds: 2));
+    showToast('Ticket was taken');
+  }
+
   Future<bool> _takeTicket() async {
+    await initializeTicket();
     double balance = await userService.getBalance();
     if (balance < 0) {
       showToast('Don\'t have enought funds, please charge your account');
       return false;
     }
-
+    if (oldTicket != null) {
+      showToast('You already have a ticket');
+      return false;
+    }
     String? tempLogin = await userService.getLoginForCurrentUser();
     if (tempLogin == null) return false;
     tempLogin = tempLogin.replaceAll('.', '');
@@ -179,6 +209,7 @@ class UserPaymentStateScreen extends State<UserPaymentScreen> {
 
     parkingServices.startParking(widget.spot.number, widget.parking.name,
         selectedCar?.registration_num, widget.spot.floor, ticket, tempLogin);
+    showToast('Ticket was taken');
 
     return true;
   }

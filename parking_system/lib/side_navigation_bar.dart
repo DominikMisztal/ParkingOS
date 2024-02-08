@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     pages = [
       userPage(user: widget.user),
-      Parkfinder(),
+      Parkfinder(user: widget.user),
       UserTicketScreen(user: widget.user),
     ];
   }

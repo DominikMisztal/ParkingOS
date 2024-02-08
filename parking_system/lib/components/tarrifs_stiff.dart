@@ -20,8 +20,7 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
   };
   _TarrifDataTableState(
       {required this.onValueChanged, required this.tariffsMap});
-  late List<List<TextEditingController>>
-      controllersList; //I have no Idea, jak my to będziemy trzymać w bazie
+  late List<List<TextEditingController>> controllersList;
 
   int columnCount = 3;
 
@@ -92,6 +91,12 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    String firstHour = controllersList[0][1].text;
+    String secondHour = controllersList[0][2].text;
+    void refresh(String newHour) {
+      setState(() {});
+    }
+
     updateControllers();
     controllersUpdated = true;
     return Scaffold(
@@ -112,14 +117,14 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
                   ? const Text('Tariffs',
                       style: TextStyle(color: Colors.white70))
                   : index == 1
-                      ? const Text('8:00-16:00',
+                      ? Text('${firstHour}:00-${secondHour}:00',
                           style: TextStyle(color: Colors.white70))
-                      : const Text('16:00-8:00',
+                      : Text('${secondHour}:00-${firstHour}:00',
                           style: TextStyle(color: Colors.white70)),
             ),
           ),
           rows: List.generate(
-            3,
+            4,
             (rowIndex) => DataRow(
               cells: List.generate(
                 columnCount,
@@ -128,18 +133,24 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
                     return DataCell(
                       Text(
                           rowIndex == 0
-                              ? 'Price for the first hour'
+                              ? 'Start Hours:'
                               : rowIndex == 1
-                                  ? 'Price for the second hour'
+                                  ? 'Price for the first hour'
                                   : rowIndex == 2
-                                      ? 'Price for every next hour'
-                                      : '',
+                                      ? 'Price for the second hour'
+                                      : rowIndex == 3
+                                          ? 'Price for every next hour'
+                                          : '',
                           style: const TextStyle(color: Colors.white60)),
                     );
+                  } else if (rowIndex == 0) {
+                    return DataCell(HourController(
+                      controller: controllersList[0][colIndex],
+                      onChanged: refresh,
+                    ));
                   } else {
-                    // For other columns, use TextFormField
                     return DataCell(TextFormField(
-                      controller: controllersList[rowIndex][colIndex],
+                      controller: controllersList[rowIndex - 1][colIndex],
                       decoration: const InputDecoration(
                         hintText: 'Enter price',
                       ),
@@ -151,22 +162,41 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     setState(() {
-      //       if (columnCount < 3) {
-      //         controllersList.forEach((controllers) {
-      //           controllers.add(TextEditingController());
-      //         });
-      //         columnCount++;
-      //       } else {
-      //         showToast('You can only have up to 2 tarrifs');
-      //       }
-      //     });
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
     );
+  }
+}
+
+class HourController extends StatelessWidget {
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
+  const HourController({
+    super.key,
+    required this.controller,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+        onChanged: onChanged,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: controller,
+        decoration: const InputDecoration(
+            hintText: 'Enter an hour',
+            labelStyle: TextStyle(color: Colors.white60)),
+        validator: ((value) {
+          if (value == null) return null;
+          if (value.isEmpty) {
+            return 'Please enter a value';
+          }
+
+          final int? number = int.tryParse(value);
+          if (number == null || number < 1 || number > 24) {
+            return 'Please enter a valid hour';
+          }
+          return null;
+        }),
+        style: TextStyle(color: Colors.white70));
   }
 }
 
