@@ -33,15 +33,50 @@ class _ParkingMakerState extends State<ParkingMaker> {
     '0': [0, 0, 0],
     '12': [0, 0, 0]
   };
+  List<ParkingDb> _parkings = [];
   int parkingCols = 8;
   int parkingRows = 8;
   int parkingFloors = 3;
   bool _toggleTariffParking = false;
-
+  bool shouldRenewData = false;
   void getParkingNames() {
     //TO DO GET PARKING NAMES
     selectedParking = parkingNames[selectedParkingIndex];
+
+    if(_parkings.isNotEmpty && shouldRenewData){
+      nameController.text = _parkings[selectedParkingIndex].name;
+      addressController.text = _parkings[selectedParkingIndex].address;
+      widthController.text = _parkings[selectedParkingIndex].width.toString();
+      heightController.text = _parkings[selectedParkingIndex].height.toString();
+      floorsController.text = _parkings[selectedParkingIndex].height.toString();
+      setState(() {
+      for (var element in _parkings) {
+        tariffsMap = _parkings[selectedParkingIndex].tarifs;
+     }
+    });
+      print(tariffsMap);
+    }
+    shouldRenewData = true;
   }
+  void getParkings() async{
+    _parkings = (await _parkingServices.getParkings())!;
+
+    parkingNames.clear();
+
+     setState(() {
+      for (var element in _parkings) {
+        parkingNames.add(element.name);
+     }
+    });
+    shouldRenewData = false;
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    getParkings();
+  }
+
 
   void updateParkingData() {
     nameController.text = '';
