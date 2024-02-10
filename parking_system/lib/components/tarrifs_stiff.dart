@@ -55,25 +55,40 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
     // String tariff1Time = controllersList[0][1].text;
     // String tariff2Time = controllersList[0][2].text;
     // UPDATE TIME SELECTION
-    String tariff1Time = '8';
-    String tariff2Time = '16';
+    String tariff1Time =
+        controllersList[0][1].text.isEmpty ? '0' : controllersList[0][1].text;
+    String tariff2Time =
+        controllersList[0][2].text.isEmpty ? '0' : controllersList[0][2].text;
+
     double tariff1_1 = double.parse(
-        controllersList[0][1].text.isEmpty ? '0' : controllersList[0][1].text);
+        controllersList[1][1].text.isEmpty ? '0' : controllersList[0][1].text);
     double tariff1_2 = double.parse(
-        controllersList[1][1].text.isEmpty ? '0' : controllersList[1][1].text);
+        controllersList[2][1].text.isEmpty ? '0' : controllersList[1][1].text);
     double tariff1_3 = double.parse(
-        controllersList[2][1].text.isEmpty ? '0' : controllersList[2][1].text);
+        controllersList[3][1].text.isEmpty ? '0' : controllersList[2][1].text);
     double tariff2_1 = double.parse(
-        controllersList[0][2].text.isEmpty ? '0' : controllersList[0][2].text);
+        controllersList[1][2].text.isEmpty ? '0' : controllersList[0][2].text);
     double tariff2_2 = double.parse(
-        controllersList[1][2].text.isEmpty ? '0' : controllersList[1][2].text);
+        controllersList[2][2].text.isEmpty ? '0' : controllersList[1][2].text);
     double tariff2_3 = double.parse(
-        controllersList[2][2].text.isEmpty ? '0' : controllersList[2][2].text);
-    temp = {
-      tariff1Time: [tariff1_1, tariff1_2, tariff1_3],
-      tariff2Time: [tariff2_1, tariff2_2, tariff2_3]
-    };
-    tariffsMap = temp;
+        controllersList[3][2].text.isEmpty ? '0' : controllersList[2][2].text);
+
+    try {
+      int temp1 = int.parse(tariff1Time);
+      int temp2 = int.parse(tariff2Time);
+      if (temp2 > temp1) {
+        temp = {
+          tariff1Time: [tariff1_1, tariff1_2, tariff1_3],
+          tariff2Time: [tariff2_1, tariff2_2, tariff2_3]
+        };
+      } else {
+        temp = {
+          tariff2Time: [tariff2_1, tariff2_2, tariff2_3],
+          tariff1Time: [tariff1_1, tariff1_2, tariff1_3]
+        };
+      }
+      tariffsMap = temp;
+    } catch (e) {}
   }
 
   void updateControllers() {
