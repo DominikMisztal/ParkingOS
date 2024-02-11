@@ -1,7 +1,7 @@
 class AccountDataValidator {
   static bool validatePassword(String password) {
     bool isValidPassword =
-        RegExp(r'^(?=.*[A-Z])(?=.*[!@#$()&*])(?=.*[0-9])(?=.*[a-z]).{8}$')
+        RegExp(r'^(?=.*[A-Z])(?=.*[!@#$()&*])(?=.*[0-9])(?=.*[a-z]).{8,16}$')
             .hasMatch(password);
 
     return isValidPassword;
