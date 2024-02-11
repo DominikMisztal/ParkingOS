@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/utils/Utils.dart';
+import 'package:flutter/services.dart';
 
 class TarrifStiffDataTable extends StatefulWidget {
   final Function(Map<String, List<double>>) onValueChanged;
@@ -111,7 +112,18 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
     String firstHour = controllersList[0][1].text;
     String secondHour = controllersList[0][2].text;
     void refresh(String newHour) {
-      setState(() {});
+      if (newHour.isEmpty) {
+        return;
+      }
+
+      final int? number = int.tryParse(newHour);
+      if (number == null || number < 1 || number > 24) {
+        return;
+      }
+      if (newHour.length > 1) {
+        setState(() {});
+      }
+      //setState(() {});
     }
 
     updateControllers();

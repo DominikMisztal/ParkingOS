@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/carCard.dart';
 import 'package:parking_system/components/car_form.dart';
-import 'package:parking_system/components/edit_email_dialog.dart';
+
 import 'package:parking_system/components/edit_password_dialog.dart';
 import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/models/car_model.dart';
@@ -22,26 +21,18 @@ class userPage extends StatefulWidget {
 class _userPageState extends State<userPage> {
   UserService userService = UserService();
   SaldoChargerModel scm = SaldoChargerModel();
-
-  // bool canAddCar(registrationPlate) async{
-  //   if(userService.canAddCar(registrationPlate)){
-  //     return true;
-  //   }
-  //   return false;
-  // }
   void getCars(Car car) async {
     bool? checkRegistration = await userService.canAddCar(car.registration_num);
     if (checkRegistration == null) return;
     print(checkRegistration);
-    if(checkRegistration == true){
-    await user.addCar(car);
-    _placeholderCars = user.userCars();
-    setState(() {
+    if (checkRegistration == true) {
+      await user.addCar(car);
       _placeholderCars = user.userCars();
-    });
-    }
-    else{
-      showToast("Auto z podaną rejestracją istnieje");
+      setState(() {
+        _placeholderCars = user.userCars();
+      });
+    } else {
+      showToast("Car with this registration number already exist");
     }
   }
 
