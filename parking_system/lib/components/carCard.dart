@@ -44,10 +44,10 @@ class _carCardState extends State<carCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Item',
+          title: const Text('Delete Car',
               style: TextStyle(color: Colors.white60, fontSize: 16)),
           content: const Text(
-            'Are you sure you want to delete this item?',
+            'Are you sure you want to delete this car?',
             style: TextStyle(color: Colors.white60, fontSize: 16),
           ),
           actions: [
