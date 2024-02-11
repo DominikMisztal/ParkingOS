@@ -70,7 +70,6 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     List<ChartData> expensesTemp = [];
 
     if (expenses.isEmpty) return;
-    print(selectedPark);
     double amount = 0;
     for (var expense in expenses[selectedPark]) {
       if ((expense.dateAdded.month == 12 &&
@@ -104,17 +103,14 @@ class _ParkingSummaryState extends State<ParkingSummary> {
 
     double temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2023, 12, 1));
-    print(temp);
     incomeTemp.add(ChartData("12", temp));
     temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2024, 1, 1));
-    print(temp);
     incomeTemp.add(ChartData("1", temp));
     temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2024, 2, 1));
-    print(temp);
     incomeTemp.add(ChartData("2", temp));
-
+    Future.delayed(Duration(seconds: 2));
     incomeData = incomeTemp;
     expenseData = expensesTemp;
   }
