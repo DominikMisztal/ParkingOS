@@ -44,15 +44,35 @@ class _ParkingMakerState extends State<ParkingMaker> {
     selectedParking = parkingNames[selectedParkingIndex];
 
     if (_parkings.isNotEmpty && shouldRenewData) {
-      nameController.text = _parkings[selectedParkingIndex].name;
-      addressController.text = _parkings[selectedParkingIndex].address;
-      widthController.text = _parkings[selectedParkingIndex].width.toString();
-      heightController.text = _parkings[selectedParkingIndex].height.toString();
-      floorsController.text = _parkings[selectedParkingIndex].height.toString();
+      if (selectedParking == 'New parking') {
+        nameController.text = '';
+        addressController.text = '';
+        widthController.text = '8';
+        heightController.text = '8';
+        floorsController.text = '3';
+      } else {
+        nameController.text = _parkings[selectedParkingIndex].name;
+        addressController.text = _parkings[selectedParkingIndex].address;
+        widthController.text = _parkings[selectedParkingIndex].width.toString();
+        heightController.text =
+            _parkings[selectedParkingIndex].height.toString();
+        floorsController.text =
+            _parkings[selectedParkingIndex].height.toString();
+      }
+
       shouldRenewData = false;
       setState(() {
         for (var element in _parkings) {
-          tariffsMap = _parkings[selectedParkingIndex].tarifs;
+          if (selectedParking == 'New parking') {
+            Map<String, List<double>> tariffsMapTemp = {
+              '8': [2, 2, 2],
+              '16': [2, 2, 2]
+            };
+            tariffsMap = tariffsMapTemp;
+          } else {
+            tariffsMap = _parkings[selectedParkingIndex].tarifs;
+          }
+
           _toggleTariffParking = false;
           generateParking();
         }
@@ -70,6 +90,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
       for (var element in _parkings) {
         parkingNames.add(element.name);
       }
+      parkingNames.add('New parking');
     });
     shouldRenewData = false;
   }

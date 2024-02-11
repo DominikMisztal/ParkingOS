@@ -167,7 +167,7 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
                     ));
                   } else {
                     return DataCell(TextFormField(
-                      controller: controllersList[rowIndex - 1][colIndex],
+                      controller: controllersList[rowIndex][colIndex],
                       decoration: const InputDecoration(
                         hintText: 'Enter price',
                       ),
