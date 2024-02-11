@@ -212,15 +212,7 @@ class _SpotsStatisticsWidgetState extends State<SpotsStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-
     getSpotRecords();
-    // if (firstLoad && selectedSpotId == '') {
-    //   filterController.text = selectedSpotId;
-    //   selectedColumnForFiltering = 'Spot ID';
-    //   // to do filtering
-    // }
-
     return FutureBuilder(
       future: getSpotRecords(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

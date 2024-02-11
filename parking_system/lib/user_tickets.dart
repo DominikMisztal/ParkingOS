@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/models/layover_model.dart';
 import 'package:parking_system/models/user.dart';

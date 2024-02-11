@@ -92,8 +92,6 @@ class _HistoryStatisticsWidgetState extends State<HistoryStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-
     getHistoryRecords();
     return FutureBuilder(
       future: getHistoryRecords(),

@@ -95,8 +95,6 @@ class _ParkingStatisticsWidgetState extends State<ParkingStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-
     getParkingRecords();
     return FutureBuilder(
       future: getParkingRecords(),

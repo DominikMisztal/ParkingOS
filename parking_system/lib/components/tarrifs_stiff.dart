@@ -75,6 +75,9 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
         controllersList[3][2].text.isEmpty ? '0' : controllersList[2][2].text);
 
     try {
+      if (tariff1Time == tariff2Time) {
+        return;
+      }
       int temp1 = int.parse(tariff1Time);
       int temp2 = int.parse(tariff2Time);
       if (temp2 > temp1) {
@@ -109,8 +112,6 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    String firstHour = controllersList[0][1].text;
-    String secondHour = controllersList[0][2].text;
     void refresh(String newHour) {
       if (newHour.isEmpty) {
         return;
@@ -127,6 +128,8 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
     }
 
     updateControllers();
+    String firstHour = controllersList[0][1].text;
+    String secondHour = controllersList[0][2].text;
     controllersUpdated = true;
     return Scaffold(
       appBar: AppBar(

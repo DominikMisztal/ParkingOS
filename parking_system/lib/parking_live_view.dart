@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/custom_formatted_text.dart';
-import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/components/parking_board_live_view.dart';
 import 'package:parking_system/services/park_services.dart';
 import 'package:parking_system/models/parkingDB.dart';
@@ -188,7 +187,7 @@ class _ParkingLiveViewState extends State<ParkingLiveView> {
                                                   .indexOf(newValue!);
                                               setValueForParking(selectedIndex);
                                               setState(() {
-                                                selectedParking = newValue!;
+                                                selectedParking = newValue;
                                                 parkingNameIndex = parkingNames
                                                     .indexWhere((element) =>
                                                         element ==

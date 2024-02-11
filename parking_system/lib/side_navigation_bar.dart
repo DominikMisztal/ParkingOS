@@ -2,7 +2,6 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_system/parkfinder_page.dart';
 import 'package:parking_system/user_page.dart';
-import 'package:parking_system/user_payment.dart';
 import 'package:parking_system/models/user.dart';
 import 'package:parking_system/user_tickets.dart';
 

@@ -14,7 +14,6 @@ class PaymentCalculator {
 
   double calculatePaymentFromHours(DateTime parkingStart, int hours) {
     int currentStayDuration = 0;
-    int parkingDuration = hours;
     double currentPayment = 0.0;
     List<double> tariff_1_values = tariffsMap[tariffsMap.keys.first]!;
     List<double> tariff_2_values = tariffsMap[tariffsMap.keys.last]!;

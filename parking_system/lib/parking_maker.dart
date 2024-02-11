@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parking_system/components/my_custom_text_field.dart';
 import 'package:parking_system/components/parking_board.dart';
-
-import 'package:parking_system/components/saldoWidget.dart';
 import 'package:parking_system/components/tarrifs_stiff.dart';
-import 'package:parking_system/models/car_model.dart';
-
 import 'package:parking_system/models/parkingDB.dart';
 import 'package:parking_system/models/spot.dart';
 import 'package:parking_system/Utils/Utils.dart';
@@ -62,6 +58,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
 
       shouldRenewData = false;
       setState(() {
+        // ignore: unused_local_variable
         for (var element in _parkings) {
           if (selectedParking == 'New parking') {
             Map<String, List<double>> tariffsMapTemp = {
@@ -210,7 +207,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                       setState(() {
                                         selectedParkingIndex =
                                             parkingNames.indexOf(newValue!);
-                                        selectedParking = newValue!;
+                                        selectedParking = newValue;
                                         shouldRenewData = true;
                                         updateParkingData();
                                       });

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/parking_board.dart';
 import 'dart:developer';
 
 import 'package:parking_system/components/parking_board_live_view.dart';

@@ -1,6 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:parking_system/components/parking_board.dart';
 import 'package:parking_system/parking_expenses.dart';
 import 'package:parking_system/parking_maker.dart';
 import 'package:parking_system/parking_live_view.dart';

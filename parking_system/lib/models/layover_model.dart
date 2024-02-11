@@ -1,7 +1,3 @@
-//Spytać się jak to robimy
-
-import 'package:parking_system/models/car_model.dart';
-
 class Layover {
   final String startDate;
   String endDate = '';
@@ -10,7 +6,8 @@ class Layover {
   final String car;
   final String userId;
 
-  Layover(this.startDate, this.endDate, this.parkingId, this.spotId, this.car, this.userId);
+  Layover(this.startDate, this.endDate, this.parkingId, this.spotId, this.car,
+      this.userId);
 
   Map<String, dynamic> toMap() {
     return {

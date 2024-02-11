@@ -15,7 +15,7 @@ class ParkingSummary extends StatefulWidget {
 
 class _ParkingSummaryState extends State<ParkingSummary> {
   ParkingServices parkingServices = ParkingServices();
-  ExpensesServices  expenseServices = ExpensesServices();
+  ExpensesServices expenseServices = ExpensesServices();
   List<ChartData> incomeData = [];
   List<ChartData> expenseData = [];
   List<String> parkingNames = [];
@@ -29,15 +29,13 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     parkingNames = temp;
     selectedParking = parkingNames[0];
   }
-  
-  void setParkingNames() async{
+
+  void setParkingNames() async {
     List<String>? temp = await parkingServices.getParkingNames();
-    if(temp == null) return;
+    if (temp == null) return;
     parkingNames.addAll(temp);
     selectedParking = parkingNames[0];
   }
-  
-  
 
   @override
   void initState() {
@@ -48,63 +46,74 @@ class _ParkingSummaryState extends State<ParkingSummary> {
   // Map<String, double> getIncome() async{
   //   Map<String, double> tempExpense = {};
   //   for (var name in parkingNames) {
-        
+
   //       tempExpense['11'] = temp;
   //   }
   //   return tempExpense;
   // }
 
-  void getExpenses() async{
+  void getExpenses() async {
     for (var name in parkingNames) {
-      List<Expense> tempExpense = await expenseServices.loadExpensesForParking(name);
+      List<Expense> tempExpense =
+          await expenseServices.loadExpensesForParking(name);
       expenses.add(tempExpense);
     }
   }
-  
+
   _ParkingSummaryState() {
     getParkingNames();
   }
   int selectedPark = 0;
 
-
   void getDataToCharts() async {
     List<ChartData> incomeTemp = [];
     List<ChartData> expensesTemp = [];
-    
-    if(expenses.isEmpty) return;
+
+    if (expenses.isEmpty) return;
     print(selectedPark);
-      double amount = 0;
-      for (var expense in expenses[selectedPark]){
-        if((expense.dateAdded.month == 11 && expense.dateAdded.year == DateTime.now().year - 1) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
-          amount += expense.amount;
-        }
+    double amount = 0;
+    for (var expense in expenses[selectedPark]) {
+      if ((expense.dateAdded.month == 11 &&
+              expense.dateAdded.year == DateTime.now().year - 1) ||
+          (expense.dateAdded.isBefore(DateTime.now()) &&
+              expense.cyclical == true)) {
+        amount += expense.amount;
       }
-      expensesTemp.add(ChartData("11", amount));
-      amount = 0;
-      for (var expense in expenses[selectedPark]){
-        if((expense.dateAdded.month == 12 && expense.dateAdded.year == DateTime.now().year - 1) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
-            amount += expense.amount;
-        }
+    }
+    expensesTemp.add(ChartData("11", amount));
+    amount = 0;
+    for (var expense in expenses[selectedPark]) {
+      if ((expense.dateAdded.month == 12 &&
+              expense.dateAdded.year == DateTime.now().year - 1) ||
+          (expense.dateAdded.isBefore(DateTime.now()) &&
+              expense.cyclical == true)) {
+        amount += expense.amount;
       }
-      expensesTemp.add(ChartData("12", amount));
-      amount = 0;
-      for (var expense in expenses[selectedPark]){
-        if((expense.dateAdded.month == DateTime.now().month && expense.dateAdded.year == DateTime.now().year) || (expense.dateAdded.isBefore(DateTime.now()) && expense.cyclical == true)){
-            amount += expense.amount;
-        }
+    }
+    expensesTemp.add(ChartData("12", amount));
+    amount = 0;
+    for (var expense in expenses[selectedPark]) {
+      if ((expense.dateAdded.month == DateTime.now().month &&
+              expense.dateAdded.year == DateTime.now().year) ||
+          (expense.dateAdded.isBefore(DateTime.now()) &&
+              expense.cyclical == true)) {
+        amount += expense.amount;
       }
-      expensesTemp.add(ChartData("1", amount));
-    
-    double temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2023,11,1));
+    }
+    expensesTemp.add(ChartData("1", amount));
+
+    double temp = await expenseServices.loadIncomeForParking(
+        selectedParking, DateTime(2023, 11, 1));
     print(temp);
     incomeTemp.add(ChartData("11", temp));
-    temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2023,12,1));
+    temp = await expenseServices.loadIncomeForParking(
+        selectedParking, DateTime(2023, 12, 1));
     print(temp);
-    incomeTemp.add(ChartData("12",temp));
-    temp = await expenseServices.loadIncomeForParking(selectedParking, DateTime(2024,1,1));
+    incomeTemp.add(ChartData("12", temp));
+    temp = await expenseServices.loadIncomeForParking(
+        selectedParking, DateTime(2024, 1, 1));
     print(temp);
     incomeTemp.add(ChartData("1", temp));
-
 
     incomeData = incomeTemp;
     expenseData = expensesTemp;
@@ -157,7 +166,6 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                 ),
                               ),
                               Padding(padding: EdgeInsets.all(10)),
-
                               FutureBuilder(
                                 future: null,
                                 builder: (BuildContext context,
@@ -179,8 +187,9 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                     style: TextStyle(color: Colors.white),
                                     onChanged: (String? newValue) {
                                       setState(() {
-                                        selectedPark = parkingNames.indexOf(newValue!);
-                                        selectedParking = newValue!;
+                                        selectedPark =
+                                            parkingNames.indexOf(newValue!);
+                                        selectedParking = newValue;
                                       });
                                     },
                                     items: parkingNames
@@ -191,7 +200,6 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                         child: Text(value),
                                       );
                                     }).toList(),
-
                                   );
                                 },
                               ),
@@ -274,8 +282,9 @@ class _ParkingSummaryState extends State<ParkingSummary> {
                                 style: TextStyle(color: Colors.white),
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    selectedPark = parkingNames.indexOf(newValue!);
-                                    selectedParking = newValue!;
+                                    selectedPark =
+                                        parkingNames.indexOf(newValue!);
+                                    selectedParking = newValue;
                                   });
                                 },
                                 items: parkingNames

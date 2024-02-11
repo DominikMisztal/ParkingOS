@@ -161,7 +161,7 @@ class _ParkingExpensesrState extends State<ParkingExpenses> {
                                     selectedPark =
                                         parkingNames.indexOf(newValue!);
                                     setState(() {
-                                      selectedParking = newValue!;
+                                      selectedParking = newValue;
                                       selecterParkingIndex =
                                           parkingNames.indexWhere((element) =>
                                               element == selectedParking);
