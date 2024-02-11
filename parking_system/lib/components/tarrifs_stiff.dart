@@ -96,12 +96,14 @@ class _TarrifDataTableState extends State<TarrifStiffDataTable> {
     String key2 = tariffsMap.keys.elementAt(1);
     List<double>? tariffs1Values = tariffsMap[key1];
     List<double>? tariffs2Values = tariffsMap[key2];
-    controllersList[0][1].text = tariffs1Values![0].toString();
-    controllersList[1][1].text = tariffs1Values[0].toString();
+    controllersList[0][1].text = key1;
+    controllersList[0][2].text = key2;
+    controllersList[1][1].text = tariffs1Values![0].toString();
     controllersList[2][1].text = tariffs1Values[0].toString();
-    controllersList[0][2].text = tariffs2Values![0].toString();
-    controllersList[1][2].text = tariffs2Values[0].toString();
+    controllersList[3][1].text = tariffs1Values[0].toString();
+    controllersList[1][2].text = tariffs2Values![0].toString();
     controllersList[2][2].text = tariffs2Values[0].toString();
+    controllersList[3][2].text = tariffs2Values[0].toString();
   }
 
   @override

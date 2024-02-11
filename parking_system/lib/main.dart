@@ -44,8 +44,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: const HomePageAdmin(email: 'admin'),
-
+      home: const Login(
+        title: 'ParkingOS login',
+      ),
     );
   }
 }

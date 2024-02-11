@@ -43,40 +43,42 @@ class _ParkingMakerState extends State<ParkingMaker> {
     //TO DO GET PARKING NAMES
     selectedParking = parkingNames[selectedParkingIndex];
 
-    if(_parkings.isNotEmpty && shouldRenewData){
+    if (_parkings.isNotEmpty && shouldRenewData) {
       nameController.text = _parkings[selectedParkingIndex].name;
       addressController.text = _parkings[selectedParkingIndex].address;
       widthController.text = _parkings[selectedParkingIndex].width.toString();
       heightController.text = _parkings[selectedParkingIndex].height.toString();
       floorsController.text = _parkings[selectedParkingIndex].height.toString();
+      shouldRenewData = false;
       setState(() {
-      for (var element in _parkings) {
-        tariffsMap = _parkings[selectedParkingIndex].tarifs;
-     }
-    });
+        for (var element in _parkings) {
+          tariffsMap = _parkings[selectedParkingIndex].tarifs;
+          _toggleTariffParking = false;
+          generateParking();
+        }
+      });
       print(tariffsMap);
     }
-    shouldRenewData = true;
   }
-  void getParkings() async{
+
+  void getParkings() async {
     _parkings = (await _parkingServices.getParkings())!;
 
     parkingNames.clear();
 
-     setState(() {
+    setState(() {
       for (var element in _parkings) {
         parkingNames.add(element.name);
-     }
+      }
     });
     shouldRenewData = false;
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
     getParkings();
   }
-
 
   void updateParkingData() {
     nameController.text = '';
@@ -188,6 +190,7 @@ class _ParkingMakerState extends State<ParkingMaker> {
                                         selectedParkingIndex =
                                             parkingNames.indexOf(newValue!);
                                         selectedParking = newValue!;
+                                        shouldRenewData = true;
                                         updateParkingData();
                                       });
                                     },
