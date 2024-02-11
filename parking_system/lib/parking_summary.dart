@@ -73,16 +73,6 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     print(selectedPark);
     double amount = 0;
     for (var expense in expenses[selectedPark]) {
-      if ((expense.dateAdded.month == 11 &&
-              expense.dateAdded.year == DateTime.now().year - 1) ||
-          (expense.dateAdded.isBefore(DateTime.now()) &&
-              expense.cyclical == true)) {
-        amount += expense.amount;
-      }
-    }
-    expensesTemp.add(ChartData("11", amount));
-    amount = 0;
-    for (var expense in expenses[selectedPark]) {
       if ((expense.dateAdded.month == 12 &&
               expense.dateAdded.year == DateTime.now().year - 1) ||
           (expense.dateAdded.isBefore(DateTime.now()) &&
@@ -93,7 +83,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
     expensesTemp.add(ChartData("12", amount));
     amount = 0;
     for (var expense in expenses[selectedPark]) {
-      if ((expense.dateAdded.month == DateTime.now().month &&
+      if ((expense.dateAdded.month == 1 &&
               expense.dateAdded.year == DateTime.now().year) ||
           (expense.dateAdded.isBefore(DateTime.now()) &&
               expense.cyclical == true)) {
@@ -101,12 +91,18 @@ class _ParkingSummaryState extends State<ParkingSummary> {
       }
     }
     expensesTemp.add(ChartData("1", amount));
+    amount = 0;
+    for (var expense in expenses[selectedPark]) {
+      if ((expense.dateAdded.month == DateTime.now().month &&
+              expense.dateAdded.year == DateTime.now().year) ||
+          (expense.dateAdded.isBefore(DateTime.now()) &&
+              expense.cyclical == true)) {
+        amount += expense.amount;
+      }
+    }
+    expensesTemp.add(ChartData("2", amount));
 
     double temp = await expenseServices.loadIncomeForParking(
-        selectedParking, DateTime(2023, 11, 1));
-    print(temp);
-    incomeTemp.add(ChartData("11", temp));
-    temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2023, 12, 1));
     print(temp);
     incomeTemp.add(ChartData("12", temp));
@@ -114,6 +110,10 @@ class _ParkingSummaryState extends State<ParkingSummary> {
         selectedParking, DateTime(2024, 1, 1));
     print(temp);
     incomeTemp.add(ChartData("1", temp));
+    temp = await expenseServices.loadIncomeForParking(
+        selectedParking, DateTime(2024, 2, 1));
+    print(temp);
+    incomeTemp.add(ChartData("2", temp));
 
     incomeData = incomeTemp;
     expenseData = expensesTemp;
