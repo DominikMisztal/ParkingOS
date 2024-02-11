@@ -80,7 +80,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
         amount += expense.amount;
       }
     }
-    expensesTemp.add(ChartData("12", amount));
+    expensesTemp.add(ChartData("Grudzień", amount));
     amount = 0;
     for (var expense in expenses[selectedPark]) {
       if ((expense.dateAdded.month == 1 &&
@@ -90,7 +90,7 @@ class _ParkingSummaryState extends State<ParkingSummary> {
         amount += expense.amount;
       }
     }
-    expensesTemp.add(ChartData("1", amount));
+    expensesTemp.add(ChartData("Styczeń", amount));
     amount = 0;
     for (var expense in expenses[selectedPark]) {
       if ((expense.dateAdded.month == DateTime.now().month &&
@@ -100,20 +100,20 @@ class _ParkingSummaryState extends State<ParkingSummary> {
         amount += expense.amount;
       }
     }
-    expensesTemp.add(ChartData("2", amount));
+    expensesTemp.add(ChartData("Luty", amount));
 
     double temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2023, 12, 1));
     print(temp);
-    incomeTemp.add(ChartData("12", temp));
+    incomeTemp.add(ChartData("Grudzień", temp));
     temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2024, 1, 1));
     print(temp);
-    incomeTemp.add(ChartData("1", temp));
+    incomeTemp.add(ChartData("Styczeń", temp));
     temp = await expenseServices.loadIncomeForParking(
         selectedParking, DateTime(2024, 2, 1));
     print(temp);
-    incomeTemp.add(ChartData("2", temp));
+    incomeTemp.add(ChartData("Luty", temp));
 
     incomeData = incomeTemp;
     expenseData = expensesTemp;
